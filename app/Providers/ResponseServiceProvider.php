@@ -18,7 +18,7 @@ class ResponseServiceProvider extends ServiceProvider
         Response::macro('success', function ($data = '', $message = '') {
             return Response::json([
               'status' => 'success',
-              'data' => $data,
+              'body' => $data,
               'message' => $message == '' ? trans('api.defaultSuccess') : $message
             ], 200);
         });
