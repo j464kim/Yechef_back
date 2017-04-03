@@ -1,6 +1,6 @@
-## Environtment
+## Environment
 
-This Project is developed using Laravel 5.4 framework
+This project is developed using Laravel 5.4 framework
 
 ## Homestead setup
 
@@ -76,8 +76,8 @@ php artisan db:seed
 
 ## Code style
 
-- All API routes should be placed in side `/routes/api.php` while all web routes should be placed in `/routes/web.php`
-- All API controller return should be using the custom-defined macro defined in `/app/Providers/ResponseServiceProvider.php`, this will be the api standard between the backend and the frontend.
+- All API routes should be placed in side `routes/api.php` while all web routes should be placed in `routes/web.php`
+- All API controller return should be using the custom-defined macro defined in `app/Providers/ResponseServiceProvider.php`, this will be the api standard between the backend and the frontend.
 - Try to use resource routes as much as you can.
 - Whenever there is a db change, please write a new migration together with your seeder.
 - Try to write test before your actual implementation of a specific function/method, this will give you a better view of what you want to achieve.
