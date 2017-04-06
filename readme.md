@@ -35,6 +35,7 @@ databases:
 ```
 
 - Go to `~/Homestead` folder and run `vagrant up` to start the virtual machine and run `vagrant ssh` to ssh into it.
+- If you can't find the project folder when you ssh into it, try to run `vagrant provision` and `vagrant halt` to shutdown vm, and repeat the above step. 
 
 ## Project Setup
 
@@ -65,10 +66,13 @@ php artisan key:generate
 composer update
 
 # run db migration
-php artisan db:migrate
+php artisan migrate
 
 # run db seed
 php artisan db:seed
+
+# or to run both at the same time
+php artisan migrate --seed
 
 ```
 
