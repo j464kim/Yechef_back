@@ -19,3 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // TODO Change this to proper middleware group later on
 Route::resource('dishes', 'DishController');
+Route::resource('kitchens', 'KitchenController');

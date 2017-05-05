@@ -23,8 +23,19 @@ $factory->define(App\Models\Media::class, function (Faker\Generator $faker) {
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Models\Dish::class, function (Faker\Generator $faker) {
     return [
-        'slug' => str_random(10),
-        'name' => str_random(10),
+        'name' => $faker->name,
+        'slug' => $faker->slug,
         'description' => str_random(10)
+    ];
+});
+
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
+$factory->define(App\Models\Kitchen::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+        'address' => $faker->address,
+        'phone' => $faker->phoneNumber,
+        'email' => $faker->unique()->safeEmail,
+        'description' => str_random(10),
     ];
 });

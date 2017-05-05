@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Dish extends Model
+class Kitchen extends Model
 {
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['slug', 'name', 'description'];
+    protected $fillable = ['name', 'address', 'phone', 'email', 'description'];
 
     /**
      * Many to many relationship to media
@@ -20,5 +20,4 @@ class Dish extends Model
     {
         return $this->belongsToMany('App\Models\Media');
     }
-
 }

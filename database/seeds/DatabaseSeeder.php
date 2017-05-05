@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
   		Model::unguard();
 
         $this->call(DishTableSeeder::class);
+        $this->call(KitchenTableSeeder::class);
 
         Model::reguard();
     }
