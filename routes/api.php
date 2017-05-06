@@ -26,7 +26,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['middleware' => ['web']], function () {
     Route::resource('dishes', 'DishController');
 
-    Route::get('kitchens/{id}', 'KitchenController@index');
+    Route::get('kitchens', 'KitchenController@index');
     Route::post('kitchens', 'KitchenController@store');
     Route::post('kitchens/{id}', 'KitchenController@update');
     Route::delete('kitchens/{id}', 'KitchenController@destroy');
