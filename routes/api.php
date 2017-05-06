@@ -18,4 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 // TODO Change this to proper middleware group later on
-Route::resource('dishes', 'DishController');
+//Route::resource('dishes', 'DishController');
+Route::get('/dishes', 'DishController@index');
+Route::match(['put', 'patch'], '/dishes/{id}', 'DishController@update');
+Route::post('/dishes', 'DishController@store');
+Route::delete('/dishes/{id}', 'DishController@destroy');

@@ -15,4 +15,26 @@ class DishController extends Controller
 		$result = Helper::paginate($request, $dish);
     	return response()->success($result);
     }
+
+    public function store(Request $request) {
+        //TODO: Dish hasMany(media) VS Media belongsToMany(dish)?
+        $dish = new Dish();
+        $dish->slug = $request->slug;
+        $dish->name = $request->name;
+        $dish->description = $request->description;
+        $dish->save();
+    }
+
+    public function update(Request $request, $id) {
+        $dish = Dish::find($id);
+        $dish->slug = $request->slug;
+        $dish->name = $request->name;
+        $dish->description = $request->description;
+        $dish->save();
+    }
+
+    public function destroy(Request $request, $id) {
+        $dish = Dish::find($id);
+        $dish->delete();
+    }
 }
