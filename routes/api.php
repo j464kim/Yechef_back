@@ -23,5 +23,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // kernel and includes session state, CSRF protection, and more.
 
 // TODO Change this to proper middleware group later on
-Route::resource('dishes', 'DishController');
-Route::resource('kitchens', 'KitchenController');
+Route::group(['middleware' => ['web']], function () {
+    Route::resource('dishes', 'DishController');
+
+    Route::get('kitchens/{id}', 'Kitchen@index');
+    Route::post('kitchens', 'Kitchen@store');
+    Route::post('kitchens/{id}', 'Kitchen@update');
+    Route::delete('kitchens/{id}', 'Kitchen@destroy');
+});
+
