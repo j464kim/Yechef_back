@@ -8,6 +8,10 @@ use App\Models\Dish;
 
 class DishController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return mixed
+     */
     public function index(Request $request)
     {
         $dish = Dish::with('media')->get();

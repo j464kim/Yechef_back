@@ -14,6 +14,11 @@ class DatabaseSeeder extends Seeder
     {
   		Model::unguard();
 
+        \DB::table('dishes')->delete();
+        \DB::table('kitchens')->delete();
+        \DB::table('media')->delete();
+
+
         $this->call(DishTableSeeder::class);
         $this->call(KitchenTableSeeder::class);
 
