@@ -16,6 +16,10 @@ class DishController extends Controller
     	return response()->success($result);
     }
 
+    public function show(Request $request, $id) {
+        $dish = Dish::with('media')->get()->find($id);
+        return response()->success($dish);
+    }
     public function store(Request $request) {
         //TODO: Dish hasMany(media) VS Media belongsToMany(dish)?
         $dish = new Dish();
