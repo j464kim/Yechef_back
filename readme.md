@@ -70,6 +70,9 @@ php artisan db:migrate
 # run db seed
 php artisan db:seed
 
+# generate passport token
+php artisan passport:keys
+
 ```
 
 - Now the project should be able to run and you can test it by visiting the url `laravel.dev` via the browser on your host machine.
