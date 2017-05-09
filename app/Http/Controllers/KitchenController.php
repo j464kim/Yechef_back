@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Yechef\Helper;
 use App\Models\Kitchen;
+use Illuminate\Support\Facades\Log;
 
 class KitchenController extends Controller
 {
@@ -18,7 +19,8 @@ class KitchenController extends Controller
         $kitchen = Kitchen::with('media')->get();
         // apply pagination
         $result = Helper::paginate($request, $kitchen);
-        return response()->success($result);
+		Log::info('index');
+		return response()->success($result);
     }
 
     /**
@@ -40,7 +42,8 @@ class KitchenController extends Controller
      */
     public function show($id)
     {
-        $kitchen = Kitchen::find($id);
+        $kitchen = Kitchen::with('media')->find($id);
+		Log::info('show');
         return response()->success($kitchen);
     }
 

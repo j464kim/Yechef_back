@@ -27,6 +27,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::resource('dishes', 'DishController');
 
     Route::get('kitchens', 'KitchenController@index');
+    Route::get('kitchens/{id}', 'KitchenController@show');
     Route::post('kitchens', 'KitchenController@store');
     Route::post('kitchens/{id}', 'KitchenController@update');
     Route::delete('kitchens/{id}', 'KitchenController@destroy');
