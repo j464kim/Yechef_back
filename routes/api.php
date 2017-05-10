@@ -24,10 +24,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // TODO Change this to proper middleware group later on
     Route::resource('dishes', 'DishController');
-
-    Route::get('kitchens', 'KitchenController@index');
-    Route::get('kitchens/{id}', 'KitchenController@show');
-    Route::post('kitchens', 'KitchenController@store');
-    Route::put('kitchens/{id}', 'KitchenController@update');
-    Route::delete('kitchens/{id}', 'KitchenController@destroy');
+    Route::resource('kitchens', 'KitchenController');
 
