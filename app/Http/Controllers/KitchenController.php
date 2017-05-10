@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Yechef\Helper;
 use App\Models\Kitchen;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
 class KitchenController extends Controller
@@ -18,7 +16,6 @@ class KitchenController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		Log::info('index');
 		$kitchen = Kitchen::with('media')->get();
 		// apply pagination
 		$result = Helper::paginate($request, $kitchen);
@@ -31,31 +28,17 @@ class KitchenController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		// validation
-		$rules = array(
-			'name'    => 'bail|required',
-			'email'   => 'bail|unique:kitchens,email',
-			'phone'   => 'bail|required',
-			'address' => 'bail|required',
-		);
-		$validator = Validator::make($request->all(), $rules);
+		$this->validateInput($request);
 
-		// process the login
-		if ($validator->fails()) {
-			return Redirect::to('/kitchens/list')
-				->withErrors($validator);
-		} else {
-			// store
-			$kitchen = new Kitchen;
-			$kitchen->name = snake_case($request->input('name'));
-			$kitchen->email = $request->input('email');
-			$kitchen->phone = $request->input('phone');
-			$kitchen->address = $request->input('address');
-			$kitchen->description = $request->input('description');
-			$kitchen->save();
+		$kitchen = Kitchen::create([
+			'name'        => snake_case($request->input('name')),
+			'email'       => $request->input('email'),
+			'phone'       => $request->input('phone'),
+			'address'     => $request->input('address'),
+			'description' => $request->input('description')
+		]);
 
-			return response()->success($kitchen);
-		}
+		return response()->success($kitchen);
 	}
 
 	/**
@@ -66,7 +49,7 @@ class KitchenController extends Controller
 	 */
 	public function show($id)
 	{
-		$kitchen = Kitchen::with('media')->findOrFail($id);
+		$kitchen = Kitchen::findKitchen($id);
 		return response()->success($kitchen);
 	}
 
@@ -80,33 +63,19 @@ class KitchenController extends Controller
 
 	public function update(Request $request, $id)
 	{
-		Log::info('UPDATE');
+		$this->validateInput($request);
 
-		// validation
-		$rules = array(
-			'name'    => 'bail|required',
-			'email'   => 'bail|unique:kitchens,email',
-			'phone'   => 'bail|required',
-			'address' => 'bail|required',
+		$kitchen = Kitchen::findKitchen($id);
+		$kitchen->update(
+			[
+				'name'        => snake_case($request->input('name')),
+				'email'       => $request->input('email'),
+				'phone'       => $request->input('phone'),
+				'address'     => $request->input('address'),
+				'description' => $request->input('description')
+			]
 		);
-		$validator = Validator::make($request->all(), $rules);
 
-		// process the login
-		if ($validator->fails()) {
-			return Redirect::to('/kitchens/list')
-				->withErrors($validator);
-		} else {
-			$kitchen = Kitchen::findOrFail($id);
-			$kitchen->update(
-				[
-					'name'        => snake_case($request->input('name')),
-					'email'       => $request->input('email'),
-					'phone'       => $request->input('phone'),
-					'address'     => $request->input('address'),
-					'description' => $request->input('description')
-				]
-			);
-		}
 		return response()->success($kitchen);
 	}
 
@@ -118,6 +87,17 @@ class KitchenController extends Controller
 	 */
 	public function destroy($id)
 	{
-		return Kitchen::where('id', $id)->delete();
+		$kitchen = Kitchen::findKitchen($id);
+		$kitchen->delete();
+	}
+
+	private function validateInput(Request $request)
+	{
+		$validationRule = Kitchen::getValidationRule();
+		$validator = Validator::make($request->all(), $validationRule);
+
+		if ($validator->fails()) {
+			return response()->fail($validator->messages());
+		}
 	}
 }
