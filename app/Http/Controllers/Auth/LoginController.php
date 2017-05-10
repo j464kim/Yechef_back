@@ -93,9 +93,19 @@ class LoginController extends Controller
 		}
 
 		$refreshToken = request()->input('refresh_token');
-		return $this->proxy('refresh_token', [
-			'refresh_token' => $refreshToken,
-		]);
+		try{
+			$result = $this->proxy('refresh_token', [
+				'refresh_token' => $refreshToken,
+			]);
+			// use trans
+			return response()->success($result, 'access token refreshed');
+		}catch(\Exception $e) {
+			// use correct return code
+			// make a generic exception to handle return code
+			// do the same for login
+			throw new OauthException(1);
+			return $result;
+		}
 	}
 
 	/**
@@ -106,39 +116,34 @@ class LoginController extends Controller
 	 * @param array $data
 	 * @param string $scope
 	 * @return mixed|\Psr\Http\Message\ResponseInterface
-	 * @throws OauthException
 	 */
 	private function proxy($grantType, array $data = [], $scope='*')
 	{
 		// TODO scope is for future permission use
 
-		try {
-			$data = array_merge($data, [
-				'client_id'     => env('PASSWORD_CLIENT_ID'),
-				'client_secret' => env('PASSWORD_CLIENT_SECRET'),
-				'grant_type'    => $grantType,
-				'scope'			=> $scope
-			]);
+		$data = array_merge($data, [
+			'client_id'     => env('PASSWORD_CLIENT_ID'),
+			'client_secret' => env('PASSWORD_CLIENT_SECRET'),
+			'grant_type'    => $grantType,
+			'scope'			=> $scope
+		]);
 
-			$response = $this->guzzleClient->request('POST', url('oauth/token'), [
-				'form_params' => $data
-			])->getBody();
+		$response = $this->guzzleClient->request('POST', url('oauth/token'), [
+			'form_params' => $data
+		])->getBody();
 
-			$data = json_decode($response);
-			// Create a refresh token cookie
-			$this->cookie->queue(
-				self::REFRESH_TOKEN,
-				$data->refresh_token,
-				$data->expires_in,
-				null,
-				null,
-				false,
-				true // HttpOnly
-			);
+		$data = json_decode($response);
+		// Create a refresh token cookie
+		$this->cookie->queue(
+			self::REFRESH_TOKEN,
+			$data->refresh_token,
+			$data->expires_in,
+			null,
+			null,
+			false,
+			true // HttpOnly
+		);
 
-			return $response;
-		} catch (\Exception $e) {
-			throw new OauthException($e->getMessage());
-		}
+		return $response;
 	}
 }
