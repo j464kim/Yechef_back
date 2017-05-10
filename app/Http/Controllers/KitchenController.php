@@ -33,10 +33,10 @@ class KitchenController extends Controller
 	{
 		// validation
 		$rules = array(
-			'name'    => 'required',
-			'email'   => 'required',
-			'phone'   => 'required',
-			'address' => 'required',
+			'name'    => 'bail|required',
+			'email'   => 'bail|unique:kitchens,email',
+			'phone'   => 'bail|required',
+			'address' => 'bail|required',
 		);
 		$validator = Validator::make($request->all(), $rules);
 
@@ -47,7 +47,7 @@ class KitchenController extends Controller
 		} else {
 			// store
 			$kitchen = new Kitchen;
-			$kitchen->name = $request->input('name');
+			$kitchen->name = snake_case($request->input('name'));
 			$kitchen->email = $request->input('email');
 			$kitchen->phone = $request->input('phone');
 			$kitchen->address = $request->input('address');
@@ -66,8 +66,7 @@ class KitchenController extends Controller
 	 */
 	public function show($id)
 	{
-		Log::info('show');
-		$kitchen = Kitchen::with('media')->find($id);
+		$kitchen = Kitchen::with('media')->findOrFail($id);
 		return response()->success($kitchen);
 	}
 
@@ -78,12 +77,36 @@ class KitchenController extends Controller
 	 * @param  int $id
 	 * @return \Illuminate\Http\Response
 	 */
+
 	public function update(Request $request, $id)
 	{
-		$input = $request->all();
-		$kitchen = Kitchen::find($id);
-		$kitchen->update($input);
-		$kitchen = Kitchen::find($id);
+		Log::info('UPDATE');
+
+		// validation
+		$rules = array(
+			'name'    => 'bail|required',
+			'email'   => 'bail|unique:kitchens,email',
+			'phone'   => 'bail|required',
+			'address' => 'bail|required',
+		);
+		$validator = Validator::make($request->all(), $rules);
+
+		// process the login
+		if ($validator->fails()) {
+			return Redirect::to('/kitchens/list')
+				->withErrors($validator);
+		} else {
+			$kitchen = Kitchen::findOrFail($id);
+			$kitchen->update(
+				[
+					'name'        => snake_case($request->input('name')),
+					'email'       => $request->input('email'),
+					'phone'       => $request->input('phone'),
+					'address'     => $request->input('address'),
+					'description' => $request->input('description')
+				]
+			);
+		}
 		return response()->success($kitchen);
 	}
 
