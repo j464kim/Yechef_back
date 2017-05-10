@@ -14,13 +14,8 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
 });
 
 // TODO Change this to proper middleware group later on
-Route::resource('dishes', 'DishController');
-//Route::get('/dishes', 'DishController@index');
-//Route::get('/dishes/{id}', 'DishController@show');
-//Route::match(['put', 'patch'], '/dishes/{id}', 'DishController@update');
-//Route::post('/dishes', 'DishController@store');
-//Route::delete('/dishes/{id}', 'DishController@destroy');
+Route::resource('dishes', 'DishController', ['except' => ['create', 'edit']]);
