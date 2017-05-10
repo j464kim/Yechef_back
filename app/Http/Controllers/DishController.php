@@ -61,7 +61,7 @@ class DishController extends Controller
 		//TODO: Return the failure response as json
 		$validator = Validator::make($request->all(), Dish::getvalidation($id));
 		If ($validator->fails()) {
-			Return response()->fail($validator->errors()->first());
+			return response()->fail($validator->errors()->first());
 		}
 	}
 
