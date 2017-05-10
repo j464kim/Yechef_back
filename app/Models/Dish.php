@@ -9,22 +9,31 @@ class Dish extends Model
 {
 	use SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'slug', 'name', 'description'
-    ];
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = [
+		'slug',
+		'name',
+		'description'
+	];
 	protected $dates = ['deleted_at'];
 
-    /**
-     * Many to many relationship to media
-     */
-    public function media()
-    {
-        return $this->belongsToMany('App\Models\Media');
-    }
+	/**
+	 * Many to many relationship to media
+	 */
+	public function media()
+	{
+		return $this->belongsToMany('App\Models\Media');
+	}
 
+	public static function getvalidation($id = null)
+	{
+		Return [
+			'name'        => 'bail|required',
+			'description' => 'bail|required',
+		];
+	}
 }

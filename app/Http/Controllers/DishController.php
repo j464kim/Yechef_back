@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Dish;
 use App\Yechef\Helper;
-use Dotenv\Exception\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class DishController extends Controller
 {
@@ -39,7 +39,7 @@ class DishController extends Controller
 
 	public function update(Request $request, $id)
 	{
-		$this->validateRequestInputs($request);
+		$this->validateRequestInputs($request, $id);
 		$dish = $this->findDish($id)->update([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
@@ -56,30 +56,13 @@ class DishController extends Controller
 		return response()->success($dish);
 	}
 
-	private function validateRequestInputs($request)
+	private function validateRequestInputs($request, $id = null)
 	{
-		try {
-			$this->validate($request, [
-				'name'        => 'bail|required',
-				'description' => 'bail|required',
-			]);
-		} catch (ValidationException $e) {
+		//TODO: Return the failure response as json
+		$validator = Validator::make($request->all(), Dish::getvalidation($id));
+		If ($validator->fails()) {
+			Return response()->fail($validator->errors()->first());
 		}
-	}
-
-	/**
-	 * Get the error messages for the defined validation rules.
-	 *
-	 * @return array
-	 */
-	public function messages()
-	{
-		Log::info('Invalid request inputs');
-
-		return [
-			'name.required'        => 'A name is required',
-			'description.required' => 'A description is required',
-		];
 	}
 
 	private function findDish($id, $withMedia = false)
@@ -97,6 +80,8 @@ class DishController extends Controller
 			//(some open source community admitted that it is flaky)
 			Log::warning('Could not find the dish with id: ' . $id);
 //			abort(422, 'Could not find the dish with id: ' . $id);
+
+			//TODO: Return the failure response as json
 			return response()->json($ex->getMessage(), 422);
 		}
 	}
