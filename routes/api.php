@@ -19,3 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // TODO Change this to proper middleware group later on
 Route::resource('dishes', 'DishController');
+
+Route::post('login', 'Auth\LoginController@login');
+Route::post('refresh-token', 'Auth\LoginController@refreshToken');

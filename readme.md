@@ -73,6 +73,12 @@ php artisan db:seed
 # generate passport token
 php artisan passport:keys
 
+# Generate Oauth password grant client credential
+php artisan passport:client --password
+# use the result to env param:
+# PASSWORD_CLIENT_ID
+# PASSWORD_CLIENT_SECRET
+
 ```
 
 - Now the project should be able to run and you can test it by visiting the url `laravel.dev` via the browser on your host machine.

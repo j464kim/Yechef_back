@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -44,7 +46,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+		if($exception instanceof OauthException){
+			Log::error($exception->getMessage() . ', strack trace: ' . $exception->getTraceAsString());
+			return response()->fail($exception->getMessage());
+		} else if($exception instanceof ValidationException) {
+			return response()->fail($exception->getMessage());
+		}else {
+			return parent::render($request, $exception);
+		}
     }
 
     /**
