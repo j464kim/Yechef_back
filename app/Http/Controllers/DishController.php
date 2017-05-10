@@ -2,43 +2,62 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Dish;
-use App\Models\Media;
 use App\Yechef\Helper;
+use Illuminate\Http\Request;
 
 class DishController extends Controller
 {
-    public function index(Request $request) {
-    	$dish = Dish::with('media')->get();
-    	// apply pagination
+	public function index(Request $request)
+	{
+		$dish = Dish::with('media')->get();
+		// apply pagination
 		$result = Helper::paginate($request, $dish);
-    	return response()->success($result);
-    }
+		return response()->success($result);
+	}
 
-    public function show(Request $request, $id) {
-        $dish = Dish::with('media')->get()->find($id);
-        return response()->success($dish);
-    }
-    public function store(Request $request) {
-        //TODO: Dish hasMany(media) VS Media belongsToMany(dish)?
-        $dish = new Dish();
-        $dish->slug = $request->slug;
-        $dish->name = $request->name;
-        $dish->description = $request->description;
-        $dish->save();
-    }
+	public function show(Request $request, $id)
+	{
+		$dish = Dish::with('media')->findOrFail($id);
+		return response()->success($dish);
+	}
 
-    public function update(Request $request, $id) {
-        $dish = Dish::find($id);
-        $dish->slug = $request->slug;
-        $dish->name = $request->name;
-        $dish->description = $request->description;
-        $dish->save();
-    }
+	public function store(Request $request)
+	{
+		//TODO: No need to require slug input from the user.
+		$this->validate($request, [
+			'name'        => 'bail|required',
+			'description' => 'bail|required',
+		]);
 
-    public function destroy(Request $request, $id) {
-        $dish = Dish::find($id);
-        $dish->delete();
-    }
+		$dish = Dish::create([
+			'slug'        => snake_case($request->input('name')),
+			'name'        => $request->input('name'),
+			'description' => $request->input('description'),
+		]);
+		return response()->success($dish);
+	}
+
+	public function update(Request $request, $id)
+	{
+		$this->validate($request, [
+			'name'        => 'bail|required',
+			'description' => 'bail|required',
+		]);
+
+		$dish = Dish::findOrFail($id)->update([
+			'slug'        => snake_case($request->input('name')),
+			'name'        => $request->input('name'),
+			'description' => $request->input('description'),
+		]);
+		return response()->success($dish);
+	}
+
+	public function destroy(Request $request, $id)
+	{
+		//TODO: Need to delete other relationships to prevent foreign key constraint issues
+		$dish = Dish::findOrFail($id);
+		$dish->delete();
+		return response()->success($dish);
+	}
 }

@@ -19,7 +19,8 @@ class CreateDishTable extends Migration
             $table->string('name');
             $table->string('description');
             $table->timestamps();
-        });
+			$table->softDeletes();
+		});
 
         Schema::create('dish_media', function(Blueprint $table)
         {
@@ -29,6 +30,7 @@ class CreateDishTable extends Migration
             $table->integer('media_id')->unsigned();
             $table->foreign('media_id')->references('id')->on('media')->onDelete('cascade');
             $table->timestamps();
+			$table->softDeletes();
         });
     }
 
