@@ -22,7 +22,7 @@ class DishController extends Controller
 	public function show(Request $request, $id)
 	{
 		$dish = Dish::findDish($id, true);
-		return response()->success($dish);
+		return response()->success($dish, 11000);
 	}
 
 	public function store(Request $request)
@@ -34,7 +34,7 @@ class DishController extends Controller
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
 		]);
-		return response()->success($dish);
+		return response()->success($dish, 11001);
 	}
 
 	public function update(Request $request, $id)
@@ -45,7 +45,7 @@ class DishController extends Controller
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
 		]);
-		return response()->success($dish);
+		return response()->success($dish, 11002);
 	}
 
 	public function destroy(Request $request, $id)
@@ -54,15 +54,14 @@ class DishController extends Controller
 		$dish = Dish::findDish($id);
 		$dish->delete();
 		event(new DishDeleted($dish));
-		return response()->success($dish);
+		return response()->success($dish, 11003);
 	}
 
 	private function validateRequestInputs($request, $id = null)
 	{
-		//TODO: Return the failure response as json
 		$validator = Validator::make($request->all(), Dish::getValidation($id));
 		If ($validator->fails()) {
-			throw new YechefException(4);
+			throw new YechefException(11501, $validator->errors()->all());
 		}
 	}
 }
