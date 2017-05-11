@@ -72,7 +72,18 @@ php artisan migrate
 php artisan db:seed
 
 # or to run both at the same time
-php artisan migrate --seed
+ php artisan migrate --seed
+
+
+# generate passport token
+php artisan passport:keys
+
+# Generate Oauth password grant client credential
+php artisan passport:client --password
+# use the result to env param:
+# PASSWORD_CLIENT_ID
+# PASSWORD_CLIENT_SECRET
+
 
 ```
 
