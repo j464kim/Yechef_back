@@ -10,10 +10,11 @@ return [
     | Range 0 <= x < 1000
     |
     */
-	'0' => 'Invalid error code',
-	'1' => 'Request Success',
-	'2'	=> 'Unautherized resource',
-
+	'0' => 'Invalid error code ',
+	'1' => 'Request Success ',
+	'2'	=> 'Unautherized resource ',
+	'3' => 'Model Not Found ',
+	'4' => 'Invalid Inputs ',
 
 	/*
 	|--------------------------------------------------------------------------

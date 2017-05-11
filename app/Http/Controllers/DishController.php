@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Events\DishDeleted;
+use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Yechef\Helper;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class DishController extends Controller
@@ -22,7 +21,7 @@ class DishController extends Controller
 
 	public function show(Request $request, $id)
 	{
-		$dish = $this->findDish($id, true);
+		$dish = Dish::findDish($id, true);
 		return response()->success($dish);
 	}
 
@@ -41,7 +40,7 @@ class DishController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->validateRequestInputs($request, $id);
-		$dish = $this->findDish($id)->update([
+		$dish = Dish::findDish($id)->update([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
@@ -52,7 +51,7 @@ class DishController extends Controller
 	public function destroy(Request $request, $id)
 	{
 		//TODO: Need to delete other relationships to prevent foreign key constraint issues
-		$dish = $this->findDish($id);
+		$dish = Dish::findDish($id);
 		$dish->delete();
 		event(new DishDeleted($dish));
 		return response()->success($dish);
@@ -61,30 +60,9 @@ class DishController extends Controller
 	private function validateRequestInputs($request, $id = null)
 	{
 		//TODO: Return the failure response as json
-		$validator = Validator::make($request->all(), Dish::getvalidation($id));
+		$validator = Validator::make($request->all(), Dish::getValidation($id));
 		If ($validator->fails()) {
-			return response()->fail($validator->errors()->first());
-		}
-	}
-
-	private function findDish($id, $withMedia = false)
-	{
-		try {
-			if ($withMedia) {
-				return Dish::with('media')->findOrFail($id);
-
-			} else {
-				return Dish::findOrFail($id);
-			}
-		} catch (ModelNotFoundException $ex) {
-			//TODO: Despite of an exception case, it returns 200 status code no matter.
-			//Abort could not be used since we want to return json response..
-			//(some open source community admitted that it is flaky)
-			Log::warning('Could not find the dish with id: ' . $id);
-//			abort(422, 'Could not find the dish with id: ' . $id);
-
-			//TODO: Return the failure response as json
-			return response()->json($ex->getMessage(), 422);
+			throw new YechefException(4);
 		}
 	}
 }
