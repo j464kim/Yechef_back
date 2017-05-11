@@ -48,7 +48,7 @@ class Kitchen extends Model
 				return Kitchen::findOrFail($id);
 			}
 		} catch (ModelNotFoundException $e) {
-			Log::error('Kitchen with id ' . $id . ' was not found');
+			Log::error('Could not find the kitchen with id: ' . $id);
 
 			$message = ($e->getMessage() ?: $message = 'the requested resource was not found');
 			return Response::json(array(

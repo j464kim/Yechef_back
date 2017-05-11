@@ -87,7 +87,6 @@ class KitchenController extends Controller
 	 */
 	public function destroy($id)
 	{
-		Log::info('DESTROY');
 		$kitchen = Kitchen::findKitchen($id);
 		$kitchen->delete();
 
