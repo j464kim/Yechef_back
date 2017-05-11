@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DishDeleted;
 use App\Models\Dish;
 use App\Yechef\Helper;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -53,6 +54,7 @@ class DishController extends Controller
 		//TODO: Need to delete other relationships to prevent foreign key constraint issues
 		$dish = $this->findDish($id);
 		$dish->delete();
+		event(new DishDeleted($dish));
 		return response()->success($dish);
 	}
 
