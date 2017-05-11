@@ -16,9 +16,9 @@ class KitchenController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		$kitchen = Kitchen::with('media')->get();
+		$kitchens = Kitchen::with('media')->get();
 		// apply pagination
-		$result = Helper::paginate($request, $kitchen);
+		$result = Helper::paginate($request, $kitchens);
 		return response()->success($result);
 	}
 
@@ -49,7 +49,7 @@ class KitchenController extends Controller
 	 */
 	public function show($id)
 	{
-		$kitchen = Kitchen::findKitchen($id);
+		$kitchen = Kitchen::findKitchen($id, true);
 		return response()->success($kitchen);
 	}
 
@@ -65,7 +65,7 @@ class KitchenController extends Controller
 	{
 		$this->validateInput($request);
 
-		$kitchen = Kitchen::findKitchen($id);
+		$kitchen = Kitchen::findKitchen($id, true);
 		$kitchen->update(
 			[
 				'name'        => snake_case($request->input('name')),
@@ -87,8 +87,11 @@ class KitchenController extends Controller
 	 */
 	public function destroy($id)
 	{
+		Log::info('DESTROY');
 		$kitchen = Kitchen::findKitchen($id);
 		$kitchen->delete();
+
+		return response()->success(['kitchen is successfully deleted!']);
 	}
 
 	private function validateInput(Request $request)
