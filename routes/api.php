@@ -13,12 +13,15 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware' => ['auth:api']], function () {
+	Route::post('logout', 'Auth\LoginController@logout')->middleware('auth:api');
 });
+
+
 
 // TODO Change this to proper middleware group later on
 Route::resource('dishes', 'DishController');
+
 
 Route::post('login', 'Auth\LoginController@login');
 Route::post('refresh-token', 'Auth\LoginController@refreshToken');

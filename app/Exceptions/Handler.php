@@ -46,12 +46,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-		if($exception instanceof OauthException){
-			Log::error($exception->getMessage() . ', strack trace: ' . $exception->getTraceAsString());
-			return response()->fail($exception->getMessage());
-		} else if($exception instanceof ValidationException) {
-			return response()->fail($exception->getMessage());
-		}else {
+		if($exception instanceof YechefException){
+			Log::error($exception->getMessage() . ', error code:' . $exception->getCode() . ', strack trace: ' . $exception->getTraceAsString());
+			return response()->fail($exception->getCode(), $exception->getMessage());
+		} else {
 			return parent::render($request, $exception);
 		}
     }
@@ -65,10 +63,12 @@ class Handler extends ExceptionHandler
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        if ($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
-        }
+//        if ($request->expectsJson()) {
+//            return response()->json(['error' => 'Unauthenticated.'], 401);
+//        }
+//
+//        return redirect()->guest(route('login'));
 
-        return redirect()->guest(route('login'));
+		return response()->unauth();
     }
 }

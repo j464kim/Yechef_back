@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Exceptions\OauthException;
+use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
-use Validator;
 
 class LoginController extends Controller
 {
@@ -25,10 +24,15 @@ class LoginController extends Controller
 
     use AuthenticatesUsers;
 
+    // cookie key
 	const REFRESH_TOKEN = 'refreshToken';
 
+	// DI parameters
 	private $guzzleClient;
 	private $cookie;
+	private $validator;
+	private $auth;
+	private $db;
 
     /**
      * Where to redirect users after login.
@@ -47,6 +51,9 @@ class LoginController extends Controller
     {
 		$this->guzzleClient = $guzzleClient;
 		$this->cookie = $app->make('cookie');
+		$this->validator = $app->make('validator');
+		$this->auth = $app->make('auth');
+		$this->db = $app->make('db');
         $this->middleware('guest', ['except' => 'logout']);
     }
 
@@ -55,25 +62,33 @@ class LoginController extends Controller
 	 *
 	 * @param Request $request
 	 * @return mixed|\Psr\Http\Message\ResponseInterface
+	 * @throws YechefException
 	 */
 	public function login(Request $request)
 	{
-		$validator = Validator::make($request->all(), [
+		$validator = $this->validator->make($request->all(), [
 			'username' => 'required',
 			'password' => 'required'
 		]);
 
 		if ($validator->fails()) {
-			return response()->fail($validator->errors()->first());
+			throw new YechefException(10500);
 		}
 
 		$username = request()->input('username');
 		$password = request()->input('password');
 
-		return $this->proxy('password', [
-			'username' => $username,
-			'password' => $password
-		]);
+
+		try{
+			$result = $this->proxy('password', [
+				'username' => $username,
+				'password' => $password
+			]);
+
+			return response()->success($result, 10000);
+		}catch(\Exception $e) {
+			throw new YechefException(10501);
+		}
 	}
 
 	/**
@@ -81,15 +96,16 @@ class LoginController extends Controller
 	 *
 	 * @param Request $request
 	 * @return mixed|\Psr\Http\Message\ResponseInterface
+	 * @throws YechefException
 	 */
 	public function refreshToken(Request $request)
 	{
-		$validator = Validator::make($request->all(), [
+		$validator = $this->validator->make($request->all(), [
 			'refresh_token' => 'required'
 		]);
 
 		if ($validator->fails()) {
-			return response()->fail($validator->errors()->first());
+			throw new YechefException(10502);
 		}
 
 		$refreshToken = request()->input('refresh_token');
@@ -100,12 +116,32 @@ class LoginController extends Controller
 			// use trans
 			return response()->success($result, 'access token refreshed');
 		}catch(\Exception $e) {
-			// use correct return code
-			// make a generic exception to handle return code
-			// do the same for login
-			throw new OauthException(1);
-			return $result;
+			throw new YechefException(10503);
 		}
+	}
+
+	public function Logout()
+	{
+		$user = $this->auth->user();
+
+		if( !isset($user) ) {
+			throw new YechefException(10504);
+		}
+
+		$accessToken = $user->token();
+
+		$this->db
+			->table('oauth_refresh_tokens')
+			->where('access_token_id', $accessToken->id)
+			->update([
+				'revoked' => true
+			]);
+
+		$accessToken->revoke();
+
+		$this->cookie->queue($this->cookie->forget(self::REFRESH_TOKEN));
+
+		return response()->success(10002);
 	}
 
 	/**
@@ -131,8 +167,8 @@ class LoginController extends Controller
 		$response = $this->guzzleClient->request('POST', url('oauth/token'), [
 			'form_params' => $data
 		])->getBody();
-
 		$data = json_decode($response);
+
 		// Create a refresh token cookie
 		$this->cookie->queue(
 			self::REFRESH_TOKEN,
@@ -143,7 +179,6 @@ class LoginController extends Controller
 			false,
 			true // HttpOnly
 		);
-
-		return $response;
+		return $data;
 	}
 }
