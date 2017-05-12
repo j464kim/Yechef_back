@@ -47,9 +47,6 @@ Note: All following command should be run inside your homestead box. Make sure t
 # set up the project configuration file since its being git ignored
 cp .env.example .env 
 
-# generate a new project key
-php artisan key:generate
-
 # connect to your local db. before doing so, please create a new db first, and change the connection parameters accordingly.
 # open up the .env file in a text editor and change the following parameters according to your setup
 
@@ -64,6 +61,9 @@ php artisan key:generate
 
 # install project dependency
 composer update
+
+# generate a new project key
+php artisan key:generate
 
 # run db migration
 php artisan migrate
