@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\YechefException;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use App\Yechef\Helper;
 use App\Models\Kitchen;
@@ -9,6 +11,18 @@ use Illuminate\Support\Facades\Validator;
 
 class KitchenController extends Controller
 {
+
+	private $validator;
+
+	/**
+	 * KitchenController constructor.
+	 * @param Application $app
+	 */
+	public function __construct(Application $app) {
+		$this->validator = $app->make('validator');
+	}
+
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -50,6 +64,7 @@ class KitchenController extends Controller
 	public function show($id)
 	{
 		$kitchen = Kitchen::findKitchen($id, true);
+
 		return response()->success($kitchen);
 	}
 
@@ -66,6 +81,7 @@ class KitchenController extends Controller
 		$this->validateInput($request);
 
 		$kitchen = Kitchen::findKitchen($id, true);
+
 		$kitchen->update(
 			[
 				'name'        => snake_case($request->input('name')),
@@ -79,27 +95,13 @@ class KitchenController extends Controller
 		return response()->success($kitchen);
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy($id)
-	{
-		$kitchen = Kitchen::findKitchen($id);
-		$kitchen->delete();
-
-		return response()->success(['kitchen is successfully deleted!']);
-	}
-
 	private function validateInput(Request $request)
 	{
 		$validationRule = Kitchen::getValidationRule();
-		$validator = Validator::make($request->all(), $validationRule);
+		$validator = $this->validator->make($request->all(), $validationRule);
 
 		if ($validator->fails()) {
-			return response()->fail($validator->messages());
+			throw new YechefException(12500);
 		}
 	}
 }

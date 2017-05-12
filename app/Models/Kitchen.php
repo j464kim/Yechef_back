@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\YechefException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
@@ -47,14 +48,8 @@ class Kitchen extends Model
 			} else {
 				return Kitchen::findOrFail($id);
 			}
-		} catch (ModelNotFoundException $e) {
-			Log::error('Could not find the kitchen with id: ' . $id);
-
-			$message = ($e->getMessage() ?: $message = 'the requested resource was not found');
-			return Response::json(array(
-				'code'    => 422,
-				'message' => $message
-			), 422);
+		} catch (\Exception $e) {
+			throw new YechefException(12501);
 		}
 	}
 }
