@@ -15,27 +15,30 @@ class ResponseServiceProvider extends ServiceProvider
     public function boot()
     {
         // success
-        Response::macro('success', function ($data = '', $message = '') {
+        Response::macro('success', function ($data = '', $returnCode = 1, $message = '') {
             return Response::json([
-              'status' => 'success',
-              'body' => $data,
-              'message' => $message == '' ? trans('api.defaultSuccess') : $message
+				'status' => 'success',
+				'return_code' => $returnCode,
+				'body' => $data,
+				'message' => trans('api.' . $returnCode ) . $message
             ], 200);
         });
 
         // fail
-        Response::macro('fail', function ($message = '') {
+        Response::macro('fail', function ($returnCode = 0, $message = '') {
             return Response::json([
-              'status' => 'failure',
-              'message' => $message == '' ? trans('api.defaultFailure') : $message
+				'status' => 'failure',
+				'return_code' => $returnCode,
+				'message' => trans('api.' . $returnCode ) . $message
             ], 500);
         });
 
         // unautherised
-        Response::macro('unauth', function ($message = '') {
+        Response::macro('unauth', function ($returnCode = 2, $message = '') {
             return Response::json([
-              'status' => 'failure',
-              'message' => $message == '' ? trans('auth.unauthrised') : $message
+				'status' => 'failure',
+				'return_code' => $returnCode,
+				'message' => trans('api.' . $returnCode ) . $message
             ], 403);
         });
     }

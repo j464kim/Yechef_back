@@ -178,9 +178,11 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\ResponseServiceProvider::class,
 
-        //cors
+        // cors
         Barryvdh\Cors\ServiceProvider::class,
 
+		// passport
+		Laravel\Passport\PassportServiceProvider::class,
     ],
 
     /*
