@@ -40,7 +40,8 @@ class DishController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->validateRequestInputs($request, $id);
-		$dish = Dish::findDish($id)->update([
+		$dish = Dish::findDish($id);
+		$dish->update([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
