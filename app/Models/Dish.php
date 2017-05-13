@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use App\Exceptions\YechefException;
+use Ghanem\Rating\Traits\Ratingable as Rating;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 
-class Dish extends Model
+class Dish extends Model implements Rating
 {
 	use SoftDeletes;
+	use Rating;
 
 	/**
 	 * The attributes that are mass assignable.
