@@ -7,7 +7,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use App\Yechef\Helper;
 use App\Models\Kitchen;
-use Illuminate\Support\Facades\Validator;
 
 class KitchenController extends Controller
 {
@@ -93,6 +92,20 @@ class KitchenController extends Controller
 		);
 
 		return response()->success($kitchen);
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function destroy($id)
+	{
+		$kitchen = Kitchen::findKitchen($id);
+		$kitchen->delete();
+
+		return response()->success(12002);
 	}
 
 	private function validateInput(Request $request)

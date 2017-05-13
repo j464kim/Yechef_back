@@ -61,7 +61,7 @@ return [
 	'12001' => 'Kitchen is successfully updated',
 	'12002' => 'Kitchen is successfully deleted',
 	// fail
-	'12500' => 'Please make sure all fields are correctly entered',
+	'12500' => 'Please make sure all fields filled out',
 	'12501' => 'Kitchen could not be found',
 
 

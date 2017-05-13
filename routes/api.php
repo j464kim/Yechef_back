@@ -22,12 +22,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 // kernel and includes session state, CSRF protection, and more.
 
 // TODO Change this to proper middleware group later on
-    Route::resource('dishes', 'DishController');
-    Route::resource('kitchens', 'KitchenController');
+Route::resource('dishes', 'DishController');
+Route::resource('kitchens', 'KitchenController');
 
 // TODO Change this to proper middleware group later on
-Route::resource('dishes', 'DishController');
-
-
 Route::post('login', 'Auth\LoginController@login');
 Route::post('refresh-token', 'Auth\LoginController@refreshToken');

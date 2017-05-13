@@ -5,10 +5,20 @@ namespace App\Models;
 use App\Exceptions\YechefException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 
 class Kitchen extends Model
 {
+	use SoftDeletes;
+
+	/**
+	 * The attributes that should be mutated to dates.
+	 *
+	 * @var array
+	 */
+	protected $dates = ['deleted_at'];
+
 	/**
 	 * The attributes that are mass assignable.
 	 *
@@ -30,11 +40,11 @@ class Kitchen extends Model
 	public static function getValidationRule()
 	{
 		$rule = array(
-			'name'        => 'bail|required|unique:kitchens',
-			'email'       => 'unique:kitchens',
+			'name'        => 'bail|required',
+			'email'       => 'required',
 			'phone'       => 'required',
 			'address'     => 'required',
-			'description' => 'nullable',
+			'description' => 'required',
 		);
 
 		return $rule;
