@@ -36,7 +36,7 @@ class Dish extends Model
 	{
 		Return [
 			'name'        => 'bail|required',
-			'description' => 'bail|required',
+			'description' => 'required',
 		];
 	}
 

@@ -6,11 +6,18 @@ use App\Events\DishDeleted;
 use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Yechef\Helper;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class DishController extends Controller
 {
+	private $validator;
+
+	public function __construct(Application $app)
+	{
+		$this->validator = $app->make('validator');
+	}
+
 	public function index(Request $request)
 	{
 		$dish = Dish::with('media')->get();
@@ -60,9 +67,13 @@ class DishController extends Controller
 
 	private function validateRequestInputs($request, $id = null)
 	{
-		$validator = Validator::make($request->all(), Dish::getValidation($id));
+		$validator = $this->validator->make($request->all(), Dish::getValidation($id));
 		If ($validator->fails()) {
-			throw new YechefException(11501, $validator->errors()->all());
+			$message = '';
+			foreach ($validator->errors()->all() as $error) {
+				$message .= "\r\n" . $error;
+			}
+			throw new YechefException(11501, $message);
 		}
 	}
 }
