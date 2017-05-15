@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\DishDeleted;
 use App\Exceptions\YechefException;
 use App\Models\Dish;
+use App\Models\User;
 use App\Yechef\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -34,6 +35,12 @@ class DishController extends Controller
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
 		]);
+		$user = User::first();
+
+		$rating = $dish->rating([
+			'rating' => 5
+		], $user);
+		dd($rating);
 		return response()->success($dish, 11001);
 	}
 

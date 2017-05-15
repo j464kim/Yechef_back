@@ -23,8 +23,8 @@ $factory->define(App\Models\Media::class, function (Faker\Generator $faker) {
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Models\Dish::class, function (Faker\Generator $faker) {
 	return [
-		'slug'        => $faker->name,
-		'name'        => $faker->slug,
+		'slug'        => $faker->slug,
+		'name'        => $faker->word,
 		'description' => $faker->text()
 	];
 });
