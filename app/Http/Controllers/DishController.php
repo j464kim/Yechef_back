@@ -29,7 +29,7 @@ class DishController extends Controller
 	public function show(Request $request, $id)
 	{
 		$dish = Dish::findDish($id, true);
-		return response()->success($dish, 11000);
+		return response()->success($dish);
 	}
 
 	public function store(Request $request)
