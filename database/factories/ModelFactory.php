@@ -13,18 +13,26 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Models\Media::class, function (Faker\Generator $faker) {
-    return [
-        'slug' => str_random(10),
-        'url' => "http://lorempixel.com/400/200/"
-    ];
+	return [
+		'slug' => str_random(10),
+		'url'  => "http://lorempixel.com/400/200/"
+	];
 });
 
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Models\Dish::class, function (Faker\Generator $faker) {
-    return [
-        'slug' => str_random(10),
-        'name' => str_random(10),
-        'description' => str_random(10)
-    ];
+	return [
+		'slug'        => $faker->name,
+		'name'        => $faker->slug,
+		'description' => $faker->text()
+	];
+});
+
+$factory->define(App\Models\User::class, function (Faker\Generator $faker) {
+	return [
+		'email'    => $faker->email,
+		'name'     => $faker->name,
+		'password' => $faker->password
+	];
 });
