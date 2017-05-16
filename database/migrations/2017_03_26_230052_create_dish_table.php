@@ -19,7 +19,7 @@ class CreateDishTable extends Migration
             $table->string('name');
             $table->string('description');
             $table->timestamps();
-        });
+		});
 
         Schema::create('dish_media', function(Blueprint $table)
         {
