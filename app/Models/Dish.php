@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\YechefException;
-use Ghanem\Rating\Traits\Ratingable;
+use App\Yechef\DishRatingable as Ratingable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;

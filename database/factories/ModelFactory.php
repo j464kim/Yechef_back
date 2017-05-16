@@ -47,3 +47,13 @@ $factory->define(App\Models\Kitchen::class, function (Faker\Generator $faker) {
 		'description' => str_random(10),
 	];
 });
+
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
+$factory->define(App\Models\Rating\DishRating::class, function (Faker\Generator $faker) {
+	return [
+		'taste_rating'    => $faker->numberBetween(0, 5),
+		'visual_rating'   => $faker->numberBetween(0, 5),
+		'quantity_rating' => $faker->numberBetween(0, 5),
+		'comment'         => $faker->text(),
+	];
+});

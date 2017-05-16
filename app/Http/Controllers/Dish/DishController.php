@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dish;
 
 use App\Events\DishDeleted;
 use App\Exceptions\YechefException;
+use App\Http\Controllers\Controller;
 use App\Models\Dish;
-use App\Models\User;
 use App\Yechef\Helper;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
@@ -42,12 +42,6 @@ class DishController extends Controller
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
 		]);
-		$user = User::first();
-
-		$rating = $dish->rating([
-			'rating' => 5
-		], $user);
-		dd($rating);
 		return response()->success($dish, 11001);
 	}
 
@@ -66,6 +60,7 @@ class DishController extends Controller
 	public function destroy(Request $request, $id)
 	{
 		//TODO: Need to delete other relationships to prevent foreign key constraint issues
+		//TODO: Also need to delete associated ratings
 		$dish = Dish::findDish($id);
 		$dish->delete();
 		event(new DishDeleted($dish));

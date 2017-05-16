@@ -12,9 +12,15 @@ class DishTableSeeder extends Seeder
 	public function run()
 	{
 		factory(App\Models\Dish::class, 50)->create()->each(function ($u) {
+			$user = \App\Models\User::first();
 			$u->media()->save(factory(App\Models\Media::class)->make());
 			$u->media()->save(factory(App\Models\Media::class)->make());
 			$u->media()->save(factory(App\Models\Media::class)->make());
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
 		});
 	}
 }
