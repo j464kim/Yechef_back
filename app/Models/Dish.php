@@ -19,11 +19,11 @@ class Dish extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = [
-		'slug',
-		'name',
-		'description'
-	];
+	protected $fillable = ['slug', 'name', 'description'];
+
+	/**
+	 * Enable softDeletes
+	 */
 	protected $dates = ['deleted_at'];
 
 	/**
@@ -38,7 +38,7 @@ class Dish extends Model
 	{
 		Return [
 			'name'        => 'bail|required',
-			'description' => 'bail|required',
+			'description' => 'required',
 		];
 	}
 

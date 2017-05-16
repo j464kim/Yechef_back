@@ -8,7 +8,7 @@ use Illuminate\Pagination\Paginator;
 
 class Helper
 {
-	public static function paginate(Request $request, $items, $perPage = 10)
+	public static function paginate(Request $request, $items, $perPage = 9)
     {
         //Get current page form url e.g. &page=1
         $currentPage = LengthAwarePaginator::resolveCurrentPage();

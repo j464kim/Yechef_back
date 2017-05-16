@@ -10,9 +10,9 @@ return [
     | Range 0 <= x < 1000
     |
     */
-	'0' => 'Invalid error code',
-	'1' => 'Request Success',
-	'2'	=> 'Unautherized resource',
+	'0'     => 'Invalid error code',
+	'1'     => 'Request Success',
+	'2'     => 'Unautherized resource',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
 	| Range 1000 <= x < 10000
 	|
 	*/
-	'1000' => 'Oauth proxy error',
+	'1000'  => 'Oauth proxy error',
 
 	/*
     |--------------------------------------------------------------------------
@@ -63,15 +63,16 @@ return [
 	'11500' => 'Unable to find the dish',
 	'11501' => 'Invalid request inputs for dish',
 
-
-
-
-
-
-
-
-
-
-
-
+	/**
+	 * Kitchen related
+	 * Success Range 12000 <= x < 12500
+	 * Error Range 12500 <= x < 13000
+	 */
+	// success
+	'12000' => 'Kitchen is successfully created',
+	'12001' => 'Kitchen is successfully updated',
+	'12002' => 'Kitchen is successfully deleted',
+	// fail
+	'12500' => 'Please make sure all fields filled out',
+	'12501' => 'Kitchen could not be found',
 ];
