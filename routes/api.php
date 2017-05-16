@@ -17,6 +17,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 // TODO Change this to proper middleware group later on
 Route::resource('dishes', 'Dish\DishController', ['except' => ['create', 'edit']]);
+Route::get('dish_ratings/avg', 'Dish\DishRatingController@getAvg');
 Route::resource('dish_ratings', 'Dish\DishRatingController', ['except' => ['create', 'edit']]);
 Route::resource('kitchens', 'KitchenController');
 

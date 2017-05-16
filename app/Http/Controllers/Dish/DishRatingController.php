@@ -20,6 +20,12 @@ class DishRatingController extends Controller
 		$this->validator = $app->make('validator');
 	}
 
+	public function getAvg(Request $request)
+	{
+		$dishRatingsAvg = Dish::findDish($request->input('dishId'))->getAvgRatingAttribute();
+		return response()->success($dishRatingsAvg);
+	}
+
 	public function index(Request $request)
 	{
 		$dishRatings = Dish::findDish($request->input('dishId'))->ratings;

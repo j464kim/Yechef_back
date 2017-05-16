@@ -30,6 +30,7 @@ class DishController extends Controller
 	public function show(Request $request, $id)
 	{
 		$dish = Dish::findDish($id, true);
+
 		return response()->success($dish);
 	}
 
