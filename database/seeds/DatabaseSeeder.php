@@ -16,10 +16,12 @@ class DatabaseSeeder extends Seeder
 
 		\DB::table('dishes')->delete();
 		\DB::table('users')->delete();
+		\DB::table('kitchens')->delete();
 		\DB::table('media')->delete();
 
 		$this->call(DishTableSeeder::class);
 		$this->call(UserTableSeeder::class);
+		$this->call(KitchenTableSeeder::class);
 
 		Model::reguard();
 	}

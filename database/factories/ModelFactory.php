@@ -36,3 +36,14 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
 		'password' => $faker->password
 	];
 });
+
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
+$factory->define(App\Models\Kitchen::class, function (Faker\Generator $faker) {
+	return [
+		'name'        => $faker->name,
+		'address'     => $faker->address,
+		'phone'       => $faker->phoneNumber,
+		'email'       => $faker->unique()->safeEmail,
+		'description' => str_random(10),
+	];
+});

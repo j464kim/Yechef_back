@@ -17,6 +17,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 // TODO Change this to proper middleware group later on
 Route::resource('dishes', 'DishController', ['except' => ['create', 'edit']]);
+Route::resource('kitchens', 'KitchenController');
 
+// This route group applies the "web" middleware group to every route
+// it contains. The "web" middleware group is defined in your HTTP
+// kernel and includes session state, CSRF protection, and more.
 Route::post('login', 'Auth\LoginController@login');
 Route::post('refresh-token', 'Auth\LoginController@refreshToken');

@@ -11,17 +11,16 @@ use Illuminate\Support\Facades\Log;
 class Dish extends Model
 {
 	use SoftDeletes;
-
 	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
 	 */
-	protected $fillable = [
-		'slug',
-		'name',
-		'description'
-	];
+	protected $fillable = ['slug', 'name', 'description'];
+
+	/**
+	 * Enable softDeletes
+	 */
 	protected $dates = ['deleted_at'];
 
 	/**
