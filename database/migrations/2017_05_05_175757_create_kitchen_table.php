@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDishTable extends Migration
+class CreateKitchenTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,20 @@ class CreateDishTable extends Migration
      */
     public function up()
     {
-        Schema::create('dishes', function (Blueprint $table) {
+        Schema::create('kitchens', function (Blueprint $table) {
             $table->increments('id');
-			$table->string('slug');
-            $table->string('name');
+            $table->string('name')->unique();
+            $table->string('address');
+            $table->string('phone');
+            $table->string('email')->unique();
             $table->string('description');
             $table->timestamps();
         });
 
-        Schema::create('dish_media', function(Blueprint $table)
-        {
+        Schema::create('kitchen_media', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('dish_id')->unsigned();
-            $table->foreign('dish_id')->references('id')->on('dishes')->onDelete('cascade');
+            $table->integer('kitchen_id')->unsigned();
+            $table->foreign('kitchen_id')->references('id')->on('kitchens')->onDelete('cascade');
             $table->integer('media_id')->unsigned();
             $table->foreign('media_id')->references('id')->on('media')->onDelete('cascade');
             $table->timestamps();
@@ -39,7 +40,7 @@ class CreateDishTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dish_media');
-        Schema::dropIfExists('dishes');
+        Schema::dropIfExists('kitchen_media');
+        Schema::dropIfExists('kitchens');
     }
 }
