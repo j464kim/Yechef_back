@@ -18,16 +18,11 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 // TODO Change this to proper middleware group later on
 Route::resource('dishes', 'DishController', ['except' => ['create', 'edit']]);
-Route::resource('kitchens', 'KitchenController');
+Route::resource('kitchens', 'KitchenController', ['except' => ['create', 'edit']]);
+Route::resource('media', 'MediaController', ['except' => ['create', 'edit']]);
 
 // This route group applies the "web" middleware group to every route
 // it contains. The "web" middleware group is defined in your HTTP
 // kernel and includes session state, CSRF protection, and more.
 Route::post('login', 'Auth\LoginController@login');
 Route::post('refresh-token', 'Auth\LoginController@refreshToken');
-
-Route::get('test', function() {
-	echo 123;
-	$s3 = Storage::disk('s3');
-	$s3->put('myFile.txt', 'this is a sample text to upload to s3', 'public');
-});
