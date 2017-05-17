@@ -16,9 +16,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 });
 
 // TODO Change this to proper middleware group later on
+Route::get('dishes/{dishId}/rating/avg', 'Dish\DishRatingController@getAvg');
+Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['except' => ['create', 'edit']]);
 Route::resource('dishes', 'Dish\DishController', ['except' => ['create', 'edit']]);
-Route::get('dish_ratings/avg', 'Dish\DishRatingController@getAvg');
-Route::resource('dish_ratings', 'Dish\DishRatingController', ['except' => ['create', 'edit']]);
 Route::resource('kitchens', 'KitchenController');
 
 // This route group applies the "web" middleware group to every route

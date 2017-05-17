@@ -20,31 +20,31 @@ class DishRatingController extends Controller
 		$this->validator = $app->make('validator');
 	}
 
-	public function getAvg(Request $request)
+	public function getAvg(Request $request, $dishId)
 	{
-		$dishRatingsAvg = Dish::findDish($request->input('dishId'))->getAvgRatingAttribute();
+		$dishRatingsAvg = Dish::findDish($dishId)->getAvgRatingAttribute();
 		return response()->success($dishRatingsAvg);
 	}
 
-	public function index(Request $request)
+	public function index(Request $request, $dishId)
 	{
-		$dishRatings = Dish::findDish($request->input('dishId'))->ratings;
+		$dishRatings = Dish::findDish($dishId)->ratings;
 		// apply pagination
 		$result = Helper::paginate($request, $dishRatings, 10);
 		return response()->success($result);
 	}
 
-	public function show(Request $request, $id)
+	public function show(Request $request, $dishId, $ratingId)
 	{
-		$dishRating = DishRating::findDishRating($id);
+		$dishRating = DishRating::findDishRating($ratingId);
 		return response()->success($dishRating);
 	}
 
-	public function store(Request $request)
+	public function store(Request $request, $dishId)
 	{
 		//TODO: No need to require slug input from the user.
 		$this->validateRequestInputs($request);
-		$dish = Dish::findDish($request->input('dishId'));
+		$dish = Dish::findDish($dishId);
 		//TODO: Replace with the real user
 		$user = User::first();
 		$rating = $dish->rating([
@@ -56,11 +56,11 @@ class DishRatingController extends Controller
 		return response()->success($rating, 11004);
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, $dishId, $ratingId)
 	{
 		//TODO: Check if the user has the permission to do so
-		$this->validateRequestInputs($request, $id);
-		$rating = Dish::updateRating($id, [
+		$this->validateRequestInputs($request, $ratingId);
+		$rating = Dish::updateRating($ratingId, [
 			'taste_rating'    => $request->input('taste_rating'),
 			'visual_rating'   => $request->input('visual_rating'),
 			'quantity_rating' => $request->input('quantity_rating'),
@@ -69,10 +69,10 @@ class DishRatingController extends Controller
 		return response()->success($rating, 11005);
 	}
 
-	public function destroy(Request $request, $id)
+	public function destroy(Request $request, $dishId, $ratingId)
 	{
 		//TODO: Check if the user has the permission to do so
-		$rating = Dish::deleteRating($id);
+		$rating = Dish::deleteRating($ratingId);
 		return response()->success($rating, 11006);
 	}
 

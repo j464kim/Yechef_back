@@ -2,8 +2,11 @@
 
 namespace App\Models\Rating;
 
+use App\Exceptions\YechefException;
 use Ghanem\Rating\Models\Rating;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class DishRating extends Rating
 {
@@ -90,10 +93,14 @@ class DishRating extends Rating
 	 */
 	public function updateRating($id, $data)
 	{
-		$rating = static::find($id);
-		$rating->update($data);
-
-		return $rating;
+		try {
+			$rating = static::findOrFail($id);
+			$rating->update($data);
+			return $rating;
+		} catch (ModelNotFoundException $e) {
+			Log::error('Could not find the dish_rating with id: ' . $id);
+			throw new YechefException(11503);
+		}
 	}
 
 	/**
@@ -103,7 +110,12 @@ class DishRating extends Rating
 	 */
 	public function deleteRating($id)
 	{
-		return static::find($id)->delete();
+		try {
+			return static::findOrFail($id)->delete();
+		} catch (ModelNotFoundException $e) {
+			Log::error('Could not find the dish_rating with id: ' . $id);
+			throw new YechefException(11503);
+		}
 	}
 
 	public static function getValidation($id = null)
