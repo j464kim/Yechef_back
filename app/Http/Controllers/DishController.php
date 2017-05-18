@@ -20,7 +20,7 @@ class DishController extends Controller
 
 	public function index(Request $request)
 	{
-		$dish = Dish::with('media')->get();
+		$dish = Dish::with('medias')->get();
 		// apply pagination
 		$result = Helper::paginate($request, $dish);
 		return response()->success($result);

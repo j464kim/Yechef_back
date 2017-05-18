@@ -43,7 +43,7 @@ class Dish extends Model
 	{
 		try {
 			if ($withMedia) {
-				return Dish::with('media')->findOrFail($id);
+				return Dish::with('medias')->findOrFail($id);
 
 			} else {
 				return Dish::findOrFail($id);
