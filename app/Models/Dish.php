@@ -52,7 +52,7 @@ class Dish extends Model
 			'name'        => 'bail|required',
 			'description' => 'bail|required',
 			'kitchen_id'  => 'bail|required|integer',
-			'price'       => 'bail|required|numeric',
+			'price'       => 'required|numeric',
 			//TODO: ingredient
 //			'ingredient_id' => 'integer',
 		];
