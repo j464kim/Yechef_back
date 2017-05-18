@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\YechefException;
+use App\Models\Kitchen;
 use App\Models\Media;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
@@ -28,40 +29,51 @@ class MediaController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		if (!$request->hasFile('file')) {
-			throw new YechefException(13500);
+		$medias = [];
+		$email = $request->input('email');
+		Log::info('email is: ' . $email);
+		$files = $request->file('file');
+		foreach ($files as $file) {
+			if (!$request->hasFile('file')) {
+				throw new YechefException(13500);
+			}
+
+			if (!$file->isValid()) {
+				throw new YechefException(13501);
+			}
+
+			$fileName = 'yechef_' . uniqid() . '.' . $file->getClientOriginalExtension();
+			$s3 = Storage::disk('s3');
+//			$s3->put($fileName, file_get_contents($file), 'public');
+			$mimeType = $file->getClientMimeType();
+			Log::info('mimetype is: ' . $mimeType);
+			Log::info(env('AWS_URL') . $fileName);
+
+			$fileUrl = $s3->url($fileName);
+			$fileSize = $file->getClientSize();
+
+			$this->validateInput($request);
+			Log::info('validated');
+
+			// get created mediable data
+			$kitchen = Kitchen::where('email', $email)->first();
+			Log::info($kitchen->id);
+
+			// Save to local db
+			$media = Media::create([
+				'slug'          => snake_case($fileName),
+				'url'           => env('AWS_URL') . $fileName,
+				// not sure if there is an exact method to determine image or video
+				'type'          => 'image',
+				'mediable_id'   => $kitchen->id,
+				'mediable_type' => get_class($kitchen),
+			]);
+
+			Log::info('media created');
+
 		}
 
-		if (!$request->file('file')->isValid()) {
-			throw new YechefException(13501);
-		}
-
-		// retrieve file from request
-		$file = $request->file('file');
-
-		$fileName = 'yechef_' . uniqid() . '.' . $file->getClientOriginalExtension();
-		$s3 = Storage::disk('s3');
-		$s3->put($fileName, file_get_contents($file), 'public');
-		$mimeType = $file->getClientMimeType();
-		Log::info('mimetype is: ' . $mimeType);
-		Log::info(env('AWS_URL') . $fileName);
-
-		$fileUrl = $s3->url($fileName);
-		$fileSize = $file->getClientSize();
-
-		$this->validateInput($request);
-		Log::info('validated');
-
-		// Save to local db
-		$media = Media::create([
-			'slug' => snake_case($fileName),
-			'url'  => env('AWS_URL') . $fileName,
-			// not sure if there is an exact method to determine image or video
-			'type' => 'image'
-		]);
-
-		Log::info('media created');
-		return response()->success($media);
+		return response()->success();
 
 	}
 

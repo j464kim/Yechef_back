@@ -30,12 +30,14 @@ class Media extends Model
 		'slug',
 		'url',
 		'type',
+		'mediable_id',
+		'mediable_type'
 	];
 
 	public static function getValidationRule()
 	{
 		$rule = array(
-			'file' => 'required|mimes:jpeg,jpg,png|max:6000'
+			'file' => 'required'
 		);
 
 		return $rule;
