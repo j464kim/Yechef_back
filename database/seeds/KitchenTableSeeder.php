@@ -12,9 +12,9 @@ class KitchenTableSeeder extends Seeder
     public function run()
     {
         factory(App\Models\Kitchen::class, 10)->create()->each(function ($u) {
-            $u->media()->save(factory(App\Models\Media::class)->make());
-            $u->media()->save(factory(App\Models\Media::class)->make());
-            $u->media()->save(factory(App\Models\Media::class)->make());
+            $u->medias()->save(factory(App\Models\Media::class)->make());
+            $u->medias()->save(factory(App\Models\Media::class)->make());
+            $u->medias()->save(factory(App\Models\Media::class)->make());
         });
     }
 }

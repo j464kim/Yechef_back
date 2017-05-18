@@ -24,11 +24,11 @@ class Dish extends Model
 	protected $dates = ['deleted_at'];
 
 	/**
-	 * Many to many relationship to media
+	 * Get all of the Dish's comments.
 	 */
-	public function media()
+	public function medias()
 	{
-		return $this->belongsToMany('App\Models\Media');
+		return $this->morphMany('App\Models\Media', 'mediable');
 	}
 
 	public static function getValidation($id = null)

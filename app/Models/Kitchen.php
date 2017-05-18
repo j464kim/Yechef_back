@@ -27,11 +27,11 @@ class Kitchen extends Model
 	protected $fillable = ['name', 'address', 'phone', 'email', 'description'];
 
 	/**
-	 * Many to many relationship to media
+	 * Get all of the Kitchen's comments.
 	 */
-	public function media()
+	public function medias()
 	{
-		return $this->belongsToMany('App\Models\Media');
+		return $this->morphMany('App\Models\Media', 'mediable');
 	}
 
 	/**

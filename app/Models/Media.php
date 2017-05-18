@@ -14,6 +14,14 @@ class Media extends Model
 	protected $table = 'media';
 
 	/**
+	 * Get all of the owning mediable models.
+	 */
+	public function mediable()
+	{
+		return $this->morphTo();
+	}
+
+	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
