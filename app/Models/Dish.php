@@ -19,7 +19,8 @@ class Dish extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['slug', 'name', 'description'];
+	//TODO: Add ingredient
+	protected $fillable = ['slug', 'name', 'description', 'price', 'kitchen_id'];
 
 	/**
 	 * Enable softDeletes
@@ -34,11 +35,26 @@ class Dish extends Model
 		return $this->belongsToMany('App\Models\Media');
 	}
 
+	public function ingredients()
+	{
+		//TODO
+//		return $this->hasMany("App\Models\Ingredient");
+	}
+
+	public function kitchen()
+	{
+		return $this->belongsTo('App\Models\Kitchen');
+	}
+
 	public static function getValidation($id = null)
 	{
 		Return [
 			'name'        => 'bail|required',
-			'description' => 'required',
+			'description' => 'bail|required',
+			'kitchen_id'  => 'bail|required|integer',
+			'price'       => 'bail|required|numeric',
+			//TODO: ingredient
+//			'ingredient_id' => 'integer',
 		];
 	}
 

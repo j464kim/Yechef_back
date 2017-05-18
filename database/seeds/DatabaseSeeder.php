@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
 		\DB::table('media')->delete();
 
 		$this->call(UserTableSeeder::class);
-		$this->call(DishTableSeeder::class);
 		$this->call(KitchenTableSeeder::class);
+		$this->call(DishTableSeeder::class);
 
 		Model::reguard();
 	}
