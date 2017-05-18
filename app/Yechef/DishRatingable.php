@@ -15,6 +15,11 @@ trait DishRatingable
 		return $this->morphMany(Rating::class, 'ratingable');
 	}
 
+	public function author()
+	{
+		return $this->belongsTo('App\Models\User');
+	}
+
 	/**
 	 *
 	 * @return mix

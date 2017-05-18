@@ -21,6 +21,13 @@ class DishTableSeeder extends Seeder
 			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
 			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
 			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
 		});
 	}
 }

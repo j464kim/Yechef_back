@@ -26,7 +26,6 @@ class DishRating extends Rating
 		'ratingable_id',
 		'ratingable_type',
 		'author_id',
-		'author_type'
 	];
 
 	/**
@@ -42,7 +41,7 @@ class DishRating extends Rating
 	 */
 	public function author()
 	{
-		return $this->morphTo('author');
+		return $this->belongsTo('App\Models\User');
 	}
 
 	/**
@@ -56,8 +55,7 @@ class DishRating extends Rating
 	{
 		$rating = new static();
 		$rating->fill(array_merge($data, [
-			'author_id'   => $author->id,
-			'author_type' => get_class($author),
+			'author_id' => $author->id,
 		]));
 
 		$ratingable->ratings()->save($rating);
@@ -76,7 +74,6 @@ class DishRating extends Rating
 	{
 		$rating = [
 			'author_id'       => $author->id,
-			'author_type'     => get_class($author),
 			"ratingable_id"   => $ratingable->id,
 			"ratingable_type" => get_class($ratingable),
 		];

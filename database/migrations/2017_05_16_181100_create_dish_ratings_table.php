@@ -20,7 +20,7 @@ class CreateDishRatingsTable extends Migration
 			$table->integer('quantity_rating');
 			$table->text('comment');
 			$table->morphs('ratingable');
-			$table->morphs('author');
+			$table->unsignedInteger('author_id');
 			$table->timestamps();
 		});
 	}
