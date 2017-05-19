@@ -8,6 +8,10 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -33,6 +37,8 @@ class LoginController extends Controller
 	private $validator;
 	private $auth;
 	private $db;
+	private $socialite;
+	private $hash;
 
     /**
      * Where to redirect users after login.
@@ -46,14 +52,17 @@ class LoginController extends Controller
 	 *
 	 * @param Application $app
 	 * @param Client $guzzleClient
+	 * @param Socialite $socialite
 	 */
-    public function __construct(Application $app, Client $guzzleClient)
+    public function __construct(Application $app, Client $guzzleClient, Socialite $socialite)
     {
 		$this->guzzleClient = $guzzleClient;
 		$this->cookie = $app->make('cookie');
 		$this->validator = $app->make('validator');
 		$this->auth = $app->make('auth');
 		$this->db = $app->make('db');
+		$this->hash = $app->make('hash');
+		$this->socialite = $socialite;
         $this->middleware('guest', ['except' => 'logout']);
     }
 
@@ -181,4 +190,89 @@ class LoginController extends Controller
 		);
 		return $data;
 	}
+
+	/**
+	 * controller for facebook oauth login callback
+	 *
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function facebook(Request $request)
+	{
+		$code = $request->input('code');
+
+		$token = $this->socialLogin('facebook', $code);
+
+		return response()->success($token);
+	}
+
+
+	/**
+	 * controller for google oauth login callback
+	 *
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function google(Request $request)
+	{
+		$code = $request->input('code');
+
+		$token = $this->socialLogin('google', $code);
+
+		return response()->success($token);
+	}
+
+	/**
+	 * Login user and return access token
+	 *
+	 * @param $provider
+	 * @param $code
+	 * @return array
+	 */
+	private function socialLogin($provider, $code)
+	{
+		$response = $this->socialite::driver($provider)->getAccessTokenResponse($code);
+
+		$token = $response['access_token'];
+
+		$user = $this->socialite::driver($provider)->userFromToken($token);
+
+		$name = $user->getName();
+		$email = $user->getEmail();
+
+		// TODO: create user account based on these data. create random password, send email in event
+		// TODO: use the proxy defined above to return correct token format
+		// TODO: store cookie in cache, or use the proxy method to handle this
+		$user = User::where('email', $email)->first();
+
+		// return user token when the user email exists
+		if(isset($user)) {
+			return $this->issueToken($user);
+		}
+		// otherwise create the user and return the token
+
+		$user = User::create([
+			'name' => $name,
+			'email' => $email,
+			'password' => $this->hash->make(md5(time()))
+		]);
+
+		return $this->issueToken($user);
+
+	}
+
+	/**
+	 * Issue access token
+	 *
+	 * @param User $user
+	 * @return array
+	 */
+	private function issueToken(User $user) {
+        $userToken = $user->token() ?? $user->createToken(env('PERSONAL_CLIENT_TOKEN_NAME'));
+
+        return [
+            "token_type" => "Bearer",
+            "access_token" => $userToken->accessToken
+        ];
+    }
 }

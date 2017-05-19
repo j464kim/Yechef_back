@@ -14,7 +14,8 @@ use Illuminate\Http\Request;
 */
 
 Route::group(['middleware' => ['auth:api']], function () {
-	Route::post('logout', 'Auth\LoginController@logout')->middleware('auth:api');
+	Route::post('logout', 'Auth\LoginController@logout');
+	Route::post('refresh-token', 'Auth\LoginController@refreshToken');
 });
 
 // This route group applies the "web" middleware group to every route
@@ -25,6 +26,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 Route::resource('dishes', 'DishController');
 Route::resource('kitchens', 'KitchenController');
 
-// TODO Change this to proper middleware group later on
+
 Route::post('login', 'Auth\LoginController@login');
-Route::post('refresh-token', 'Auth\LoginController@refreshToken');
+Route::post('auth/facebook', 'Auth\LoginController@facebook');
+Route::post('auth/google', 'Auth\LoginController@google');
