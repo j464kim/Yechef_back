@@ -15,7 +15,7 @@ class PasswordLoginClient extends Migration
     public function up()
     {
 		DB::table('oauth_clients')->insertGetId([
-			'id' => 11,
+			'id' => 10,
 			'name' => 'password',
 			'secret' => 'NWftDkQwYUArTcRcmVQF6jFdtiJoHTNQaItry43q',
 			'redirect' => 'http://localhost',
@@ -32,6 +32,6 @@ class PasswordLoginClient extends Migration
      */
     public function down()
     {
-		DB::table('oauth_clients')->where('id', 11)->delete();
+		DB::table('oauth_clients')->where('id', 10)->delete();
     }
 }
