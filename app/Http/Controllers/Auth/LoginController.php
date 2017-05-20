@@ -4,14 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
-use App\Models\SocialAccount;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
-use App\Models\User;
-use Auth;
 
 class LoginController extends Controller
 {
@@ -160,7 +157,7 @@ class LoginController extends Controller
 	 * @param string $scope
 	 * @return mixed|\Psr\Http\Message\ResponseInterface
 	 */
-	private function proxy($grantType, array $data = [], $scope='*')
+	private function proxy($grantType, array $data = [], $scope='')
 	{
 		// TODO scope is for future permission use
 
@@ -199,11 +196,17 @@ class LoginController extends Controller
 	{
 		$code = $request->input('code');
 
-		$token = $this->socialLogin('facebook', $code);
+		$response = $this->socialite::driver('facebook')->getAccessTokenResponse($code);
 
-		return response()->success($token);
+		$accessToken = $response['access_token'];
+
+		$result = $this->proxy('social', [
+			'network' => 'facebook',
+			'access_token' => $accessToken,
+		]);
+
+		return response()->success($result, 10000);
 	}
-
 
 	/**
 	 * controller for google oauth login callback
@@ -215,33 +218,17 @@ class LoginController extends Controller
 	{
 		$code = $request->input('code');
 
-		$token = $this->socialLogin('google', $code);
+		$response = $this->socialite::driver('google')->getAccessTokenResponse($code);
 
-		return response()->success($token);
+		$accessToken = $response['access_token'];
+
+		$result = $this->proxy('social', [
+			'network' => 'google',
+			'access_token' => $accessToken,
+		]);
+
+		return response()->success($result, 10000);
 	}
 
-	/**
-	 * Login user and return access token
-	 *
-	 * @param $provider
-	 * @param $code
-	 * @return array
-	 */
-	private function socialLogin($provider, $code)
-	{
-		$response = $this->socialite::driver($provider)->getAccessTokenResponse($code);
 
-		$token = $response['access_token'];
-
-		$providerUser = $this->socialite::driver($provider)->userFromToken($token);
-
-		// TODO: create user account based on these data. create random password, send email in event
-		// TODO: use the proxy defined above to return correct token format
-		// TODO: store cookie in cache, or use the proxy method to handle this
-		SocialAccount::createOrGetUser($provider, $providerUser);
-		$token = $this->proxy('client_credentials');
-
-		return $token;
-
-	}
 }

@@ -186,6 +186,9 @@ return [
 
         // socialite
         Laravel\Socialite\SocialiteServiceProvider::class,
+
+		// passport social grant
+		Adaojunior\Passport\SocialGrantServiceProvider::class,
     ],
 
     /*

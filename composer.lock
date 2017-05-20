@@ -4,8 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c834c5e69f197aab34153aed922724e",
+    "content-hash": "0d43e49e2d94048477300b3efb434877",
     "packages": [
+        {
+            "name": "adaojunior/passport-social-grant",
+            "version": "v2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/adaojunior/passport-social-grant.git",
+                "reference": "89681b8ce74112570c79cabe91f8594d4624ccea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/adaojunior/passport-social-grant/zipball/89681b8ce74112570c79cabe91f8594d4624ccea",
+                "reference": "89681b8ce74112570c79cabe91f8594d4624ccea",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/passport": "^2.0",
+                "php": ">=5.6.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Adaojunior\\Passport\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adão Júnior",
+                    "email": "itsjunnior@gmail.com",
+                    "homepage": "https://github.com/adaojunior",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Social guard for Laravel Passport",
+            "homepage": "https://github.com/adaojunior/passport-social-grant",
+            "keywords": [
+                "guard",
+                "laravel",
+                "oauth",
+                "passport",
+                "social"
+            ],
+            "time": "2017-03-16T23:17:30+00:00"
+        },
         {
             "name": "barryvdh/laravel-cors",
             "version": "v0.9.2",
