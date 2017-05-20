@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Auth;
 
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
+use App\Models\SocialAccount;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -38,7 +38,6 @@ class LoginController extends Controller
 	private $auth;
 	private $db;
 	private $socialite;
-	private $hash;
 
     /**
      * Where to redirect users after login.
@@ -61,7 +60,6 @@ class LoginController extends Controller
 		$this->validator = $app->make('validator');
 		$this->auth = $app->make('auth');
 		$this->db = $app->make('db');
-		$this->hash = $app->make('hash');
 		$this->socialite = $socialite;
         $this->middleware('guest', ['except' => 'logout']);
     }
@@ -176,13 +174,13 @@ class LoginController extends Controller
 		$response = $this->guzzleClient->request('POST', url('oauth/token'), [
 			'form_params' => $data
 		])->getBody();
-		$data = json_decode($response);
+		$data = json_decode($response,true);
 
 		// Create a refresh token cookie
 		$this->cookie->queue(
 			self::REFRESH_TOKEN,
-			$data->refresh_token,
-			$data->expires_in,
+			isset($data['refresh_token']) ? $data['refresh_token']: null,
+			$data['expires_in'],
 			null,
 			null,
 			false,
@@ -235,44 +233,15 @@ class LoginController extends Controller
 
 		$token = $response['access_token'];
 
-		$user = $this->socialite::driver($provider)->userFromToken($token);
-
-		$name = $user->getName();
-		$email = $user->getEmail();
+		$providerUser = $this->socialite::driver($provider)->userFromToken($token);
 
 		// TODO: create user account based on these data. create random password, send email in event
 		// TODO: use the proxy defined above to return correct token format
 		// TODO: store cookie in cache, or use the proxy method to handle this
-		$user = User::where('email', $email)->first();
+		SocialAccount::createOrGetUser($provider, $providerUser);
+		$token = $this->proxy('client_credentials');
 
-		// return user token when the user email exists
-		if(isset($user)) {
-			return $this->issueToken($user);
-		}
-		// otherwise create the user and return the token
-
-		$user = User::create([
-			'name' => $name,
-			'email' => $email,
-			'password' => $this->hash->make(md5(time()))
-		]);
-
-		return $this->issueToken($user);
+		return $token;
 
 	}
-
-	/**
-	 * Issue access token
-	 *
-	 * @param User $user
-	 * @return array
-	 */
-	private function issueToken(User $user) {
-        $userToken = $user->token() ?? $user->createToken(env('PERSONAL_CLIENT_TOKEN_NAME'));
-
-        return [
-            "token_type" => "Bearer",
-            "access_token" => $userToken->accessToken
-        ];
-    }
 }
