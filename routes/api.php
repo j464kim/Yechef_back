@@ -14,11 +14,11 @@
 Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('logout', 'Auth\LoginController@logout');
 	Route::post('refresh-token', 'Auth\LoginController@refreshToken');
+// TODO Change this to proper middleware group later on
+	Route::resource('dishes', 'DishController', ['except' => ['create', 'edit']]);
+	Route::resource('kitchens', 'KitchenController');
 });
 
-// TODO Change this to proper middleware group later on
-Route::resource('dishes', 'DishController', ['except' => ['create', 'edit']]);
-Route::resource('kitchens', 'KitchenController');
 
 Route::post('login', 'Auth\LoginController@login');
 Route::post('auth/facebook', 'Auth\LoginController@facebook');

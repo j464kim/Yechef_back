@@ -71,7 +71,7 @@ class LoginController extends Controller
 	public function login(Request $request)
 	{
 		$validator = $this->validator->make($request->all(), [
-			'username' => 'required',
+			'email' => 'email|required',
 			'password' => 'required'
 		]);
 
@@ -79,13 +79,13 @@ class LoginController extends Controller
 			throw new YechefException(10500);
 		}
 
-		$username = request()->input('username');
+		$email = request()->input('email');
 		$password = request()->input('password');
 
 
 		try{
 			$result = $this->proxy('password', [
-				'username' => $username,
+				'username' => $email,
 				'password' => $password
 			]);
 
