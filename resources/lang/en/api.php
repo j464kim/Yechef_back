@@ -82,7 +82,7 @@ return [
 	 * Error Range 13500 <= x < 14000
 	 */
 	// success
-	'13000' => 'Successfully uploaded the files',
+	'13000' => 'Successfully uploaded the media',
 
 	// fail
 	'13500' => 'File does not exist',

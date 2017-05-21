@@ -12,9 +12,9 @@ class DishTableSeeder extends Seeder
 	public function run()
 	{
 		factory(App\Models\Dish::class, 50)->create()->each(function ($u) {
-			$u->medias()->save(factory(App\Models\Media::class)->make());
-			$u->medias()->save(factory(App\Models\Media::class)->make());
-			$u->medias()->save(factory(App\Models\Media::class)->make());
+			for ($i = 0; $i < 3; $i++) {
+				$u->medias()->save(factory(App\Models\Media::class)->make());
+			}
 		});
 	}
 }

@@ -3,24 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\YechefException;
-use App\Models\Kitchen;
 use App\Models\Media;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\Filesystem\Factory;
 
 class MediaController extends Controller
 {
 	private $validator;
+	private $storage;
 
 	/**
 	 * KitchenController constructor.
 	 * @param Application $app
 	 */
-	public function __construct(Application $app)
+	public function __construct(Application $app, Factory $factory)
 	{
 		$this->validator = $app->make('validator');
+		$this->storage = $factory;
 	}
 
 	/**
@@ -44,10 +45,13 @@ class MediaController extends Controller
 				throw new YechefException(13501);
 			}
 
-			$fileName = 'yechef_' . uniqid() . '.' . $file->getClientOriginalExtension();
-			$s3 = Storage::disk('s3');
-			// please leave it commented as it costs money to upload file to S3
-//			$s3->put($fileName, file_get_contents($file), 'public');
+			$path_parts = pathinfo($_FILES["p_image"]["name"]);
+			$fileName = 'yechef_' . date('d-m-Y_H-i-s') . '.' . uniqid() . '.' . $file->getClientOriginalExtension();
+			$s3 = $this->storage->disk('s3');
+
+			// please leave it commented ads it costs money to upload file to S3
+			$s3->put($fileName, file_get_contents($file), 'public');
+
 			$mimeType = $file->getClientMimeType();
 			Log::info('mimetype is: ' . $mimeType);
 			Log::info(env('AWS_URL') . $fileName);
@@ -72,7 +76,7 @@ class MediaController extends Controller
 
 		}
 
-		return response()->success();
+		return response()->success(13000);
 
 	}
 
