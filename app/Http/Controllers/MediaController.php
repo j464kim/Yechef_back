@@ -45,12 +45,11 @@ class MediaController extends Controller
 				throw new YechefException(13501);
 			}
 
-			$path_parts = pathinfo($_FILES["p_image"]["name"]);
 			$fileName = 'yechef_' . date('d-m-Y_H-i-s') . '.' . uniqid() . '.' . $file->getClientOriginalExtension();
 			$s3 = $this->storage->disk('s3');
 
 			// please leave it commented ads it costs money to upload file to S3
-			$s3->put($fileName, file_get_contents($file), 'public');
+//			$s3->put($fileName, file_get_contents($file), 'public');
 
 			$mimeType = $file->getClientMimeType();
 			Log::info('mimetype is: ' . $mimeType);
