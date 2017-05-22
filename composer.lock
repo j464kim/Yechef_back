@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0d43e49e2d94048477300b3efb434877",
+    "content-hash": "acd485bf7ed5e1f9d0514a885b5e03b9",
     "packages": [
         {
             "name": "adaojunior/passport-social-grant",
