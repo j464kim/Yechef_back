@@ -32,9 +32,11 @@ $factory->define(App\Models\Dish::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
 	return [
-		'email'    => $faker->email,
-		'name'     => $faker->name,
-		'password' => $faker->password
+		'email'      => $faker->email,
+		'first_name' => $faker->firstName,
+		'password'   => $faker->password,
+		'last_name'  => $faker->lastName,
+		'phone'      => $faker->phoneNumber,
 	];
 });
 
