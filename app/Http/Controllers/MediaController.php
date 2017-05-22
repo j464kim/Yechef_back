@@ -44,24 +44,26 @@ class MediaController extends Controller
 			}
 
 			$fileName = 'yechef_' . date('d-m-Y_H-i-s') . '.' . uniqid() . '.' . $file->getClientOriginalExtension();
+			$uniqueFileName = md5($fileName . microtime());
+
 			$s3 = $this->storage->disk('s3');
 
 			// please leave it commented ads it costs money to upload file to S3
-//			$s3->put($fileName, file_get_contents($file), 'public');
+			$s3->put($uniqueFileName, file_get_contents($file), 'public');
 
 			$mimeType = $file->getClientMimeType();
 			Log::info('mimetype is: ' . $mimeType);
-			Log::info(env('AWS_URL') . $fileName);
+			Log::info(env('AWS_URL') . $uniqueFileName);
 
-			$fileUrl = $s3->url($fileName);
+			$fileUrl = $s3->url($uniqueFileName);
 			$fileSize = $file->getClientSize();
 
 			$this->validateInput($request);
 
 			// Save to local db
 			Media::create([
-				'slug'          => snake_case($fileName),
-				'url'           => env('AWS_URL') . $fileName,
+				'slug'          => snake_case($uniqueFileName),
+				'url'           => env('AWS_URL') . $uniqueFileName,
 				// not sure if there is an exact method to determine image or video
 				'type'          => 'image',
 				'mediable_id'   => $mediable_id,
