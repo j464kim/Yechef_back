@@ -183,6 +183,9 @@ return [
 
 		// passport
 		Laravel\Passport\PassportServiceProvider::class,
+
+		// rating
+		Ghanem\Rating\RatingServiceProvider::class,
     ],
 
     /*

@@ -23,9 +23,10 @@ $factory->define(App\Models\Media::class, function (Faker\Generator $faker) {
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Models\Dish::class, function (Faker\Generator $faker) {
 	return [
-		'slug'        => $faker->name,
-		'name'        => $faker->slug,
-		'description' => $faker->text()
+		'slug'        => $faker->slug,
+		'name'        => $faker->word,
+		'description' => $faker->realText(),
+		'price'       => $faker->randomFloat(2, 0, 2500),
 	];
 });
 
@@ -47,5 +48,15 @@ $factory->define(App\Models\Kitchen::class, function (Faker\Generator $faker) {
 		'phone'       => $faker->phoneNumber,
 		'email'       => $faker->unique()->safeEmail,
 		'description' => str_random(10),
+	];
+});
+
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
+$factory->define(App\Models\Rating\DishRating::class, function (Faker\Generator $faker) {
+	return [
+		'taste_rating'    => $faker->numberBetween(0, 5),
+		'visual_rating'   => $faker->numberBetween(0, 5),
+		'quantity_rating' => $faker->numberBetween(0, 5),
+		'comment'         => $faker->text(),
 	];
 });
