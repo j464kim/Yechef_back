@@ -32,8 +32,6 @@ class MediaController extends Controller
 	{
 		$mediable_id = $request->input('mediable_id');
 		$mediable_type = $request->input('mediable_type');
-		Log::info($mediable_id);
-		Log::info($mediable_type);
 
 		$files = $request->file('file');
 		foreach ($files as $file) {
@@ -59,10 +57,9 @@ class MediaController extends Controller
 			$fileSize = $file->getClientSize();
 
 			$this->validateInput($request);
-			Log::info('validated');
 
 			// Save to local db
-			$media = Media::create([
+			Media::create([
 				'slug'          => snake_case($fileName),
 				'url'           => env('AWS_URL') . $fileName,
 				// not sure if there is an exact method to determine image or video
@@ -70,8 +67,6 @@ class MediaController extends Controller
 				'mediable_id'   => $mediable_id,
 				'mediable_type' => $mediable_type
 			]);
-
-			Log::info('media created');
 
 		}
 

@@ -26,7 +26,7 @@ class Kitchen extends Model
 	protected $fillable = ['name', 'address', 'phone', 'email', 'description'];
 
 	/**
-	 * Get all of the Kitchen's comments.
+	 * Get all of the Kitchen's medias.
 	 */
 	public function medias()
 	{
