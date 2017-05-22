@@ -16,18 +16,9 @@ class DishTableSeeder extends Seeder
 			$u->media()->save(factory(App\Models\Media::class)->make());
 			$u->media()->save(factory(App\Models\Media::class)->make());
 			$u->media()->save(factory(App\Models\Media::class)->make());
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			for ($i = 0; $i < 10; $i++) {
+				$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+			}
 		});
 	}
 }

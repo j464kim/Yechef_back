@@ -52,7 +52,6 @@ class Dish extends Model
 				return Dish::findOrFail($id);
 			}
 		} catch (ModelNotFoundException $e) {
-			Log::error('Could not find the dish with id: ' . $id);
 			throw new YechefException(11500);
 		}
 	}

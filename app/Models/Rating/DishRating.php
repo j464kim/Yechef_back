@@ -95,7 +95,6 @@ class DishRating extends Rating
 			$rating->update($data);
 			return $rating;
 		} catch (ModelNotFoundException $e) {
-			Log::error('Could not find the dish_rating with id: ' . $id);
 			throw new YechefException(11503);
 		}
 	}
@@ -110,7 +109,6 @@ class DishRating extends Rating
 		try {
 			return static::findOrFail($id)->delete();
 		} catch (ModelNotFoundException $e) {
-			Log::error('Could not find the dish_rating with id: ' . $id);
 			throw new YechefException(11503);
 		}
 	}
@@ -131,7 +129,6 @@ class DishRating extends Rating
 		try {
 			return DishRating::findOrFail($id);
 		} catch (ModelNotFoundException $e) {
-			Log::error('Could not find the dish_rating with id: ' . $id);
 			throw new YechefException(11503);
 		}
 	}
