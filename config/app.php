@@ -183,6 +183,12 @@ return [
 
 		// passport
 		Laravel\Passport\PassportServiceProvider::class,
+
+        // socialite
+        Laravel\Socialite\SocialiteServiceProvider::class,
+
+		// passport social grant
+		Adaojunior\Passport\SocialGrantServiceProvider::class,
     ],
 
     /*
@@ -231,7 +237,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     ],
 
 ];
