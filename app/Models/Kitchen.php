@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Exceptions\YechefException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 
@@ -27,11 +26,11 @@ class Kitchen extends Model
 	protected $fillable = ['name', 'address', 'phone', 'email', 'description'];
 
 	/**
-	 * Many to many relationship to media
+	 * Get all of the Kitchen's medias.
 	 */
-	public function media()
+	public function medias()
 	{
-		return $this->belongsToMany('App\Models\Media');
+		return $this->morphMany('App\Models\Media', 'mediable');
 	}
 
 	/**
@@ -54,7 +53,7 @@ class Kitchen extends Model
 	{
 		try {
 			if ($withMedia) {
-				return Kitchen::with('media')->findOrFail($id);
+				return Kitchen::with('medias')->findOrFail($id);
 			} else {
 				return Kitchen::findOrFail($id);
 			}

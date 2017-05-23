@@ -29,7 +29,7 @@ class KitchenController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		$kitchens = Kitchen::with('media')->get();
+		$kitchens = Kitchen::with('medias')->get();
 		// apply pagination
 		$result = Helper::paginate($request, $kitchens);
 		return response()->success($result);
