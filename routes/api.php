@@ -16,15 +16,16 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('refresh-token', 'Auth\LoginController@refreshToken');
 // TODO Change this to proper middleware group later on
 	Route::get('dishes/{dishId}/rating/avg', 'Dish\DishRatingController@getAvg');
-	Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['except' => ['create', 'edit']]);
-	Route::resource('dishes', 'Dish\DishController', ['except' => ['create', 'edit']]);
-	Route::resource('kitchens', 'KitchenController', ['except' => ['create', 'edit']]);
+	Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['except' => ['index', 'show', 'create', 'edit']]);
+	Route::resource('dishes', 'Dish\DishController', ['except' => ['index', 'show', 'create', 'edit']]);
+	Route::resource('kitchens', 'KitchenController', ['except' => ['index', 'show', 'create', 'edit']]);
 	Route::resource('media', 'MediaController', ['only' => 'store']);
 });
-Route::resource('dishes', 'Dish\DishController', ['except' => ['create', 'edit']]);
-Route::resource('kitchens', 'KitchenController', ['except' => ['create', 'edit']]);
+//TODO: list
+Route::resource('dishes', 'Dish\DishController', ['only' => ['index', 'show']]);
+Route::resource('kitchens', 'KitchenController', ['only' => ['index', 'show']]);
 Route::get('dishes/{dishId}/rating/avg', 'Dish\DishRatingController@getAvg');
-Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['except' => ['create', 'edit']]);
+Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['only' => ['index', 'show']]);
 
 Route::post('login', 'Auth\LoginController@login');
 Route::post('auth/facebook', 'Auth\LoginController@facebook');
