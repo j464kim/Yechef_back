@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Storage;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,7 +18,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 // TODO Change this to proper middleware group later on
 Route::resource('dishes', 'DishController', ['except' => ['create', 'edit']]);
-Route::resource('kitchens', 'KitchenController');
+Route::resource('kitchens', 'KitchenController', ['except' => ['create', 'edit']]);
+Route::resource('media', 'MediaController', ['only' => 'store']);
 
 // This route group applies the "web" middleware group to every route
 // it contains. The "web" middleware group is defined in your HTTP
