@@ -80,4 +80,17 @@ return [
 	// fail
 	'12500' => 'Please make sure all fields filled out',
 	'12501' => 'Kitchen could not be found',
+
+	/**
+	 * Media related
+	 * Success Range 13000 <= x < 13500
+	 * Error Range 13500 <= x < 14000
+	 */
+	// success
+	'13000' => 'Successfully uploaded the media',
+
+	// fail
+	'13500' => 'File does not exist',
+	'13501' => 'File is not valid',
+	'13502' => 'There are errors in the files',
 ];

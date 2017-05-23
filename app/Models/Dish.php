@@ -27,11 +27,11 @@ class Dish extends Model
 	protected $dates = ['deleted_at'];
 
 	/**
-	 * Many to many relationship to media
+	 * Get all of the Dish's comments.
 	 */
-	public function media()
+	public function medias()
 	{
-		return $this->belongsToMany('App\Models\Media');
+		return $this->morphMany('App\Models\Media', 'mediable');
 	}
 
 	public static function getValidation($id = null)
@@ -46,7 +46,7 @@ class Dish extends Model
 	{
 		try {
 			if ($withMedia) {
-				return Dish::with('media')->findOrFail($id);
+				return Dish::with('medias')->findOrFail($id);
 
 			} else {
 				return Dish::findOrFail($id);

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
@@ -33,6 +34,7 @@ class LoginController extends Controller
 	private $validator;
 	private $auth;
 	private $db;
+	private $socialite;
 
     /**
      * Where to redirect users after login.
@@ -46,14 +48,16 @@ class LoginController extends Controller
 	 *
 	 * @param Application $app
 	 * @param Client $guzzleClient
+	 * @param Socialite $socialite
 	 */
-    public function __construct(Application $app, Client $guzzleClient)
+    public function __construct(Application $app, Client $guzzleClient, Socialite $socialite)
     {
 		$this->guzzleClient = $guzzleClient;
 		$this->cookie = $app->make('cookie');
 		$this->validator = $app->make('validator');
 		$this->auth = $app->make('auth');
 		$this->db = $app->make('db');
+		$this->socialite = $socialite;
         $this->middleware('guest', ['except' => 'logout']);
     }
 
@@ -67,7 +71,7 @@ class LoginController extends Controller
 	public function login(Request $request)
 	{
 		$validator = $this->validator->make($request->all(), [
-			'username' => 'required',
+			'email' => 'email|required',
 			'password' => 'required'
 		]);
 
@@ -75,13 +79,13 @@ class LoginController extends Controller
 			throw new YechefException(10500);
 		}
 
-		$username = request()->input('username');
+		$email = request()->input('email');
 		$password = request()->input('password');
 
 
 		try{
 			$result = $this->proxy('password', [
-				'username' => $username,
+				'username' => $email,
 				'password' => $password
 			]);
 
@@ -153,7 +157,7 @@ class LoginController extends Controller
 	 * @param string $scope
 	 * @return mixed|\Psr\Http\Message\ResponseInterface
 	 */
-	private function proxy($grantType, array $data = [], $scope='*')
+	private function proxy($grantType, array $data = [], $scope='')
 	{
 		// TODO scope is for future permission use
 
@@ -167,13 +171,13 @@ class LoginController extends Controller
 		$response = $this->guzzleClient->request('POST', url('oauth/token'), [
 			'form_params' => $data
 		])->getBody();
-		$data = json_decode($response);
+		$data = json_decode($response,true);
 
 		// Create a refresh token cookie
 		$this->cookie->queue(
 			self::REFRESH_TOKEN,
-			$data->refresh_token,
-			$data->expires_in,
+			isset($data['refresh_token']) ? $data['refresh_token']: null,
+			$data['expires_in'],
 			null,
 			null,
 			false,
@@ -181,4 +185,50 @@ class LoginController extends Controller
 		);
 		return $data;
 	}
+
+	/**
+	 * controller for facebook oauth login callback
+	 *
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function facebook(Request $request)
+	{
+		$code = $request->input('code');
+
+		$response = $this->socialite::driver('facebook')->getAccessTokenResponse($code);
+
+		$accessToken = $response['access_token'];
+
+		$result = $this->proxy('social', [
+			'network' => 'facebook',
+			'access_token' => $accessToken,
+		]);
+
+		return response()->success($result, 10000);
+	}
+
+	/**
+	 * controller for google oauth login callback
+	 *
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function google(Request $request)
+	{
+		$code = $request->input('code');
+
+		$response = $this->socialite::driver('google')->getAccessTokenResponse($code);
+
+		$accessToken = $response['access_token'];
+
+		$result = $this->proxy('social', [
+			'network' => 'google',
+			'access_token' => $accessToken,
+		]);
+
+		return response()->success($result, 10000);
+	}
+
+
 }

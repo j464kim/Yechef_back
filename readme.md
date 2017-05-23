@@ -78,7 +78,10 @@ php artisan db:seed
 # generate passport token
 php artisan passport:keys
 
+
 # Generate Oauth password grant client credential
+Note: this is done in migration already, no need to run this step
+
 php artisan passport:client --password
 # use the result to env param:
 # PASSWORD_CLIENT_ID

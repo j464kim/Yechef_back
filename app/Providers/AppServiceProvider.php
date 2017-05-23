@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Adaojunior\Passport\SocialUserResolverInterface;
+use App\Yechef\SocialLogin;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+		$this->app->singleton(SocialUserResolverInterface::class, SocialLogin::class);
     }
 }
