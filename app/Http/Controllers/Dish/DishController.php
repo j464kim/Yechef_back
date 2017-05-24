@@ -42,6 +42,9 @@ class DishController extends Controller
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
+			'price'       => $request->input('price'),
+			'kitchen_id'  => $request->input('kitchen_id'),
+			//TODO: ingredient
 		]);
 		return response()->success($dish, 11001);
 	}
@@ -54,6 +57,9 @@ class DishController extends Controller
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
+			'price'       => $request->input('price'),
+			'kitchen_id'  => $request->input('kitchen_id'),
+			//TODO: ingredient
 		]);
 		return response()->success($dish, 11002);
 	}

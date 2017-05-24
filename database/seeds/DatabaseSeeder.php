@@ -20,9 +20,9 @@ class DatabaseSeeder extends Seeder
 //		\DB::table('kitchens')->truncate();
 //		\DB::table('users')->truncate();
 
-		$this->call(DishesTableSeeder::class);
-		$this->call(KitchensTableSeeder::class);
 		$this->call(UsersTableSeeder::class);
+		$this->call(KitchensTableSeeder::class);
+		$this->call(DishesTableSeeder::class);
 
 		Model::reguard();
     }

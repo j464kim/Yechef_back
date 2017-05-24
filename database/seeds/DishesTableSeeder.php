@@ -11,14 +11,17 @@ class DishesTableSeeder extends Seeder
 	 */
 	public function run()
 	{
-		factory(App\Models\Dish::class, 50)->create()->each(function ($u) {
-			$user = \App\Models\User::first();
-			for ($i = 0; $i < 10; $i++) {
-				$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
-			}
-			for ($i = 0; $i < 3; $i++) {
-				$u->medias()->save(factory(App\Models\Media::class)->make());
-			}
-		});
+		for ($i = 0; $i < 5; $i++) {
+			$kitchen = \App\Models\Kitchen::all()->random(1)->first();
+			factory(App\Models\Dish::class, 10)->create(['kitchen_id' => $kitchen->id])->each(function ($u) {
+				$user = \App\Models\User::all()->random(1)->first();
+				for ($i = 0; $i < 10; $i++) {
+					$u->rating(factory(App\Models\Rating\DishRating::class)->raw(), $user)->save();
+				}
+				for ($i = 0; $i < 3; $i++) {
+					$u->medias()->save(factory(App\Models\Media::class)->make());
+				}
+			});
+		}
 	}
 }

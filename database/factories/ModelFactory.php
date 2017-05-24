@@ -25,7 +25,8 @@ $factory->define(App\Models\Dish::class, function (Faker\Generator $faker) {
 	return [
 		'slug'        => $faker->slug,
 		'name'        => $faker->word,
-		'description' => $faker->text()
+		'description' => $faker->realText(),
+		'price'       => $faker->randomFloat(2, 5, 25),
 	];
 });
 
