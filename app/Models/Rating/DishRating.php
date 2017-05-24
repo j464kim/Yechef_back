@@ -117,9 +117,9 @@ class DishRating extends Rating
 	{
 		Return [
 			'dishId'          => 'bail|required',
-			'taste_rating'    => 'bail|required|numeric',
-			'visual_rating'   => 'bail|required|numeric',
-			'quantity_rating' => 'bail|required|numeric',
+			'taste_rating'    => 'bail|required|integer|between:1,5',
+			'visual_rating'   => 'bail|required|integer|between:1,5',
+			'quantity_rating' => 'bail|required|integer|between:1,5',
 			'comment'         => 'required|max:200',
 		];
 	}

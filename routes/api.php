@@ -26,6 +26,9 @@ Route::resource('kitchens', 'KitchenController', ['only' => ['index', 'show']]);
 Route::get('dishes/{dishId}/rating/avg', 'Dish\DishRatingController@getAvg');
 Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['only' => ['index', 'show']]);
 
+//TODO: For testing only. Enable it in order to bypass auth:api middleware..
+//Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['except' => ['index', 'show', 'create', 'edit']]);
+
 Route::post('login', 'Auth\LoginController@login');
 Route::post('auth/facebook', 'Auth\LoginController@facebook');
 Route::post('auth/google', 'Auth\LoginController@google');
