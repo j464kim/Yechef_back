@@ -15,7 +15,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('logout', 'Auth\LoginController@logout');
 	Route::post('refresh-token', 'Auth\LoginController@refreshToken');
 // TODO Change this to proper middleware group later on
-	Route::get('dishes/{dishId}/rating/avg', 'Dish\DishRatingController@getAvg');
 	Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['except' => ['index', 'show', 'create', 'edit']]);
 	Route::resource('dishes', 'Dish\DishController', ['except' => ['index', 'show', 'create', 'edit']]);
 	Route::resource('kitchens', 'KitchenController', ['except' => ['index', 'show', 'create', 'edit']]);
