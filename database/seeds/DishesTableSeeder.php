@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class DishTableSeeder extends Seeder
+class DishesTableSeeder extends Seeder
 {
 	/**
 	 * Run the database seeds.
