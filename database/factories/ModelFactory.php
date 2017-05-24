@@ -53,9 +53,9 @@ $factory->define(App\Models\Kitchen::class, function (Faker\Generator $faker) {
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Models\Rating\DishRating::class, function (Faker\Generator $faker) {
 	return [
-		'taste_rating'    => $faker->numberBetween(0, 5),
-		'visual_rating'   => $faker->numberBetween(0, 5),
-		'quantity_rating' => $faker->numberBetween(0, 5),
+		'taste_rating'    => $faker->numberBetween(1, 5),
+		'visual_rating'   => $faker->numberBetween(1, 5),
+		'quantity_rating' => $faker->numberBetween(1, 5),
 		'comment'         => $faker->text(),
 	];
 });
