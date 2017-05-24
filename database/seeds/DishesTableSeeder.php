@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class KitchenTableSeeder extends Seeder
+class DishesTableSeeder extends Seeder
 {
 	/**
 	 * Run the database seeds.
@@ -11,7 +11,7 @@ class KitchenTableSeeder extends Seeder
 	 */
 	public function run()
 	{
-		factory(App\Models\Kitchen::class, 10)->create()->each(function ($u) {
+		factory(App\Models\Dish::class, 50)->create()->each(function ($u) {
 			for ($i = 0; $i < 3; $i++) {
 				$u->medias()->save(factory(App\Models\Media::class)->make());
 			}
