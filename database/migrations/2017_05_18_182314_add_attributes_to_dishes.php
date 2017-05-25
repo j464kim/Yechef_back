@@ -16,6 +16,7 @@ class AddAttributesToDishes extends Migration
 		Schema::table('dishes', function (Blueprint $table) {
 			$table->double('price')->after('description');
 			$table->unsignedInteger('kitchen_id')->after('price');
+			$table->foreign('kitchen_id')->references('id')->on('kitchens')->onDelete('cascade');
 		});
 	}
 
@@ -27,6 +28,7 @@ class AddAttributesToDishes extends Migration
 	public function down()
 	{
 		Schema::table('dishes', function (Blueprint $table) {
+			$table->dropForeign('dishes_kitchen_id_foreign');
 			$table->dropColumn('kitchen_id');
 			$table->dropColumn('price');
 		});

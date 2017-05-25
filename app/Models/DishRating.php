@@ -6,10 +6,19 @@ use App\Exceptions\YechefException;
 use Ghanem\Rating\Models\Rating;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DishRating extends Rating
 {
+	use SoftDeletes;
+
+	/**
+	 * The attributes that should be mutated to dates.
+	 *
+	 * @var array
+	 */
+	protected $dates = ['deleted_at'];
+
 	/**
 	 * @var string
 	 */
@@ -72,8 +81,8 @@ class DishRating extends Rating
 	public function createUniqueRating(Model $dish, $data, Model $user)
 	{
 		$rating = [
-			'user_id'       => $user->id,
-			"dish_id"   => $dish->id,
+			'user_id' => $user->id,
+			"dish_id" => $dish->id,
 		];
 
 		Rating::updateOrCreate($rating, $data);

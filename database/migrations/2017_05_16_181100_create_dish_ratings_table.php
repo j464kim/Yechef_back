@@ -20,8 +20,11 @@ class CreateDishRatingsTable extends Migration
 			$table->integer('quantity_rating');
 			$table->text('comment');
 			$table->unsignedInteger('dish_id');
+			$table->foreign('dish_id')->references('id')->on('dishes')->onDelete('cascade');
 			$table->unsignedInteger('user_id');
+			$table->foreign('user_id')->references('id')->on('users');
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 
@@ -32,6 +35,8 @@ class CreateDishRatingsTable extends Migration
 	 */
 	public function down()
 	{
+		Schema::disableForeignKeyConstraints();
 		Schema::dropIfExists('dish_ratings');
+		Schema::enableForeignKeyConstraints();
 	}
 }
