@@ -14,8 +14,8 @@ class AddAttributesToDishes extends Migration
 	public function up()
 	{
 		Schema::table('dishes', function (Blueprint $table) {
-			$table->unsignedInteger('kitchen_id');
-			$table->double('price');
+			$table->double('price')->after('description');
+			$table->unsignedInteger('kitchen_id')->after('price');
 		});
 	}
 

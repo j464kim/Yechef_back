@@ -2,7 +2,7 @@
 
 namespace App\Yechef;
 
-use App\Models\Rating\DishRating as Rating;
+use App\Models\DishRating as Rating;
 use Illuminate\Database\Eloquent\Model;
 
 trait DishRatingable

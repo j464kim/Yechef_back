@@ -33,6 +33,11 @@ class Kitchen extends Model
 		return $this->morphMany('App\Models\Media', 'mediable');
 	}
 
+	public function dishes()
+	{
+		return $this->hasMany('App\Models\Dish');
+	}
+
 	/**
 	 * @return array
 	 */

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Rating;
+namespace App\Models;
 
 use App\Exceptions\YechefException;
 use Ghanem\Rating\Models\Rating;
@@ -23,23 +23,22 @@ class DishRating extends Rating
 		'visual_rating',
 		'quantity_rating',
 		'comment',
-		'ratingable_id',
-		'ratingable_type',
-		'author_id',
+		'dish_id',
+		'user_id',
 	];
 
 	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
-	public function rateable()
+	public function dish()
 	{
-		return $this->morphTo('');
+		return $this->belongsTo('App\Models\Dish');
 	}
 
 	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
-	public function author()
+	public function user()
 	{
 		return $this->belongsTo('App\Models\User');
 	}
@@ -51,14 +50,14 @@ class DishRating extends Rating
 	 *
 	 * @return static
 	 */
-	public function createRating(Model $ratingable, $data, Model $author)
+	public function createRating(Model $dish, $data, Model $user)
 	{
 		$rating = new static();
 		$rating->fill(array_merge($data, [
-			'author_id' => $author->id,
+			'user_id' => $user->id,
 		]));
 
-		$ratingable->ratings()->save($rating);
+		$dish->ratings()->save($rating);
 
 		return $rating;
 	}
@@ -70,12 +69,11 @@ class DishRating extends Rating
 	 *
 	 * @return static
 	 */
-	public function createUniqueRating(Model $ratingable, $data, Model $author)
+	public function createUniqueRating(Model $dish, $data, Model $user)
 	{
 		$rating = [
-			'author_id'       => $author->id,
-			"ratingable_id"   => $ratingable->id,
-			"ratingable_type" => get_class($ratingable),
+			'user_id'       => $user->id,
+			"dish_id"   => $dish->id,
 		];
 
 		Rating::updateOrCreate($rating, $data);

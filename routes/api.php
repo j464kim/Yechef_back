@@ -32,5 +32,6 @@ Route::resource('dishes', 'Dish\DishController', ['except' => ['index', 'show', 
 Route::resource('media', 'MediaController', ['only' => 'store']);
 
 Route::post('login', 'Auth\LoginController@login');
+Route::post('register', 'Auth\RegisterController@register');
 Route::post('auth/facebook', 'Auth\LoginController@facebook');
 Route::post('auth/google', 'Auth\LoginController@google');

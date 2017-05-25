@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Dish;
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use App\Models\Dish;
-use App\Models\Rating\DishRating;
+use App\Models\DishRating;
 use App\Models\User;
 use App\Yechef\Helper;
 use Illuminate\Contracts\Foundation\Application;

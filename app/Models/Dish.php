@@ -46,6 +46,11 @@ class Dish extends Model
 		return $this->belongsTo('App\Models\Kitchen');
 	}
 
+	public function ratings()
+	{
+		return $this->hasMany('App\Models\DishRating');
+	}
+
 	public static function getValidation($id = null)
 	{
 		Return [
