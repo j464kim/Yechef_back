@@ -13,9 +13,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Models\Media::class, function (Faker\Generator $faker) {
+	$randomNumber = $faker->numberBetween(0,10);
 	return [
 		'slug' => str_random(10),
-		'url'  => "http://lorempixel.com/400/200/food/YeChef/"
+		'url'  => "http://lorempixel.com/400/200/food/$randomNumber/YeChef/"
 	];
 });
 

@@ -15,7 +15,7 @@ class DishesTableSeeder extends Seeder
 	{
 		$kitchens = Kitchen::all();
 		foreach ($kitchens as $kitchen) {
-			factory(Dish::class, 3)->create(['kitchen_id' => $kitchen->id]);
+			factory(Dish::class, 2)->create(['kitchen_id' => $kitchen->id]);
 		}
 	}
 }
