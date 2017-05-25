@@ -2,6 +2,7 @@
 
 use App\Models\Dish;
 use App\Models\Kitchen;
+use App\Models\Media;
 use Illuminate\Database\Seeder;
 
 class MediasTableSeeder extends Seeder
@@ -17,12 +18,12 @@ class MediasTableSeeder extends Seeder
 		$kitchens = Kitchen::all();
 		foreach ($dishes as $dish) {
 			for ($i = 0; $i < 3; $i++) {
-				$dish->medias()->save(factory(App\Models\Media::class)->make());
+				$dish->medias()->save(factory(Media::class)->make());
 			}
 		}
 		foreach ($kitchens as $kitchen) {
 			for ($i = 0; $i < 3; $i++) {
-				$kitchen->medias()->save(factory(App\Models\Media::class)->make());
+				$kitchen->medias()->save(factory(Media::class)->make());
 			}
 		}
 	}

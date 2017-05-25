@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Class DishRating
+ * @package App\Models
+ */
 class DishRating extends Rating
 {
 	use SoftDeletes;
@@ -53,11 +57,13 @@ class DishRating extends Rating
 	}
 
 	/**
-	 * @param Model $ratingable
+	 * @param Model $dish
 	 * @param $data
-	 * @param Model $author
-	 *
+	 * @param Model $user
 	 * @return static
+	 * @internal param Model $ratingable
+	 * @internal param Model $author
+	 *
 	 */
 	public function createRating(Model $dish, $data, Model $user)
 	{
@@ -72,11 +78,12 @@ class DishRating extends Rating
 	}
 
 	/**
-	 * @param Model $ratingable
+	 * @param Model $dish
 	 * @param $data
-	 * @param Model $author
-	 *
+	 * @param Model $user
 	 * @return static
+	 * @internal param Model $ratingable
+	 * @internal param Model $author
 	 */
 	public function createUniqueRating(Model $dish, $data, Model $user)
 	{
@@ -92,8 +99,8 @@ class DishRating extends Rating
 	/**
 	 * @param $id
 	 * @param $data
-	 *
 	 * @return mixed
+	 * @throws YechefException
 	 */
 	public function updateRating($id, $data)
 	{
@@ -108,8 +115,8 @@ class DishRating extends Rating
 
 	/**
 	 * @param $id
-	 *
 	 * @return mixed
+	 * @throws YechefException
 	 */
 	public function deleteRating($id)
 	{
@@ -120,6 +127,10 @@ class DishRating extends Rating
 		}
 	}
 
+	/**
+	 * @param null $id
+	 * @return array
+	 */
 	public static function getValidation($id = null)
 	{
 		Return [
@@ -131,6 +142,11 @@ class DishRating extends Rating
 		];
 	}
 
+	/**
+	 * @param $id
+	 * @return mixed
+	 * @throws YechefException
+	 */
 	public static function findDishRating($id)
 	{
 		try {

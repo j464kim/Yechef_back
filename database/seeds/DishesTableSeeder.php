@@ -13,8 +13,8 @@ class DishesTableSeeder extends Seeder
 	 */
 	public function run()
 	{
-		for ($i = 0; $i < 10; $i++) {
-			$kitchen = Kitchen::findKitchen($i + 1);
+		$kitchens = Kitchen::all();
+		foreach ($kitchens as $kitchen) {
 			factory(Dish::class, 5)->create(['kitchen_id' => $kitchen->id]);
 		}
 	}

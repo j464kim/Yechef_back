@@ -14,10 +14,12 @@ class RatingsTableSeeder extends Seeder
 	 */
 	public function run()
 	{
-		for ($i = 0; $i < 50; $i++) {
-			$dish = Dish::findDish($i + 1);
-			$user = User::findOrFail(($i % 10) + 1);
-			factory(DishRating::class, 10)->create(['dish_id' => $dish->id, 'user_id' => $user->id]);
+		$dishes = Dish::all();
+		foreach ($dishes as $dish) {
+			$users = User::all();
+			foreach ($users as $user) {
+				factory(DishRating::class, 1)->create(['dish_id' => $dish->id, 'user_id' => $user->id]);
+			}
 		}
 	}
 }

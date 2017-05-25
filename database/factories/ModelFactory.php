@@ -15,7 +15,7 @@
 $factory->define(App\Models\Media::class, function (Faker\Generator $faker) {
 	return [
 		'slug' => str_random(10),
-		'url'  => "http://lorempixel.com/400/200/"
+		'url'  => "http://lorempixel.com/400/200/food/YeChef/"
 	];
 });
 
