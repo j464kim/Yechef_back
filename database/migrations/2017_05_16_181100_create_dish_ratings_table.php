@@ -35,8 +35,6 @@ class CreateDishRatingsTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::disableForeignKeyConstraints();
 		Schema::dropIfExists('dish_ratings');
-		Schema::enableForeignKeyConstraints();
 	}
 }

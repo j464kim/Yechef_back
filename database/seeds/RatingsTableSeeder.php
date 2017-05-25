@@ -16,7 +16,7 @@ class RatingsTableSeeder extends Seeder
 	{
 		$dishes = Dish::all();
 		foreach ($dishes as $dish) {
-			$users = User::all();
+			$users = User::all()->random('3');
 			foreach ($users as $user) {
 				factory(DishRating::class, 1)->create(['dish_id' => $dish->id, 'user_id' => $user->id]);
 			}

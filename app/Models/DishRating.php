@@ -61,9 +61,6 @@ class DishRating extends Rating
 	 * @param $data
 	 * @param Model $user
 	 * @return static
-	 * @internal param Model $ratingable
-	 * @internal param Model $author
-	 *
 	 */
 	public function createRating(Model $dish, $data, Model $user)
 	{
@@ -81,9 +78,7 @@ class DishRating extends Rating
 	 * @param Model $dish
 	 * @param $data
 	 * @param Model $user
-	 * @return static
-	 * @internal param Model $ratingable
-	 * @internal param Model $author
+	 * @return array
 	 */
 	public function createUniqueRating(Model $dish, $data, Model $user)
 	{

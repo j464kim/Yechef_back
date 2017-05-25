@@ -11,6 +11,6 @@ class KitchensTableSeeder extends Seeder
 	 */
 	public function run()
 	{
-		factory(App\Models\Kitchen::class, 10)->create();
+		factory(App\Models\Kitchen::class, 5)->create();
 	}
 }
