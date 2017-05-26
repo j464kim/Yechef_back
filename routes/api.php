@@ -30,6 +30,7 @@ Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['only' =
 Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['except' => ['index', 'show', 'create', 'edit']]);
 Route::resource('dishes', 'Dish\DishController', ['except' => ['index', 'show', 'create', 'edit']]);
 Route::resource('media', 'MediaController', ['only' => 'store']);
+Route::resource('kitchens', 'KitchenController', ['except' => ['index', 'show', 'create', 'edit']]);
 
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register', 'Auth\RegisterController@register');
