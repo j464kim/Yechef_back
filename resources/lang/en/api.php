@@ -59,9 +59,14 @@ return [
 	'11001' => 'Dish successfully created',
 	'11002' => 'Dish successfully updated',
 	'11003' => 'Dish successfully deleted',
+	'11004' => 'Dish successfully rated',
+	'11005' => 'Dish rating successfully updated',
+	'11006' => 'Dish rating successfully deleted',
 	// fail
 	'11500' => 'Unable to find the dish',
 	'11501' => 'Invalid request inputs for dish',
+	'11502' => 'Invalid request inputs for dish rating',
+	'11503' => 'Unable to find the dish rating',
 
 	/**
 	 * Kitchen related

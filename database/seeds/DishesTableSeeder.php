@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Dish;
+use App\Models\Kitchen;
 use Illuminate\Database\Seeder;
 
 class DishesTableSeeder extends Seeder
@@ -11,10 +13,9 @@ class DishesTableSeeder extends Seeder
 	 */
 	public function run()
 	{
-		factory(App\Models\Dish::class, 50)->create()->each(function ($u) {
-			for ($i = 0; $i < 3; $i++) {
-				$u->medias()->save(factory(App\Models\Media::class)->make());
-			}
-		});
+		$kitchens = Kitchen::all();
+		foreach ($kitchens as $kitchen) {
+			factory(Dish::class, 2)->create(['kitchen_id' => $kitchen->id]);
+		}
 	}
 }
