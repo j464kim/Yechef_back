@@ -162,8 +162,8 @@ class LoginController extends Controller
 	{
 		// TODO scope is for future permission use
 
-		$user = User::where('email', $data['username'])->first();
-		$user = json_decode($user, true);
+//		$user = User::where('email', $data['username'])->first();
+//		$user = json_decode($user, true);
 
 		$data = array_merge($data, [
 			'client_id'     => env('PASSWORD_CLIENT_ID'),
@@ -187,12 +187,12 @@ class LoginController extends Controller
 			false,
 			true // HttpOnly
 		);
-		$data = array_merge($data, [
-			'first_name' => $user['first_name'],
-			'last_name'  => $user['last_name'],
-			'email'      => $user['email'],
-			'id'         => $user['id'],
-		]);
+//		$data = array_merge($data, [
+//			'first_name' => $user['first_name'],
+//			'last_name'  => $user['last_name'],
+//			'email'      => $user['email'],
+//			'id'         => $user['id'],
+//		]);
 		return $data;
 	}
 
