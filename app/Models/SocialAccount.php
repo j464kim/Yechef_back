@@ -40,11 +40,20 @@ class SocialAccount extends Model
 			$user = User::where('email', $providerUser->getEmail())->first();
 
 			if (!$user) {
-// TODO: create user account based on these data. create random password, send email in event
+				// TODO: create user account based on these data. create random password, send email in event
+				$first_name = '';
+				$last_name = '';
+				if ($provider === 'google') {
+					$first_name = $providerUser->user['name']['givenName'];
+					$last_name = $providerUser->user['name']['familyName'];
+				} elseif ($provider === 'facebook') {
+					$first_name = $providerUser->user['first_name'];
+					$last_name = $providerUser->user['last_name'];
+				}
 				$user = User::create([
 					'email'      => $providerUser->getEmail(),
-					'first_name' => $providerUser->user['name']['givenName'],
-					'last_name'  => $providerUser->user['name']['familyName'],
+					'first_name' => $first_name,
+					'last_name'  => $last_name,
 					'password'   => Hash::make(md5(time()))
 				]);
 			}

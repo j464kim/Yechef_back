@@ -162,9 +162,7 @@ class LoginController extends Controller
 	{
 		// TODO scope is for future permission use
 
-//		$user = User::where('email', $data['username'])->first();
-//		$user = json_decode($user, true);
-
+		$dataCopy = $data;
 		$data = array_merge($data, [
 			'client_id'     => env('PASSWORD_CLIENT_ID'),
 			'client_secret' => env('PASSWORD_CLIENT_SECRET'),
@@ -187,13 +185,8 @@ class LoginController extends Controller
 			false,
 			true // HttpOnly
 		);
-//		$data = array_merge($data, [
-//			'first_name' => $user['first_name'],
-//			'last_name'  => $user['last_name'],
-//			'email'      => $user['email'],
-//			'id'         => $user['id'],
-//		]);
-		return $data;
+
+		return $this->appendUserInfo($dataCopy, $data, $grantType);
 	}
 
 	/**
@@ -240,5 +233,33 @@ class LoginController extends Controller
 		return response()->success($result, 10000);
 	}
 
-
+	/**
+	 * @param array $data
+	 * @param $grantType
+	 * @param string $network
+	 * @return array
+	 */
+	private function appendUserInfo(array $dataCopy, array $data, $grantType)
+	{
+		if ($grantType === 'password') {
+			$user = User::where('email', $dataCopy['username'])->first();
+			$user = json_decode($user, true);
+			$data = array_merge($data, [
+				'first_name' => $user['first_name'],
+				'last_name'  => $user['last_name'],
+				'email'      => $user['email'],
+				'id'         => $user['id'],
+			]);
+		} else {
+			$user = User::where('email',
+				Socialite::driver($dataCopy['network'])->userFromToken($dataCopy['access_token'])->getEmail())->first();
+			$data = array_merge($data, [
+				'first_name' => $user['first_name'],
+				'last_name'  => $user['last_name'],
+				'email'      => $user['email'],
+				'id'         => $user['id'],
+			]);
+		}
+		return $data;
+	}
 }
