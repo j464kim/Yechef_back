@@ -34,6 +34,15 @@ class Kitchen extends Model
 	}
 
 	/**
+	 * Get all of the Dish's likes.
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 */
+	public function likes()
+	{
+		return $this->morphMany('App\Models\Like', 'likable');
+	}
+
+	/**
 	 * @return array
 	 */
 	public static function getValidationRule()
@@ -49,6 +58,12 @@ class Kitchen extends Model
 		return $rule;
 	}
 
+	/**
+	 * @param $id
+	 * @param bool $withMedia
+	 * @return \Illuminate\Database\Eloquent\Collection|Model
+	 * @throws YechefException
+	 */
 	public static function findKitchen($id, $withMedia = false)
 	{
 		try {
