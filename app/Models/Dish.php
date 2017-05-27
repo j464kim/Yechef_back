@@ -53,7 +53,7 @@ class Dish extends Model
 	}
 
 	/**
-	 * Get all of the Dish's likes.
+	 * Get all of the Dish's reactions.
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
 	 */
 	public function reactions()

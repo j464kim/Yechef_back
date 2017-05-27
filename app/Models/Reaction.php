@@ -39,8 +39,9 @@ class Reaction extends Model
 	public static function getValidationRule()
 	{
 		$rule = array(
-			'reactionableId' => 'bail|required',
-			'kind'      => 'required'
+			'reactionableId'   => 'bail|required',
+			'reactionableType' => 'bail|required',
+			'kind'             => 'required'
 		);
 
 		return $rule;

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\Foundation\Application;
 use App\Models\User;
 use App\Models\Reaction;
-use App\Models\Kitchen;
 use Illuminate\Support\Facades\Log;
 
 class ReactionController extends Controller
@@ -32,9 +31,7 @@ class ReactionController extends Controller
 		Log::info('index called');
 		$reactionableId = $request->input('reactionableId');
 		$userId = $request->input('userId');
-
-		$reactionable = Kitchen::findKitchen(1);
-		$reactionableType = get_class($reactionable);
+		$reactionableType = $request->input('reactionableType');
 
 		$reactions = Reaction::where('reactionable_type', $reactionableType)
 			->where('reactionable_id', $reactionableId)
@@ -68,9 +65,8 @@ class ReactionController extends Controller
 		// TODO: placeholder until registration is implemented
 		$userId = $request->input('userId');
 		$reactionableId = $request->input('reactionableId');
-		$reactionable = Kitchen::findKitchen($reactionableId);
-		$reactionableType = get_class($reactionable);
-
+		$reactionableType = $request->input('reactionableType');
+		$reactionable = $reactionableType::findOrFail($reactionableId);
 		// delete existing reaction
 		$oldReactions = Reaction::where('user_id', $userId)
 			->where('reactionable_type', $reactionableType)
@@ -110,8 +106,7 @@ class ReactionController extends Controller
 	{
 		$reactionableId = $request->input('reactionableId');
 		$userId = $request->input('userId');
-		$reactionable = Kitchen::findKitchen($reactionableId);
-		$reactionableType = get_class($reactionable);
+		$reactionableType = $request->input('reactionableType');
 
 		$reaction = Reaction::where('user_id', $userId)
 			->where('reactionable_type', $reactionableType)
