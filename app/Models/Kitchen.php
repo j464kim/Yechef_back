@@ -33,6 +33,11 @@ class Kitchen extends Model
 		return $this->morphMany('App\Models\Media', 'mediable');
 	}
 
+	public function dishes()
+	{
+		return $this->hasMany('App\Models\Dish');
+	}
+
 	/**
 	 * Get all of the Dish's likes.
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany

@@ -17,19 +17,22 @@ class DatabaseSeeder extends Seeder
 
 		Schema::disableForeignKeyConstraints();
 
+		\DB::table('dish_ratings')->truncate();
 		\DB::table('media')->truncate();
 		\DB::table('dishes')->truncate();
 		\DB::table('kitchens')->truncate();
 		\DB::table('reactions')->truncate();
 		\DB::table('users')->truncate();
 
-		$this->call(DishesTableSeeder::class);
-		$this->call(KitchensTableSeeder::class);
 		$this->call(UsersTableSeeder::class);
+		$this->call(KitchensTableSeeder::class);
+		$this->call(DishesTableSeeder::class);
+		$this->call(RatingsTableSeeder::class);
+		$this->call(MediasTableSeeder::class);
 		$this->call(ReactionsTableSeeder::class);
 
 		Schema::enableForeignKeyConstraints();
 
 		Model::reguard();
-    }
+	}
 }
