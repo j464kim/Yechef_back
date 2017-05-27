@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Dish;
+namespace App\Http\Controllers;
 
 use App\Events\DishDeleted;
 use App\Exceptions\YechefException;

@@ -15,20 +15,20 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('logout', 'Auth\LoginController@logout');
 	Route::post('refresh-token', 'Auth\LoginController@refreshToken');
 // TODO Change this to proper middleware group later on
-	Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['except' => ['index', 'show', 'create', 'edit']]);
-	Route::resource('dishes', 'Dish\DishController', ['except' => ['index', 'show', 'create', 'edit']]);
+	Route::resource('dishes/{dishId}/rating', 'DishRatingController', ['except' => ['index', 'show', 'create', 'edit']]);
+	Route::resource('dishes', 'DishController', ['except' => ['index', 'show', 'create', 'edit']]);
 	Route::resource('kitchens', 'KitchenController', ['except' => ['index', 'show', 'create', 'edit']]);
 	Route::resource('media', 'MediaController', ['only' => 'store']);
 });
 //TODO: list
-Route::resource('dishes', 'Dish\DishController', ['only' => ['index', 'show']]);
+Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);
 Route::resource('kitchens', 'KitchenController', ['only' => ['index', 'show']]);
-Route::get('dishes/{dishId}/rating/avg', 'Dish\DishRatingController@getAvg');
-Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['only' => ['index', 'show']]);
+Route::get('dishes/{dishId}/rating/avg', 'DishRatingController@getAvg');
+Route::resource('dishes/{dishId}/rating', 'DishRatingController', ['only' => ['index', 'show']]);
 
 //TODO: For testing only. Enable it in order to bypass auth:api middleware..
-Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['except' => ['index', 'show', 'create', 'edit']]);
-Route::resource('dishes', 'Dish\DishController', ['except' => ['index', 'show', 'create', 'edit']]);
+Route::resource('dishes/{dishId}/rating', 'DishRatingController', ['except' => ['index', 'show', 'create', 'edit']]);
+Route::resource('dishes', 'DishController', ['except' => ['index', 'show', 'create', 'edit']]);
 Route::resource('media', 'MediaController', ['only' => 'store']);
 Route::resource('kitchens', 'KitchenController', ['except' => ['index', 'show', 'create', 'edit']]);
 

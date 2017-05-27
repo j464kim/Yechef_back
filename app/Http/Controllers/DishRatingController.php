@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Dish;
+namespace App\Http\Controllers;
 
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
