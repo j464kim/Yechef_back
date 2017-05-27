@@ -6,17 +6,17 @@ use App\Exceptions\YechefException;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Foundation\Application;
 use App\Models\User;
-use App\Models\Like;
+use App\Models\Reaction;
 use App\Models\Kitchen;
 use Illuminate\Support\Facades\Log;
 
-class LikeController extends Controller
+class ReactionController extends Controller
 {
 
 	private $validator;
 
 	/**
-	 * LikeController constructor.
+	 * ReactionController constructor.
 	 * @param Application $app
 	 */
 	public function __construct(Application $app)
@@ -30,22 +30,22 @@ class LikeController extends Controller
 	public function index(Request $request)
 	{
 		Log::info('index called');
-		$likableId = $request->input('likableId');
+		$reactionableId = $request->input('reactionableId');
 		$userId = $request->input('userId');
 
-		$likable = Kitchen::findKitchen(1);
-		$likableType = get_class($likable);
+		$reactionable = Kitchen::findKitchen(1);
+		$reactionableType = get_class($reactionable);
 
-		$reactions = Like::where('likable_type', $likableType)
-			->where('likable_id', $likableId)
+		$reactions = Reaction::where('reactionable_type', $reactionableType)
+			->where('reactionable_id', $reactionableId)
 			->get();
 
 		$userReaction = $reactions->where('user_id', $userId)->first();
 		$userReactionId = $userReaction ? $userReaction->id : null;
-		$userReactionKind = $userReaction ? $userReaction->isLike : null;
+		$userReactionKind = $userReaction ? $userReaction->kind : null;
 
-		$numLikes = $reactions->where('isLike', 1)->count();
-		$numDislikes = $reactions->where('isLike', 0)->count();
+		$numLikes = $reactions->where('kind', 1)->count();
+		$numDislikes = $reactions->where('kind', 0)->count();
 
 		$reactionResponse = (object)array(
 			'numLikes'         => $numLikes,
@@ -67,14 +67,14 @@ class LikeController extends Controller
 
 		// TODO: placeholder until registration is implemented
 		$userId = $request->input('userId');
-		$likableId = $request->input('likableId');
-		$likable = Kitchen::findKitchen($likableId);
-		$likableType = get_class($likable);
+		$reactionableId = $request->input('reactionableId');
+		$reactionable = Kitchen::findKitchen($reactionableId);
+		$reactionableType = get_class($reactionable);
 
 		// delete existing reaction
-		$oldReactions = Like::where('user_id', $userId)
-			->where('likable_type', $likableType)
-			->where('likable_id', $likableId)
+		$oldReactions = Reaction::where('user_id', $userId)
+			->where('reactionable_type', $reactionableType)
+			->where('reactionable_id', $reactionableId)
 			->get();
 
 		//$oldReactions must be singular. double check it
@@ -83,16 +83,16 @@ class LikeController extends Controller
 		}
 
 		$oldReaction = $oldReactions->first();
-		$oldReactionKind = $oldReaction ? $oldReaction->isLike: null;
+		$oldReactionKind = $oldReaction ? $oldReaction->kind : null;
 		!$oldReaction ?: $oldReaction->delete();
 
 		// add new reaction
-		$newReaction = new Like;
-		$newReaction->isLike = $request->input('isLike');
+		$newReaction = new Reaction;
+		$newReaction->kind = $request->input('kind');
 		$newReaction->user_id = $userId;
 
 		// associate polymorphic relationship
-		$likable->likes()->save($newReaction);
+		$reactionable->reactions()->save($newReaction);
 		$newReaction->save();
 
 		// send deleted reaction to frontend to reflect the change on view
@@ -108,14 +108,14 @@ class LikeController extends Controller
 	 */
 	public function destroy(Request $request, $reactionId)
 	{
-		$likableId = $request->input('likableId');
+		$reactionableId = $request->input('reactionableId');
 		$userId = $request->input('userId');
-		$likable = Kitchen::findKitchen($likableId);
-		$likableType = get_class($likable);
+		$reactionable = Kitchen::findKitchen($reactionableId);
+		$reactionableType = get_class($reactionable);
 
-		$reaction = Like::where('user_id', $userId)
-			->where('likable_type', $likableType)
-			->where('likable_id', $likableId)
+		$reaction = Reaction::where('user_id', $userId)
+			->where('reactionable_type', $reactionableType)
+			->where('reactionable_id', $reactionableId)
 			->first();
 		$reaction->delete();
 
@@ -128,7 +128,7 @@ class LikeController extends Controller
 	 */
 	private function validateInput(Request $request)
 	{
-		$validationRule = Like::getValidationRule();
+		$validationRule = Reaction::getValidationRule();
 		$validator = $this->validator->make($request->all(), $validationRule);
 
 		if ($validator->fails()) {

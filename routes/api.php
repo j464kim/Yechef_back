@@ -33,10 +33,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 Route::resource('dishes', 'DishController');
 Route::resource('kitchens', 'KitchenController');
 
-Route::post('likes/getReactions',
-	['uses' => 'LikeController@index', 'as' => 'likes.getReactions']);
-Route::resource('likes', 'LikeController',
-	['parameters' => ['likes' => 'like_id'], 'only' => ['store', 'destroy']]);
+Route::post('reactions/getReactions',
+	['uses' => 'ReactionController@index', 'as' => 'reactions.getReactions']);
+Route::resource('reactions', 'ReactionController',
+	['parameters' => ['reactions' => 'like_id'], 'only' => ['store', 'destroy']]);
 
 Route::post('login', 'Auth\LoginController@login');
 Route::post('auth/facebook', 'Auth\LoginController@facebook');

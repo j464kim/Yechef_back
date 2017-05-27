@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Like extends Model
+class Reaction extends Model
 {
 
 	/**
-	 * Get all of the owning likable models.
+	 * Get all of the owning reactionable models.
 	 */
-	public function likable()
+	public function reactionable()
 	{
 		return $this->morphTo();
 	}
@@ -19,10 +19,10 @@ class Like extends Model
 	 * @var array
 	 */
 	protected $fillable = [
-		'isLike',
+		'kind',
 		'user_id',
-		'likable_id',
-		'likable_type',
+		'reactionable_id',
+		'reactionable_type',
 	];
 
 	/**
@@ -39,8 +39,8 @@ class Like extends Model
 	public static function getValidationRule()
 	{
 		$rule = array(
-			'likableId' => 'bail|required',
-			'isLike'    => 'required'
+			'reactionableId' => 'bail|required',
+			'kind'      => 'required'
 		);
 
 		return $rule;
@@ -50,10 +50,10 @@ class Like extends Model
 	 * @param $id
 	 * @return mixed
 	 */
-	public static function findLike($id)
+	public static function findReaction($id)
 	{
 		try {
-			return Like::findOrFail($id);
+			return Reaction::findOrFail($id);
 		} catch (\Exception $e) {
 			throw new YechefException(14501);
 		}
@@ -64,7 +64,7 @@ class Like extends Model
 	 */
 	public function getTotalLikes()
 	{
-		$totalLikes = $this::where('isLike', '=', 1)->get();
+		$totalLikes = $this::where('kind', '=', 1)->get();
 
 		return count($totalLikes);
 	}
@@ -74,7 +74,7 @@ class Like extends Model
 	 */
 	public function getTotalDislikes()
 	{
-		$totalDislikes = $this::where('isLike', '=', 0)->get();
+		$totalDislikes = $this::where('kind', '=', 0)->get();
 
 		return count($totalDislikes);
 	}

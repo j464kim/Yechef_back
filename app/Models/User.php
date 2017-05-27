@@ -28,8 +28,8 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function likes()
+    public function reactions()
 	{
-		return $this->hasMany('App\Models\Like');
+		return $this->hasMany('App\Models\Reaction');
 	}
 }

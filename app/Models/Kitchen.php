@@ -37,9 +37,9 @@ class Kitchen extends Model
 	 * Get all of the Dish's likes.
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
 	 */
-	public function likes()
+	public function reactions()
 	{
-		return $this->morphMany('App\Models\Like', 'likable');
+		return $this->morphMany('App\Models\Reaction', 'reactionable');
 	}
 
 	/**

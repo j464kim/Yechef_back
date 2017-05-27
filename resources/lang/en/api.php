@@ -90,7 +90,7 @@ return [
 	'13502' => 'There are errors in the files',
 
 	/**
-	 * Like related
+	 * Relation related
 	 * Success Range 14000 <= x < 14500
 	 * Error Range 14500 <= x < 15000
 	 */

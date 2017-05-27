@@ -20,13 +20,13 @@ class DatabaseSeeder extends Seeder
 		\DB::table('media')->truncate();
 		\DB::table('dishes')->truncate();
 		\DB::table('kitchens')->truncate();
-		\DB::table('likes')->truncate();
+		\DB::table('reactions')->truncate();
 		\DB::table('users')->truncate();
 
 		$this->call(DishesTableSeeder::class);
 		$this->call(KitchensTableSeeder::class);
 		$this->call(UsersTableSeeder::class);
-		$this->call(LikesTableSeeder::class);
+		$this->call(ReactionsTableSeeder::class);
 
 		Schema::enableForeignKeyConstraints();
 
