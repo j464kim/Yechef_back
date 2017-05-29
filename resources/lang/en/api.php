@@ -107,5 +107,6 @@ return [
 	// fail
 	'14500' => 'Something is wrong with an action',
 	'14501' => 'Could not find the reaction',
-	'14502' => 'User has more than 1 reactions to the post'
+	'14502' => 'User has more than 1 reactions to the post',
+	'14503' => 'Could not find the reactionable'
 ];

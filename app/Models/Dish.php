@@ -7,12 +7,14 @@ use App\Yechef\DishRatingable as Ratingable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Reactionable;
 use Illuminate\Support\Facades\Log;
 
 class Dish extends Model
 {
 	use SoftDeletes;
 	use Ratingable;
+	use Reactionable;
 
 	/**
 	 * The attributes that are mass assignable.

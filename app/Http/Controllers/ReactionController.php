@@ -5,13 +5,11 @@ namespace App\Http\Controllers;
 use App\Exceptions\YechefException;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Foundation\Application;
-use App\Models\User;
 use App\Models\Reaction;
 use Illuminate\Support\Facades\Log;
 
 class ReactionController extends Controller
 {
-
 	private $validator;
 
 	/**
@@ -28,21 +26,25 @@ class ReactionController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		Log::info('index called');
 		$reactionableId = $request->input('reactionableId');
-		$userId = $request->input('userId');
 		$reactionableType = $request->input('reactionableType');
+		$userId = $request->input('userId');
 
-		$reactions = Reaction::where('reactionable_type', $reactionableType)
-			->where('reactionable_id', $reactionableId)
-			->get();
+		try {
+			$reactionable = $reactionableType::findOrFail($reactionableId);
+		} catch (\Exception $e) {
+			throw new YechefException(14503);
+		}
 
-		$userReaction = $reactions->where('user_id', $userId)->first();
+		$reactions = $reactionable->getReactions();
+		$userReactions = $reactionable->getReactions($userId);
+		$userReaction = $userReactions->first();
+
 		$userReactionId = $userReaction ? $userReaction->id : null;
 		$userReactionKind = $userReaction ? $userReaction->kind : null;
 
-		$numLikes = $reactions->where('kind', 1)->count();
-		$numDislikes = $reactions->where('kind', 0)->count();
+		$numLikes = $reactions->where('kind', Reaction::LIKE)->count();
+		$numDislikes = $reactions->where('kind', Reaction::DISLIKE)->count();
 
 		$reactionResponse = (object)array(
 			'numLikes'         => $numLikes,
@@ -63,24 +65,23 @@ class ReactionController extends Controller
 		$this->validateInput($request);
 
 		// TODO: placeholder until registration is implemented
-		$userId = $request->input('userId');
 		$reactionableId = $request->input('reactionableId');
 		$reactionableType = $request->input('reactionableType');
-		$reactionable = $reactionableType::findOrFail($reactionableId);
-		// delete existing reaction
-		$oldReactions = Reaction::where('user_id', $userId)
-			->where('reactionable_type', $reactionableType)
-			->where('reactionable_id', $reactionableId)
-			->get();
+		$userId = $request->input('userId');
+
+		try {
+			$reactionable = $reactionableType::findOrFail($reactionableId);
+		} catch (\Exception $e) {
+			throw new YechefException(14503);
+		}
+
+		// get existing reactions to be deleted
+		$oldReactions = $reactionable->getReactions($userId);
 
 		//$oldReactions must be singular. double check it
 		if (count($oldReactions) > 1) {
 			throw new YechefException($oldReactions, 14502);
 		}
-
-		$oldReaction = $oldReactions->first();
-		$oldReactionKind = $oldReaction ? $oldReaction->kind : null;
-		!$oldReaction ?: $oldReaction->delete();
 
 		// add new reaction
 		$newReaction = new Reaction;
@@ -91,8 +92,14 @@ class ReactionController extends Controller
 		$reactionable->reactions()->save($newReaction);
 		$newReaction->save();
 
-		// send deleted reaction to frontend to reflect the change on view
-		$newReaction->oldReactionKind = $oldReactionKind;
+		if (count($oldReactions)) {
+			$oldReaction = $oldReactions->first();
+			$oldReaction->delete();
+			$oldReactionKind = $oldReaction->kind;
+
+			// send deleted reaction to frontend to reflect the change on view
+			$newReaction->oldReactionKind = $oldReactionKind;
+		}
 
 		return response()->success($newReaction, 14000);
 	}
@@ -105,16 +112,19 @@ class ReactionController extends Controller
 	public function destroy(Request $request, $reactionId)
 	{
 		$reactionableId = $request->input('reactionableId');
-		$userId = $request->input('userId');
 		$reactionableType = $request->input('reactionableType');
+		$userId = $request->input('userId');
 
-		$reaction = Reaction::where('user_id', $userId)
-			->where('reactionable_type', $reactionableType)
-			->where('reactionable_id', $reactionableId)
-			->first();
-		$reaction->delete();
+		try {
+			$reactionable = $reactionableType::findOrFail($reactionableId);
+		} catch (\Exception $e) {
+			throw new YechefException(14503);
+		}
 
-		return response()->success($reaction, 14001);
+		$userReaction = $reactionable->getReactions($userId);
+		$userReaction->first()->delete();
+
+		return response()->success($userReaction, 14001);
 	}
 
 	/**

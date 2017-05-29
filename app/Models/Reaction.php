@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Exceptions\YechefException;
 
 class Reaction extends Model
 {
+	const DISLIKE = 0;
+	const LIKE = 1;
 
 	/**
 	 * Get all of the owning reactionable models.
@@ -60,23 +63,4 @@ class Reaction extends Model
 		}
 	}
 
-	/**
-	 * @return int
-	 */
-	public function getTotalLikes()
-	{
-		$totalLikes = $this::where('kind', '=', 1)->get();
-
-		return count($totalLikes);
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getTotalDislikes()
-	{
-		$totalDislikes = $this::where('kind', '=', 0)->get();
-
-		return count($totalDislikes);
-	}
 }

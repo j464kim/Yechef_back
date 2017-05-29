@@ -5,12 +5,20 @@ namespace App\Models;
 use App\Exceptions\YechefException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Reactionable;
 use Illuminate\Support\Facades\Log;
 
+/**
+ *
+ * @property int id
+ *
+ * Class Kitchen
+ * @package App\Models
+ */
 class Kitchen extends Model
 {
 	use SoftDeletes;
-
+	use Reactionable;
 	/**
 	 * The attributes that should be mutated to dates.
 	 *
@@ -81,4 +89,5 @@ class Kitchen extends Model
 			throw new YechefException(12501);
 		}
 	}
+
 }
