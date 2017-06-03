@@ -27,6 +27,7 @@ class RegisterController extends Controller
 
 	// DI parameters
 	private $loginCtrl;
+	private $validator;
 
 	/**
 	 * Where to redirect users after registration.
@@ -44,11 +45,12 @@ class RegisterController extends Controller
 	{
 		$this->loginCtrl = $loginController;
 		$this->middleware('guest');
+		$this->validator = $app->make('validator');
 	}
 
 	public function register(Request $request)
 	{
-		$validator = $this->validator($request->all());
+		$validator = $this->validator->make($request->all(), User::getValidation());
 
 		if ($validator->fails()) {
 			throw new YechefException(10505, $validator->getMessageBag());
@@ -60,48 +62,14 @@ class RegisterController extends Controller
 		$password = $request->input('password');
 		$phone = $request->input('phone');
 
-		$this->create([
+		User::create([
 			'email'      => $email,
-			'password'   => $password,
+			'password'   => bcrypt($password),
 			'first_name' => $first_name,
 			'last_name'  => $last_name,
 			'phone'      => $phone,
 		]);
 
 		return $this->loginCtrl->login($request);
-	}
-
-	/**
-	 * Get a validator for an incoming registration request.
-	 *
-	 * @param  array $data
-	 * @return \Illuminate\Contracts\Validation\Validator
-	 */
-	protected function validator(array $data)
-	{
-		return Validator::make($data, [
-			'first_name' => 'required|max:255',
-			'last_name'  => 'required|max:255',
-			'email'      => 'required|email|max:255|unique:users',
-			'password'   => 'required|min:6|confirmed',
-			'phone'      => 'phone',
-		]);
-	}
-
-	/**
-	 * Create a new user instance after a valid registration.
-	 *
-	 * @param  array $data
-	 * @return User
-	 */
-	protected function create(array $data)
-	{
-		return User::create([
-			'first_name' => $data['first_name'],
-			'last_name'  => $data['last_name'],
-			'phone'      => $data['phone'],
-			'email'      => $data['email'],
-			'password'   => bcrypt($data['password']),
-		]);
 	}
 }

@@ -43,12 +43,17 @@ class SocialAccount extends Model
 				// TODO: create user account based on these data. create random password, send email in event
 				$first_name = '';
 				$last_name = '';
-				if ($provider === 'google') {
-					$first_name = $providerUser->user['name']['givenName'];
-					$last_name = $providerUser->user['name']['familyName'];
-				} elseif ($provider === 'facebook') {
-					$first_name = $providerUser->user['first_name'];
-					$last_name = $providerUser->user['last_name'];
+				switch ($provider) {
+					case 'google':
+						$first_name = $providerUser->user['name']['givenName'];
+						$last_name = $providerUser->user['name']['familyName'];
+						break;
+					case 'facebook':
+						$first_name = $providerUser->user['first_name'];
+						$last_name = $providerUser->user['last_name'];
+						break;
+					default:
+
 				}
 				$user = User::create([
 					'email'      => $providerUser->getEmail(),
@@ -56,10 +61,10 @@ class SocialAccount extends Model
 					'last_name'  => $last_name,
 					'password'   => Hash::make(md5(time()))
 				]);
-			}
 
-			$account->user()->associate($user);
-			$account->save();
+				$account->user()->associate($user);
+				$account->save();
+			}
 
 			return $user;
 

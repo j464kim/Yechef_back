@@ -186,7 +186,20 @@ class LoginController extends Controller
 			true // HttpOnly
 		);
 
-		return $this->appendUserInfo($dataCopy, $data, $grantType);
+		$user = null;
+		if ($grantType === 'password') {
+			$user = User::where('email', $dataCopy['username'])->first();
+		} else {
+			$user = User::where('email',
+				$this->socialite::driver($dataCopy['network'])->userFromToken($dataCopy['access_token'])->getEmail())->first();
+		}
+		$data = array_merge($data, [
+			'first_name' => $user['first_name'],
+			'last_name'  => $user['last_name'],
+			'email'      => $user['email'],
+			'id'         => $user['id'],
+		]);
+		return $data;
 	}
 
 	/**
@@ -231,30 +244,5 @@ class LoginController extends Controller
 		]);
 
 		return response()->success($result, 10000);
-	}
-
-	/**
-	 * @param array $data
-	 * @param $grantType
-	 * @param string $network
-	 * @return array
-	 */
-	private function appendUserInfo(array $dataCopy, array $data, $grantType)
-	{
-		$user = null;
-		if ($grantType === 'password') {
-			$user = User::where('email', $dataCopy['username'])->first();
-			$user = json_decode($user, true);
-		} else {
-			$user = User::where('email',
-				Socialite::driver($dataCopy['network'])->userFromToken($dataCopy['access_token'])->getEmail())->first();
-		}
-		$data = array_merge($data, [
-			'first_name' => $user['first_name'],
-			'last_name'  => $user['last_name'],
-			'email'      => $user['email'],
-			'id'         => $user['id'],
-		]);
-		return $data;
 	}
 }
