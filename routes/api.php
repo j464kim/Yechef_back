@@ -15,7 +15,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('logout', 'Auth\LoginController@logout');
 	Route::post('refresh-token', 'Auth\LoginController@refreshToken');
 // TODO Change this to proper middleware group later on
-	Route::resource('dishes/{dishId}/rating', 'DishRatingController', ['except' => ['index', 'show', 'create', 'edit']]);
+	Route::resource('dishes/{dishId}/rating', 'DishRatingController',
+		['except' => ['index', 'show', 'create', 'edit']]);
 	Route::resource('dishes', 'DishController', ['except' => ['index', 'show', 'create', 'edit']]);
 	Route::resource('kitchens', 'KitchenController', ['except' => ['index', 'show', 'create', 'edit']]);
 	Route::resource('media', 'MediaController', ['only' => 'store']);
@@ -38,7 +39,8 @@ Route::post('auth/facebook', 'Auth\LoginController@facebook');
 Route::post('auth/google', 'Auth\LoginController@google');
 
 // Password Reset Routes...
-$this->get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
 $this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
-$this->get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
 $this->post('password/reset', 'Auth\ResetPasswordController@reset');
+$this->get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+$this->get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+
