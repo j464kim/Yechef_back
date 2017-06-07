@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
@@ -104,6 +105,8 @@ class KitchenController extends Controller
 	{
 		$kitchen = Kitchen::findKitchen($id);
 		$kitchen->delete();
+
+		event(new ReactionableDeleted($kitchen));
 
 		return response()->success(12002);
 	}

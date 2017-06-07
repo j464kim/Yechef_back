@@ -34,6 +34,9 @@ class Media extends Model
 		'mediable_type'
 	];
 
+	/**
+	 * @return array
+	 */
 	public static function getValidationRule()
 	{
 		$rule = array(

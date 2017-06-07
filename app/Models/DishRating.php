@@ -7,6 +7,7 @@ use Ghanem\Rating\Models\Rating;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Reactionable;
 
 /**
  * Class DishRating
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class DishRating extends Rating
 {
 	use SoftDeletes;
+	use Reactionable;
 
 	/**
 	 * The attributes that should be mutated to dates.

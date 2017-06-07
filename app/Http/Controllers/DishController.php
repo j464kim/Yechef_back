@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\DishDeleted;
+use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use App\Models\Dish;
@@ -70,7 +71,10 @@ class DishController extends Controller
 		//TODO: Also need to delete associated ratings
 		$dish = Dish::findDish($id);
 		$dish->delete();
+
 		event(new DishDeleted($dish));
+		event(new ReactionableDeleted($dish));
+
 		return response()->success($dish, 11003);
 	}
 
