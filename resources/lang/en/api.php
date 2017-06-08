@@ -94,4 +94,20 @@ return [
 	'13500' => 'File does not exist',
 	'13501' => 'File is not valid',
 	'13502' => 'There are errors in the files',
+
+	/**
+	 * Relation related
+	 * Success Range 14000 <= x < 14500
+	 * Error Range 14500 <= x < 15000
+	 */
+	// success
+	'14000' => 'Successfully added reaction to the post',
+	'14001' => 'Successfully deleted reaction to the post',
+	'14002' => 'Successfully retrieved the number of reactions',
+
+	// fail
+	'14500' => 'Something is wrong with an action',
+	'14501' => 'Could not find the reaction',
+	'14502' => 'User has more than 1 reactions to the post',
+	'14503' => 'Could not find the reactionable'
 ];

@@ -7,12 +7,14 @@ use App\Yechef\DishRatingable as Ratingable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Reactionable;
 use Illuminate\Support\Facades\Log;
 
 class Dish extends Model
 {
 	use SoftDeletes;
 	use Ratingable;
+	use Reactionable;
 
 	/**
 	 * The attributes that are mass assignable.
@@ -29,6 +31,7 @@ class Dish extends Model
 
 	/**
 	 * Get all of the Dish's comments.
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
 	 */
 	public function medias()
 	{
@@ -51,6 +54,19 @@ class Dish extends Model
 		return $this->hasMany('App\Models\DishRating');
 	}
 
+	/**
+	 * Get all of the Dish's reactions.
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 */
+	public function reactions()
+	{
+		return $this->morphMany('App\Models\Reaction', 'reactionable');
+	}
+
+	/**
+	 * @param null $id
+	 * @return array
+	 */
 	public static function getValidation($id = null)
 	{
 		Return [
@@ -63,6 +79,12 @@ class Dish extends Model
 		];
 	}
 
+	/**
+	 * @param $id
+	 * @param bool $withMedia
+	 * @return \Illuminate\Database\Eloquent\Collection|Model
+	 * @throws YechefException
+	 */
 	public static function findDish($id, $withMedia = false)
 	{
 		try {

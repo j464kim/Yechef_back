@@ -37,5 +37,10 @@ class User extends Authenticatable
 			'password'   => 'required|min:6|confirmed',
 			'phone'      => 'phone',
 		];
+  }
+    
+  public function reactions()
+	{
+		return $this->hasMany('App\Models\Reaction');
 	}
 }

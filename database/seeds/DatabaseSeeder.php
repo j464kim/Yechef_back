@@ -1,8 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
 		\DB::table('media')->truncate();
 		\DB::table('dishes')->truncate();
 		\DB::table('kitchens')->truncate();
+		\DB::table('reactions')->truncate();
 		\DB::table('users')->truncate();
 
 		$this->call(UsersTableSeeder::class);
@@ -28,6 +29,7 @@ class DatabaseSeeder extends Seeder
 		$this->call(DishesTableSeeder::class);
 		$this->call(RatingsTableSeeder::class);
 		$this->call(MediasTableSeeder::class);
+		$this->call(ReactionsTableSeeder::class);
 
 		Schema::enableForeignKeyConstraints();
 
