@@ -25,8 +25,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 //Route::resource('dishes', 'Dish\DishController', ['only' => ['index', 'show']]);
 //Route::resource('kitchens', 'KitchenController', ['only' => ['index', 'show']]);
 
-//Route::get('dishes/{dishId}/rating/avg', 'Dish\DishRatingController@getAvg');
-//Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['only' => ['index', 'show']]);
+Route::get('dishes/{dishId}/rating/avg', 'DishRatingController@getAvg');
+Route::resource('dishes/{dishId}/rating', 'DishRatingController', ['only' => ['index', 'show']]);
 
 Route::resource('dishes', 'DishController');
 Route::resource('kitchens', 'KitchenController');
