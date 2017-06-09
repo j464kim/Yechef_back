@@ -48,6 +48,7 @@ return [
 	'10502' => 'Refresh token required',
 	'10503' => 'Fail to refresh access token',
 	'10504' => 'No user session found',
+	'10505' => 'Wrong input for user registration',
 
 	/**
 	 * Dish related
