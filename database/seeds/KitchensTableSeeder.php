@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\Kitchen;
 
 class KitchensTableSeeder extends Seeder
 {
@@ -11,6 +12,6 @@ class KitchensTableSeeder extends Seeder
 	 */
 	public function run()
 	{
-		factory(App\Models\Kitchen::class, 5)->create();
+		factory(Kitchen::class, 5)->create();
 	}
 }

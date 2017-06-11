@@ -22,9 +22,8 @@ class MediasTableSeeder extends Seeder
 			}
 		}
 		foreach ($kitchens as $kitchen) {
-			for ($i = 0; $i < 3; $i++) {
-				$kitchen->medias()->save(factory(Media::class)->make());
-			}
+			$kitchen->medias()->save(factory(Media::class)->make(['url' => 'http://hbu.h-cdn.co/assets/17/08/1600x1028/gallery-1487868231-kitchen-1.jpg']));
 		}
+
 	}
 }
