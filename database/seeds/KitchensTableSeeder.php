@@ -13,7 +13,11 @@ class KitchensTableSeeder extends Seeder
 	 */
 	public function run()
 	{
-		$user = User::first();
-		factory(Kitchen::class, 5)->create(['user_id' => $user->id]);
+		factory(Kitchen::class, 5)->create()->each(function ($u) {
+			$user = User::first();
+			$u->users()->save($user, ['verified' => true, 'role' => 1]);
+			$user = User::find(2);
+			$u->users()->save($user, ['verified' => false, 'role' => 1]);
+		});
 	}
 }

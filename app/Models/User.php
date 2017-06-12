@@ -46,7 +46,7 @@ class User extends Authenticatable
 
 	public function kitchens()
 	{
-		return $this->hasMany('App\Models\Kitchen');
+		return $this->belongsToMany('App\Models\Kitchen')->withPivot('role', 'verified')->withTimestamps();
 	}
 
 	public function reactions()

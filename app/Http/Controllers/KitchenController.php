@@ -58,7 +58,6 @@ class KitchenController extends Controller
 			'phone'       => $request->input('phone'),
 			'address'     => $request->input('address'),
 			'description' => $request->input('description'),
-			'user_id'     => $this->user->id,
 		]);
 
 		return response()->success($kitchen);
@@ -118,6 +117,12 @@ class KitchenController extends Controller
 		event(new ReactionableDeleted($kitchen));
 
 		return response()->success(12002);
+	}
+
+	public function getAdmins($id)
+	{
+		$admins = Kitchen::findKitchen($id, false)->users;
+		return response()->success($admins);
 	}
 
 	private function validateInput(Request $request)
