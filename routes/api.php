@@ -21,6 +21,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 // TODO Uncomment below 2 lines when auth is all ready
 //	Route::resource('kitchens', 'KitchenController', ['only' => ['store', 'destroy', 'update']]);
 //	Route::resource('media', 'MediaController', ['only' => 'store']);
+
+//	Route::get('user/getMyKitchens', 'UserController@getMyKitchens');
 });
 // TODO Uncomment below 2 lines when auth is all ready
 //Route::resource('dishes', 'Dish\DishController', ['only' => ['index', 'show']]);
@@ -42,4 +44,6 @@ Route::resource('reactions', 'ReactionController',
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register', 'Auth\RegisterController@register');
 Route::post('auth/facebook', 'Auth\LoginController@facebook');
-Route::post('auth/google', 'Auth\LoginController@google');
+Route::post('auth/google', 'Auth\LoginController@google');\
+
+Route::get('users/getMyKitchens', 'UserController@getMyKitchens');
