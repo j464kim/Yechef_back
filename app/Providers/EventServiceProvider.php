@@ -17,9 +17,6 @@ class EventServiceProvider extends ServiceProvider
 		'App\Events\Event'       => [
 			'App\Listeners\EventListener',
 		],
-		'App\Events\DishDeleted' => [
-			'App\Listeners\DishDeletedListener',
-		],
 		ReactionableDeleted::class => [
 			ReactionableDeletedListener::class,
 		],
