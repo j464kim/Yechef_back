@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\DishDeleted;
 use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
