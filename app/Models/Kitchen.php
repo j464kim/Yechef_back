@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\YechefException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 use App\Traits\Reactionable;
 use Illuminate\Support\Facades\Log;
 
@@ -17,14 +18,18 @@ use Illuminate\Support\Facades\Log;
  */
 class Kitchen extends Model
 {
-	use SoftDeletes;
+	use SoftDeletes, CascadeSoftDeletes;
 	use Reactionable;
+
 	/**
-	 * The attributes that should be mutated to dates.
-	 *
-	 * @var array
+	 * Enable softDeletes cascade soft-deletes related models
 	 */
 	protected $dates = ['deleted_at'];
+
+	/**
+	 * Cascade soft-deletes related models
+	 */
+	protected $cascadeDeletes = ['dishes'];
 
 	/**
 	 * The attributes that are mass assignable.
