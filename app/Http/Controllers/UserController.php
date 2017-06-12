@@ -27,7 +27,7 @@ class UserController extends Controller
 
 	public function getMyKitchens(Request $request)
 	{
-		$result = $this->user->kitchens;
+		$result = $this->user->kitchens()->with('medias')->get();
 		return response()->success($result);
 	}
 }
