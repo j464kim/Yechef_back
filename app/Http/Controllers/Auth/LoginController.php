@@ -4,28 +4,29 @@ namespace App\Http\Controllers\Auth;
 
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Login Controller
+	|--------------------------------------------------------------------------
+	|
+	| This controller handles authenticating users for the application and
+	| redirecting them to your home screen. The controller uses a trait
+	| to conveniently provide its functionality to your applications.
+	|
+	*/
 
-    use AuthenticatesUsers;
+	use AuthenticatesUsers;
 
-    // cookie key
+	// cookie key
 	const REFRESH_TOKEN = 'refreshToken';
 
 	// DI parameters
@@ -36,12 +37,12 @@ class LoginController extends Controller
 	private $db;
 	private $socialite;
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
+	/**
+	 * Where to redirect users after login.
+	 *
+	 * @var string
+	 */
+	protected $redirectTo = '/home';
 
 	/**
 	 * Create a new controller instance.
@@ -50,16 +51,16 @@ class LoginController extends Controller
 	 * @param Client $guzzleClient
 	 * @param Socialite $socialite
 	 */
-    public function __construct(Application $app, Client $guzzleClient, Socialite $socialite)
-    {
+	public function __construct(Application $app, Client $guzzleClient, Socialite $socialite)
+	{
 		$this->guzzleClient = $guzzleClient;
 		$this->cookie = $app->make('cookie');
 		$this->validator = $app->make('validator');
 		$this->auth = $app->make('auth');
 		$this->db = $app->make('db');
 		$this->socialite = $socialite;
-        $this->middleware('guest', ['except' => 'logout']);
-    }
+		$this->middleware('guest', ['except' => 'logout']);
+	}
 
 	/**
 	 * Login the user using Oauth password granted token
@@ -71,7 +72,7 @@ class LoginController extends Controller
 	public function login(Request $request)
 	{
 		$validator = $this->validator->make($request->all(), [
-			'email' => 'email|required',
+			'email'    => 'email|required',
 			'password' => 'required'
 		]);
 
@@ -83,14 +84,14 @@ class LoginController extends Controller
 		$password = request()->input('password');
 
 
-		try{
+		try {
 			$result = $this->proxy('password', [
 				'username' => $email,
 				'password' => $password
 			]);
 
 			return response()->success($result, 10000);
-		}catch(\Exception $e) {
+		} catch (\Exception $e) {
 			throw new YechefException(10501);
 		}
 	}
@@ -113,13 +114,13 @@ class LoginController extends Controller
 		}
 
 		$refreshToken = request()->input('refresh_token');
-		try{
+		try {
 			$result = $this->proxy('refresh_token', [
 				'refresh_token' => $refreshToken,
 			]);
 			// use trans
 			return response()->success($result, 'access token refreshed');
-		}catch(\Exception $e) {
+		} catch (\Exception $e) {
 			throw new YechefException(10503);
 		}
 	}
@@ -128,7 +129,7 @@ class LoginController extends Controller
 	{
 		$user = $this->auth->user();
 
-		if( !isset($user) ) {
+		if (!isset($user)) {
 			throw new YechefException(10504);
 		}
 
@@ -157,32 +158,47 @@ class LoginController extends Controller
 	 * @param string $scope
 	 * @return mixed|\Psr\Http\Message\ResponseInterface
 	 */
-	private function proxy($grantType, array $data = [], $scope='')
+	private function proxy($grantType, array $data = [], $scope = '')
 	{
 		// TODO scope is for future permission use
 
+		$dataCopy = $data;
 		$data = array_merge($data, [
 			'client_id'     => env('PASSWORD_CLIENT_ID'),
 			'client_secret' => env('PASSWORD_CLIENT_SECRET'),
 			'grant_type'    => $grantType,
-			'scope'			=> $scope
+			'scope'         => $scope
 		]);
 
 		$response = $this->guzzleClient->request('POST', url('oauth/token'), [
 			'form_params' => $data
 		])->getBody();
-		$data = json_decode($response,true);
+		$data = json_decode($response, true);
 
 		// Create a refresh token cookie
 		$this->cookie->queue(
 			self::REFRESH_TOKEN,
-			isset($data['refresh_token']) ? $data['refresh_token']: null,
+			isset($data['refresh_token']) ? $data['refresh_token'] : null,
 			$data['expires_in'],
 			null,
 			null,
 			false,
 			true // HttpOnly
 		);
+
+		$user = null;
+		if ($grantType === 'password') {
+			$user = User::where('email', $dataCopy['username'])->first();
+		} else {
+			$user = User::where('email',
+				$this->socialite::driver($dataCopy['network'])->userFromToken($dataCopy['access_token'])->getEmail())->first();
+		}
+		$data = array_merge($data, [
+			'first_name' => $user['first_name'],
+			'last_name'  => $user['last_name'],
+			'email'      => $user['email'],
+			'id'         => $user['id'],
+		]);
 		return $data;
 	}
 
@@ -201,7 +217,7 @@ class LoginController extends Controller
 		$accessToken = $response['access_token'];
 
 		$result = $this->proxy('social', [
-			'network' => 'facebook',
+			'network'      => 'facebook',
 			'access_token' => $accessToken,
 		]);
 
@@ -223,12 +239,10 @@ class LoginController extends Controller
 		$accessToken = $response['access_token'];
 
 		$result = $this->proxy('social', [
-			'network' => 'google',
+			'network'      => 'google',
 			'access_token' => $accessToken,
 		]);
 
 		return response()->success($result, 10000);
 	}
-
-
 }
