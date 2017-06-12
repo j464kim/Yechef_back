@@ -121,7 +121,7 @@ class LoginController extends Controller
 			// use trans
 			return response()->success($result, 'access token refreshed');
 		} catch (\Exception $e) {
-			throw new YechefException(10503);
+			throw new YechefException(10503, $e->getMessage());
 		}
 	}
 

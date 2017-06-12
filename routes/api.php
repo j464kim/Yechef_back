@@ -14,6 +14,7 @@
 Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('logout', 'Auth\LoginController@logout');
 	Route::post('refresh-token', 'Auth\LoginController@refreshToken');
+
 // TODO Change this to proper middleware group later on
 //	Route::resource('dishes/{dishId}/rating', 'Dish\DishRatingController', ['except' => ['index', 'show', 'create', 'edit']]);
 //	Route::resource('dishes', 'Dish\DishController', ['only' => ['store', 'destroy', 'update']]);
@@ -30,6 +31,8 @@ Route::resource('dishes/{dishId}/rating', 'DishRatingController', ['only' => ['i
 
 Route::resource('dishes', 'DishController');
 Route::resource('kitchens', 'KitchenController');
+Route::resource('media', 'MediaController', ['only' => 'store']);
+
 
 Route::post('reactions/getReactions',
 	['uses' => 'ReactionController@index', 'as' => 'reactions.getReactions']);

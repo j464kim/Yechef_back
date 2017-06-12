@@ -31,7 +31,7 @@ class Kitchen extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['name', 'address', 'phone', 'email', 'description'];
+	protected $fillable = ['name', 'address', 'phone', 'email', 'description', 'user_id'];
 
 	/**
 	 * Get all of the Kitchen's medias.
@@ -44,6 +44,11 @@ class Kitchen extends Model
 	public function dishes()
 	{
 		return $this->hasMany('App\Models\Dish');
+	}
+
+	public function user()
+	{
+		return $this->belongsTo('App\Models\User');
 	}
 
 	/**

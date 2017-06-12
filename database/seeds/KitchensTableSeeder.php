@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\Kitchen;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class KitchensTableSeeder extends Seeder
 {
@@ -12,6 +13,7 @@ class KitchensTableSeeder extends Seeder
 	 */
 	public function run()
 	{
-		factory(Kitchen::class, 5)->create();
+		$user = User::first();
+		factory(Kitchen::class, 5)->create(['user_id' => $user->id]);
 	}
 }

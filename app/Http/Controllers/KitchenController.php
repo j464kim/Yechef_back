@@ -4,22 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
+use App\Models\Kitchen;
+use App\Models\User;
+use App\Yechef\Helper;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
-use App\Yechef\Helper;
-use App\Models\Kitchen;
 
 class KitchenController extends Controller
 {
 
 	private $validator;
+	private $auth;
+	private $user;
 
 	/**
 	 * KitchenController constructor.
 	 * @param Application $app
 	 */
-	public function __construct(Application $app) {
+	public function __construct(Application $app)
+	{
 		$this->validator = $app->make('validator');
+		$this->auth = $app->make('auth');
+		//TODO: Get User Dynamically
+		$this->user = User::first();
+//		$this->user = $this->auth->user();
 	}
 
 
@@ -49,7 +57,8 @@ class KitchenController extends Controller
 			'email'       => $request->input('email'),
 			'phone'       => $request->input('phone'),
 			'address'     => $request->input('address'),
-			'description' => $request->input('description')
+			'description' => $request->input('description'),
+			'user_id'     => $this->user->id,
 		]);
 
 		return response()->success($kitchen);
