@@ -72,7 +72,6 @@ class DishController extends Controller
 		$dish = Dish::findDish($id);
 		$dish->delete();
 
-		event(new DishDeleted($dish));
 		event(new ReactionableDeleted($dish));
 
 		return response()->success($dish, 11003);
