@@ -59,6 +59,7 @@ class KitchenController extends Controller
 			'address'     => $request->input('address'),
 			'description' => $request->input('description'),
 		]);
+		$kitchen->users()->save($this->user, ['role' => 1, 'verified' => true]);
 
 		return response()->success($kitchen);
 	}
