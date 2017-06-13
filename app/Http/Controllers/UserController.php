@@ -30,4 +30,10 @@ class UserController extends Controller
 		$result = $this->user->kitchens()->with('medias')->get();
 		return response()->success($result);
 	}
+
+	public function index(Request $request)
+	{
+		$result = User::all();
+		return response()->success($result);
+	}
 }
