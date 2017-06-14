@@ -109,5 +109,16 @@ return [
 	'14500' => 'Something is wrong with an action',
 	'14501' => 'Could not find the reaction',
 	'14502' => 'User has more than 1 reactions to the post',
-	'14503' => 'Could not find the reactionable'
+	'14503' => 'Could not find the reactionable',
+
+
+	/**
+	 * User related
+	 * Success Range 15000 <= x < 15500
+	 * Error Range 15500 <= x < 16000
+	 */
+	// success
+	'15000' => 'Found the User',
+	// fail
+	'15501' => 'Unable to find the user',
 ];

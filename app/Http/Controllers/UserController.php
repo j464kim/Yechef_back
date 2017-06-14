@@ -36,4 +36,5 @@ class UserController extends Controller
 		$result = User::all();
 		return response()->success($result);
 	}
+
 }

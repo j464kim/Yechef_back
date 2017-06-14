@@ -53,4 +53,18 @@ class User extends Authenticatable
 	{
 		return $this->hasMany('App\Models\Reaction');
 	}
+
+
+	public static function findUser($id, $withMedia = false)
+	{
+		try {
+			if ($withMedia) {
+				return User::with('medias')->findOrFail($id);
+			} else {
+				return User::findOrFail($id);
+			}
+		} catch (\Exception $e) {
+			throw new YechefException(15501);
+		}
+	}
 }

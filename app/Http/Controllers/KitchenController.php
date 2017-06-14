@@ -126,6 +126,21 @@ class KitchenController extends Controller
 		return response()->success($admins);
 	}
 
+	public function addAdmin(Request $request, $id)
+	{
+		$kitchen = Kitchen::findKitchen($id);
+		$user = User::findUser($request->input('user_id'));
+		$kitchen->users()->save($user, ['verified' => false, 'role' => 1]);
+		return response()->success($kitchen);
+	}
+
+	public function removeAdmin(Request $request, $id)
+	{
+		$kitchen = Kitchen::findKitchen($id);
+		$kitchen->users()->detach($request->input('user_id'));
+		return response()->success($kitchen);
+	}
+
 	private function validateInput(Request $request)
 	{
 		$validationRule = Kitchen::getValidationRule();

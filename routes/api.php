@@ -46,6 +46,9 @@ Route::post('register', 'Auth\RegisterController@register');
 Route::post('auth/facebook', 'Auth\LoginController@facebook');
 Route::post('auth/google', 'Auth\LoginController@google');\
 
-Route::get('users/getMyKitchens', 'UserController@getMyKitchens');
 Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
+Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
+Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
+
+Route::get('users/getMyKitchens', 'UserController@getMyKitchens');
 Route::get('users/list', 'UserController@index');
