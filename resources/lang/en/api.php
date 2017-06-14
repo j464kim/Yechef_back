@@ -12,7 +12,8 @@ return [
     */
 	'0'     => 'Invalid error code',
 	'1'     => 'Request Success',
-	'2'     => 'Unautherized resource',
+	'2'     => 'Please login before accessing the requested resource',
+	'3'     => 'You are not allowed to access the requested resource',
 
 	/*
 	|--------------------------------------------------------------------------
