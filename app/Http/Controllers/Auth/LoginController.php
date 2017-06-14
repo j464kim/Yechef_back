@@ -121,7 +121,7 @@ class LoginController extends Controller
 			// use trans
 			return response()->success($result, 'access token refreshed');
 		} catch (\Exception $e) {
-			throw new YechefException(10503);
+			throw new YechefException(10503, $e->getMessage());
 		}
 	}
 
@@ -185,20 +185,6 @@ class LoginController extends Controller
 			false,
 			true // HttpOnly
 		);
-
-		$user = null;
-		if ($grantType === 'password') {
-			$user = User::where('email', $dataCopy['username'])->first();
-		} else {
-			$user = User::where('email',
-				$this->socialite::driver($dataCopy['network'])->userFromToken($dataCopy['access_token'])->getEmail())->first();
-		}
-		$data = array_merge($data, [
-			'first_name' => $user['first_name'],
-			'last_name'  => $user['last_name'],
-			'email'      => $user['email'],
-			'id'         => $user['id'],
-		]);
 		return $data;
 	}
 
