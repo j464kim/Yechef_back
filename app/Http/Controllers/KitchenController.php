@@ -7,7 +7,7 @@ use App\Exceptions\YechefException;
 use App\Models\Kitchen;
 use App\Models\User;
 use App\Yechef\Helper;
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
 class KitchenController extends Controller
@@ -25,9 +25,6 @@ class KitchenController extends Controller
 	{
 		$this->validator = $app->make('validator');
 		$this->auth = $app->make('auth');
-		//TODO: Get User Dynamically
-		$this->user = User::first();
-//		$this->user = $this->auth->user();
 	}
 
 
@@ -50,6 +47,7 @@ class KitchenController extends Controller
 	 */
 	public function store(Request $request)
 	{
+		$this->user = $request->user();
 		$this->validateInput($request);
 
 		$kitchen = Kitchen::create([
