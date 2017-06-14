@@ -39,7 +39,7 @@ class CreateDishTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dish_media');
+		Schema::dropIfExists('dish_media');
         Schema::dropIfExists('dishes');
-    }
+	}
 }

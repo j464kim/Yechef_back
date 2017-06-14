@@ -2,70 +2,74 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
+use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+use App\Models\User;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Register Controller
+	|--------------------------------------------------------------------------
+	|
+	| This controller handles the registration of new users as well as their
+	| validation and creation. By default this controller uses a trait to
+	| provide this functionality without requiring any additional code.
+	|
+	*/
 
-    use RegistersUsers;
+	use RegistersUsers;
 
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
+	// DI parameters
+	private $loginCtrl;
+	private $validator;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
+	/**
+	 * Where to redirect users after registration.
+	 *
+	 * @var string
+	 */
+	protected $redirectTo = '/home';
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
-        ]);
-    }
+	/**
+	 * Create a new controller instance.
+	 *
+	 * @return void
+	 */
+	public function __construct(Application $app, LoginController $loginController)
+	{
+		$this->loginCtrl = $loginController;
+		$this->middleware('guest');
+		$this->validator = $app->make('validator');
+	}
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return User
-     */
-    protected function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
-    }
+	public function register(Request $request)
+	{
+		$validator = $this->validator->make($request->all(), User::getValidation());
+
+		if ($validator->fails()) {
+			throw new YechefException(10505, $validator->getMessageBag());
+		}
+
+		$first_name = $request->input('first_name');
+		$last_name = $request->input('last_name');
+		$email = $request->input('email');
+		$password = $request->input('password');
+		$phone = $request->input('phone');
+
+		User::create([
+			'email'      => $email,
+			'password'   => bcrypt($password),
+			'first_name' => $first_name,
+			'last_name'  => $last_name,
+			'phone'      => $phone,
+		]);
+
+		return $this->loginCtrl->login($request);
+	}
 }

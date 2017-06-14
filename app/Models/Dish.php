@@ -3,53 +3,103 @@
 namespace App\Models;
 
 use App\Exceptions\YechefException;
+use App\Yechef\DishRatingable as Ratingable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Iatstuti\Database\Support\CascadeSoftDeletes;
+use App\Traits\Reactionable;
 use Illuminate\Support\Facades\Log;
 
 class Dish extends Model
 {
-	use SoftDeletes;
+	use SoftDeletes, CascadeSoftDeletes;
+	use Ratingable, Reactionable;
+
 	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['slug', 'name', 'description'];
+	//TODO: Add ingredient
+	protected $fillable = ['slug', 'name', 'description', 'price', 'kitchen_id'];
 
 	/**
-	 * Enable softDeletes
+	 * Enable softDeletes & cascade soft-deletes
 	 */
 	protected $dates = ['deleted_at'];
 
 	/**
-	 * Many to many relationship to media
+	 * Cascade soft-deletes related models
 	 */
-	public function media()
+	protected $cascadeDeletes = ['ratings'];
+
+	/**
+	 * Get all of the Dish's comments.
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 */
+	public function medias()
 	{
-		return $this->belongsToMany('App\Models\Media');
+		return $this->morphMany('App\Models\Media', 'mediable');
 	}
 
+	public function ingredients()
+	{
+		//TODO
+//		return $this->hasMany("App\Models\Ingredient");
+	}
+
+	public function kitchen()
+	{
+		return $this->belongsTo('App\Models\Kitchen');
+	}
+
+	public function ratings()
+	{
+		return $this->hasMany('App\Models\DishRating');
+	}
+
+	/**
+	 * Get all of the Dish's reactions.
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 */
+	public function reactions()
+	{
+		return $this->morphMany('App\Models\Reaction', 'reactionable');
+	}
+
+	/**
+	 * @param null $id
+	 * @return array
+	 */
 	public static function getValidation($id = null)
 	{
 		Return [
 			'name'        => 'bail|required',
-			'description' => 'required',
+			'description' => 'bail|required',
+			'kitchen_id'  => 'bail|required|integer',
+			'price'       => 'required|numeric',
+			//TODO: ingredient
+//			'ingredient_id' => 'integer',
 		];
 	}
 
+	/**
+	 * @param $id
+	 * @param bool $withMedia
+	 * @return \Illuminate\Database\Eloquent\Collection|Model
+	 * @throws YechefException
+	 */
 	public static function findDish($id, $withMedia = false)
 	{
 		try {
 			if ($withMedia) {
-				return Dish::with('media')->findOrFail($id);
+				return Dish::with('medias')->findOrFail($id);
 
 			} else {
 				return Dish::findOrFail($id);
 			}
 		} catch (ModelNotFoundException $e) {
-			Log::error('Could not find the dish with id: ' . $id);
 			throw new YechefException(11500);
 		}
 	}

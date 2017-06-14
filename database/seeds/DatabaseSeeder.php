@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
@@ -14,14 +15,23 @@ class DatabaseSeeder extends Seeder
 	{
 		Model::unguard();
 
-		\DB::table('dishes')->delete();
-		\DB::table('users')->delete();
-		\DB::table('kitchens')->delete();
-		\DB::table('media')->delete();
+		Schema::disableForeignKeyConstraints();
 
-		$this->call(DishTableSeeder::class);
-		$this->call(UserTableSeeder::class);
-		$this->call(KitchenTableSeeder::class);
+		\DB::table('dish_ratings')->truncate();
+		\DB::table('media')->truncate();
+		\DB::table('dishes')->truncate();
+		\DB::table('kitchens')->truncate();
+		\DB::table('reactions')->truncate();
+		\DB::table('users')->truncate();
+
+		$this->call(UsersTableSeeder::class);
+		$this->call(KitchensTableSeeder::class);
+		$this->call(DishesTableSeeder::class);
+		$this->call(RatingsTableSeeder::class);
+		$this->call(MediasTableSeeder::class);
+		$this->call(ReactionsTableSeeder::class);
+
+		Schema::enableForeignKeyConstraints();
 
 		Model::reguard();
 	}

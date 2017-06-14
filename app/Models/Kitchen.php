@@ -4,20 +4,32 @@ namespace App\Models;
 
 use App\Exceptions\YechefException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Iatstuti\Database\Support\CascadeSoftDeletes;
+use App\Traits\Reactionable;
 use Illuminate\Support\Facades\Log;
 
+/**
+ *
+ * @property int id
+ *
+ * Class Kitchen
+ * @package App\Models
+ */
 class Kitchen extends Model
 {
-	use SoftDeletes;
+	use SoftDeletes, CascadeSoftDeletes;
+	use Reactionable;
 
 	/**
-	 * The attributes that should be mutated to dates.
-	 *
-	 * @var array
+	 * Enable softDeletes cascade soft-deletes related models
 	 */
 	protected $dates = ['deleted_at'];
+
+	/**
+	 * Cascade soft-deletes related models
+	 */
+	protected $cascadeDeletes = ['dishes'];
 
 	/**
 	 * The attributes that are mass assignable.
@@ -27,11 +39,25 @@ class Kitchen extends Model
 	protected $fillable = ['name', 'address', 'phone', 'email', 'description'];
 
 	/**
-	 * Many to many relationship to media
+	 * Get all of the Kitchen's medias.
 	 */
-	public function media()
+	public function medias()
 	{
-		return $this->belongsToMany('App\Models\Media');
+		return $this->morphMany('App\Models\Media', 'mediable');
+	}
+
+	public function dishes()
+	{
+		return $this->hasMany('App\Models\Dish');
+	}
+
+	/**
+	 * Get all of the Dish's reactions.
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 */
+	public function reactions()
+	{
+		return $this->morphMany('App\Models\Reaction', 'reactionable');
 	}
 
 	/**
@@ -50,11 +76,17 @@ class Kitchen extends Model
 		return $rule;
 	}
 
+	/**
+	 * @param $id
+	 * @param bool $withMedia
+	 * @return \Illuminate\Database\Eloquent\Collection|Model
+	 * @throws YechefException
+	 */
 	public static function findKitchen($id, $withMedia = false)
 	{
 		try {
 			if ($withMedia) {
-				return Kitchen::with('media')->findOrFail($id);
+				return Kitchen::with('medias')->findOrFail($id);
 			} else {
 				return Kitchen::findOrFail($id);
 			}
@@ -62,4 +94,5 @@ class Kitchen extends Model
 			throw new YechefException(12501);
 		}
 	}
+
 }

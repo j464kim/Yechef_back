@@ -40,7 +40,7 @@ class CreateKitchenTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kitchen_media');
+		Schema::dropIfExists('kitchen_media');
         Schema::dropIfExists('kitchens');
-    }
+	}
 }

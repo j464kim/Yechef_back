@@ -162,6 +162,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+		Orangehill\Iseed\IseedServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -184,6 +185,8 @@ return [
 		// passport
 		Laravel\Passport\PassportServiceProvider::class,
 
+		// rating
+		Ghanem\Rating\RatingServiceProvider::class,
         // socialite
         Laravel\Socialite\SocialiteServiceProvider::class,
 

@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Socialite\Contracts\User as ProviderUser;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Contracts\User as ProviderUser;
 
 class SocialAccount extends Model
 {
@@ -34,22 +34,37 @@ class SocialAccount extends Model
 
 			$account = new SocialAccount([
 				'provider_user_id' => $providerUser->getId(),
-				'provider' => $provider
+				'provider'         => $provider
 			]);
 
 			$user = User::where('email', $providerUser->getEmail())->first();
 
 			if (!$user) {
-// TODO: create user account based on these data. create random password, send email in event
-				$user = User::create([
-					'email' => $providerUser->getEmail(),
-					'name' => $providerUser->getName(),
-					'password' => Hash::make(md5(time()))
-				]);
-			}
+				// TODO: create user account based on these data. create random password, send email in event
+				$first_name = '';
+				$last_name = '';
+				switch ($provider) {
+					case 'google':
+						$first_name = $providerUser->user['name']['givenName'];
+						$last_name = $providerUser->user['name']['familyName'];
+						break;
+					case 'facebook':
+						$first_name = $providerUser->user['first_name'];
+						$last_name = $providerUser->user['last_name'];
+						break;
+					default:
 
-			$account->user()->associate($user);
-			$account->save();
+				}
+				$user = User::create([
+					'email'      => $providerUser->getEmail(),
+					'first_name' => $first_name,
+					'last_name'  => $last_name,
+					'password'   => Hash::make(md5(time()))
+				]);
+
+				$account->user()->associate($user);
+				$account->save();
+			}
 
 			return $user;
 

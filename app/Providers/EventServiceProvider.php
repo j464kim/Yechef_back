@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use App\Events\ReactionableDeleted;
+use App\Listeners\ReactionableDeletedListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -15,8 +17,8 @@ class EventServiceProvider extends ServiceProvider
 		'App\Events\Event'       => [
 			'App\Listeners\EventListener',
 		],
-		'App\Events\DishDeleted' => [
-			'App\Listeners\DishDeletedListener',
+		ReactionableDeleted::class => [
+			ReactionableDeletedListener::class,
 		],
 	];
 

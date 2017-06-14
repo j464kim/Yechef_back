@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\DishDeleted;
+use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
+use App\Http\Controllers\Controller;
 use App\Models\Dish;
 use App\Yechef\Helper;
 use Illuminate\Contracts\Foundation\Application;
@@ -20,7 +21,7 @@ class DishController extends Controller
 
 	public function index(Request $request)
 	{
-		$dish = Dish::with('media')->get();
+		$dish = Dish::with('medias')->get();
 		// apply pagination
 		$result = Helper::paginate($request, $dish);
 		return response()->success($result);
@@ -29,6 +30,7 @@ class DishController extends Controller
 	public function show(Request $request, $id)
 	{
 		$dish = Dish::findDish($id, true);
+
 		return response()->success($dish);
 	}
 
@@ -40,6 +42,9 @@ class DishController extends Controller
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
+			'price'       => $request->input('price'),
+			'kitchen_id'  => $request->input('kitchen_id'),
+			//TODO: ingredient
 		]);
 		return response()->success($dish, 11001);
 	}
@@ -52,6 +57,9 @@ class DishController extends Controller
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
+			'price'       => $request->input('price'),
+			'kitchen_id'  => $request->input('kitchen_id'),
+			//TODO: ingredient
 		]);
 		return response()->success($dish, 11002);
 	}
@@ -59,9 +67,12 @@ class DishController extends Controller
 	public function destroy(Request $request, $id)
 	{
 		//TODO: Need to delete other relationships to prevent foreign key constraint issues
+		//TODO: Also need to delete associated ratings
 		$dish = Dish::findDish($id);
 		$dish->delete();
-		event(new DishDeleted($dish));
+
+		event(new ReactionableDeleted($dish));
+
 		return response()->success($dish, 11003);
 	}
 
