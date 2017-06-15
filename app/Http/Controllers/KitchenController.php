@@ -14,8 +14,6 @@ class KitchenController extends Controller
 {
 
 	private $validator;
-	private $auth;
-	private $user;
 
 	/**
 	 * KitchenController constructor.
@@ -24,7 +22,6 @@ class KitchenController extends Controller
 	public function __construct(Application $app)
 	{
 		$this->validator = $app->make('validator');
-		$this->auth = $app->make('auth');
 	}
 
 
@@ -47,7 +44,7 @@ class KitchenController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$this->user = $request->user();
+		$user = $request->user();
 		$this->validateInput($request);
 
 		$kitchen = Kitchen::create([
@@ -58,7 +55,7 @@ class KitchenController extends Controller
 			'address'     => $request->input('address'),
 			'description' => $request->input('description'),
 		]);
-		$kitchen->users()->save($this->user, ['role' => 1, 'verified' => true]);
+		$kitchen->users()->save($user, ['role' => 1, 'verified' => true]);
 
 		return response()->success($kitchen);
 	}
@@ -128,17 +125,29 @@ class KitchenController extends Controller
 
 	public function addAdmin(Request $request, $id)
 	{
+		$userId = $request->input('user_id');
 		$kitchen = Kitchen::findKitchen($id);
-		$user = User::findUser($request->input('user_id'));
-		$kitchen->users()->save($user, ['verified' => false, 'role' => 1]);
-		return response()->success($kitchen);
+		$user = User::findUser($userId);
+		$admin = $kitchen->users()->where('user_id', $userId)->first();
+		if (!$admin) {
+			$kitchen->users()->save($user, ['verified' => false, 'role' => 1]);
+		} else {
+			throw new YechefException(12502);
+		}
+		return response()->success($user);
 	}
 
 	public function removeAdmin(Request $request, $id)
 	{
+		$userId = $request->input('user_id');
 		$kitchen = Kitchen::findKitchen($id);
-		$kitchen->users()->detach($request->input('user_id'));
-		return response()->success($kitchen);
+		$admin = $kitchen->users()->where('user_id', $userId)->first();
+		if ($admin) {
+			$kitchen->users()->detach($userId);
+			return response()->success($admin);
+		} else {
+			throw new YechefException(12503);
+		}
 	}
 
 	private function validateInput(Request $request)

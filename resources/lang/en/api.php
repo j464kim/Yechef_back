@@ -82,6 +82,8 @@ return [
 	// fail
 	'12500' => 'Please make sure all fields filled out',
 	'12501' => 'Kitchen could not be found',
+	'12502' => 'This admin already exists',
+	'12503' => 'Cannot find the kitchen admin',
 
 	/**
 	 * Media related

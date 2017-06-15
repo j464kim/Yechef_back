@@ -15,10 +15,10 @@ class CreateKitchenUserTable extends Migration
     {
 		Schema::create('kitchen_user', function (Blueprint $table) {
 			$table->increments('id');
-			$table->unsignedInteger('user_id')->unsigned();
-			$table->foreign('user_id')->references('id')->on('users');
 			$table->unsignedInteger('kitchen_id')->unsigned();
 			$table->foreign('kitchen_id')->references('id')->on('kitchens');
+			$table->unsignedInteger('user_id')->unsigned();
+			$table->foreign('user_id')->references('id')->on('users');
 			$table->tinyInteger('role');
 			$table->boolean('verified');
 			$table->timestamps();
