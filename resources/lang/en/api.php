@@ -84,6 +84,7 @@ return [
 	'12501' => 'Kitchen could not be found',
 	'12502' => 'This admin already exists',
 	'12503' => 'Cannot find the kitchen admin',
+	'12504' => 'Cannot add/remove self as kitchen admin',
 
 	/**
 	 * Media related

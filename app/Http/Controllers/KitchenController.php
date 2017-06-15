@@ -125,7 +125,11 @@ class KitchenController extends Controller
 
 	public function addAdmin(Request $request, $id)
 	{
+		$currentUser = $request->user();
 		$userId = $request->input('user_id');
+		if ($userId == $currentUser->id) {
+			throw new YechefException(12504);
+		}
 		$kitchen = Kitchen::findKitchen($id);
 		$user = User::findUser($userId);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
@@ -139,7 +143,11 @@ class KitchenController extends Controller
 
 	public function removeAdmin(Request $request, $id)
 	{
+		$currentUser = $request->user();
 		$userId = $request->input('user_id');
+		if ($userId == $currentUser->id) {
+			throw new YechefException(12504);
+		}
 		$kitchen = Kitchen::findKitchen($id);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
 		if ($admin) {
