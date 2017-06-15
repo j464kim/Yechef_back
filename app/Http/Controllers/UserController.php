@@ -19,6 +19,12 @@ class UserController extends Controller
 		return response()->success($result);
 	}
 
+	public function getLoggedInUser(Request $request)
+	{
+		$user = $request->user();
+		return response()->success($user);
+	}
+
 	public function index(Request $request)
 	{
 		$result = User::all();

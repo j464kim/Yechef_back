@@ -13,6 +13,7 @@
 
 Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('logout', 'Auth\LoginController@logout');
+	Route::get('logged-in', 'UserController@getLoggedInUser');
 // TODO Change this to proper middleware group later on
 	Route::resource('dishes/{dishId}/rating', 'DishRatingController', ['except' => ['index', 'show', 'edit']]);
 	Route::resource('dishes', 'DishController', ['only' => ['store', 'destroy', 'update']]);
