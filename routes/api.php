@@ -41,8 +41,14 @@ Route::post('refresh-token', 'Auth\LoginController@refreshToken');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register', 'Auth\RegisterController@register');
 Route::post('auth/facebook', 'Auth\LoginController@facebook');
-Route::post('auth/google', 'Auth\LoginController@google');\
+Route::post('auth/google', 'Auth\LoginController@google');
 
 Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
 
 Route::get('users/list', 'UserController@index');
+
+// Password Reset Routes...
+$this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+$this->post('password/reset', 'Auth\ResetPasswordController@reset');
+$this->get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+$this->get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
