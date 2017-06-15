@@ -125,11 +125,7 @@ class KitchenController extends Controller
 
 	public function addAdmin(Request $request, $id)
 	{
-		$currentUser = $request->user();
-		$userId = $request->input('user_id');
-		if ($userId == $currentUser->id) {
-			throw new YechefException(12504);
-		}
+		$userId = $this->noSelfAction($request);
 		$kitchen = Kitchen::findKitchen($id);
 		$user = User::findUser($userId);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
@@ -143,11 +139,7 @@ class KitchenController extends Controller
 
 	public function removeAdmin(Request $request, $id)
 	{
-		$currentUser = $request->user();
-		$userId = $request->input('user_id');
-		if ($userId == $currentUser->id) {
-			throw new YechefException(12504);
-		}
+		$userId = $this->noSelfAction($request);
 		$kitchen = Kitchen::findKitchen($id);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
 		if ($admin) {
@@ -155,6 +147,17 @@ class KitchenController extends Controller
 			return response()->success($admin);
 		} else {
 			throw new YechefException(12503);
+		}
+	}
+
+	private function noSelfAction(Request $request)
+	{
+		$currentUser = $request->user();
+		$userId = $request->input('user_id');
+		if ($userId === $currentUser->id) {
+			throw new YechefException(12504);
+		} else {
+			return $userId;
 		}
 	}
 
