@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "546a6303f8aec040fc512cd89e9e4c18",
+    "content-hash": "33b98999a76b0b59c19def57fb34080b",
     "packages": [
         {
             "name": "adaojunior/passport-social-grant",
@@ -1001,6 +1001,48 @@
                 "url"
             ],
             "time": "2017-03-20T17:10:46+00:00"
+        },
+        {
+            "name": "iatstuti/laravel-cascade-soft-deletes",
+            "version": "1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/michaeldyrynda/laravel-cascade-soft-deletes.git",
+                "reference": "d69d0b1bc0cfac36fb57ca22fd319fe40cc1a723"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/michaeldyrynda/laravel-cascade-soft-deletes/zipball/d69d0b1bc0cfac36fb57ca22fd319fe40cc1a723",
+                "reference": "d69d0b1bc0cfac36fb57ca22fd319fe40cc1a723",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "~5.0",
+                "illuminate/events": "~5.0",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "utility",
+            "autoload": {
+                "psr-4": {
+                    "Iatstuti\\Database\\Support\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dyrynda",
+                    "email": "michael@dyrynda.com.au",
+                    "homepage": "https://dyrynda.com.au"
+                }
+            ],
+            "description": "Cascading deletes for Eloquent models that implement soft deletes",
+            "time": "2016-08-07T12:20:10+00:00"
         },
         {
             "name": "jakub-onderka/php-console-color",

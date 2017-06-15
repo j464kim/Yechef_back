@@ -7,14 +7,14 @@ use App\Yechef\DishRatingable as Ratingable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 use App\Traits\Reactionable;
 use Illuminate\Support\Facades\Log;
 
 class Dish extends Model
 {
-	use SoftDeletes;
-	use Ratingable;
-	use Reactionable;
+	use SoftDeletes, CascadeSoftDeletes;
+	use Ratingable, Reactionable;
 
 	/**
 	 * The attributes that are mass assignable.
@@ -25,9 +25,14 @@ class Dish extends Model
 	protected $fillable = ['slug', 'name', 'description', 'price', 'kitchen_id'];
 
 	/**
-	 * Enable softDeletes
+	 * Enable softDeletes & cascade soft-deletes
 	 */
 	protected $dates = ['deleted_at'];
+
+	/**
+	 * Cascade soft-deletes related models
+	 */
+	protected $cascadeDeletes = ['ratings'];
 
 	/**
 	 * Get all of the Dish's comments.
