@@ -51,7 +51,8 @@ class KitchenController extends Controller
 		$this->validateInput($request);
 
 		$kitchen = Kitchen::create([
-			'name'        => snake_case($request->input('name')),
+			'slug'        => snake_case($request->input('name')),
+			'name'        => $request->input('name'),
 			'email'       => $request->input('email'),
 			'phone'       => $request->input('phone'),
 			'address'     => $request->input('address'),
@@ -91,7 +92,8 @@ class KitchenController extends Controller
 
 		$kitchen->update(
 			[
-				'name'        => snake_case($request->input('name')),
+				'slug'        => snake_case($request->input('name')),
+				'name'        => $request->input('name'),
 				'email'       => $request->input('email'),
 				'phone'       => $request->input('phone'),
 				'address'     => $request->input('address'),
