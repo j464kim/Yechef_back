@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
 use App\Models\Dish;
-use App\Models\Kitchen;
 use App\Yechef\Helper;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
@@ -45,6 +44,10 @@ class DishController extends Controller
 			'description' => $request->input('description'),
 			'price'       => $request->input('price'),
 			'kitchen_id'  => $request->input('kitchen_id'),
+			'nationality' => $request->input('nationality'),
+			'gluten_free' => $request->input('gluten_free'),
+			'vegetarian'  => $request->input('vegetarian'),
+			'vegan'       => $request->input('vegan'),
 			//TODO: ingredient
 		]);
 		return response()->success($dish, 11001);
@@ -61,6 +64,10 @@ class DishController extends Controller
 			'description' => $request->input('description'),
 			'price'       => $request->input('price'),
 			'kitchen_id'  => $request->input('kitchen_id'),
+			'nationality' => $request->input('nationality'),
+			'gluten_free' => $request->input('gluten_free'),
+			'vegetarian'  => $request->input('vegetarian'),
+			'vegan'       => $request->input('vegan'),
 			//TODO: ingredient
 		]);
 		return response()->success($dish, 11002);
