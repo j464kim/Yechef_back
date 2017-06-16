@@ -125,7 +125,7 @@ class KitchenController extends Controller
 
 	public function addAdmin(Request $request, $id)
 	{
-		$userId = $this->noSelfAction($request);
+		$userId = $this->getUserId($request);
 		$kitchen = Kitchen::findKitchen($id);
 		$user = User::findUser($userId);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
@@ -139,7 +139,7 @@ class KitchenController extends Controller
 
 	public function removeAdmin(Request $request, $id)
 	{
-		$userId = $this->noSelfAction($request);
+		$userId = $this->getUserId($request);
 		$kitchen = Kitchen::findKitchen($id);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
 		if ($admin) {
@@ -150,7 +150,7 @@ class KitchenController extends Controller
 		}
 	}
 
-	private function noSelfAction(Request $request)
+	private function getUserId(Request $request)
 	{
 		$currentUser = $request->user();
 		$userId = $request->input('user_id');
