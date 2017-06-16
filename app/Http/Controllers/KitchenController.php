@@ -157,7 +157,7 @@ class KitchenController extends Controller
 	public function getDishes(Request $request, $id)
 	{
 		$kitchen = Kitchen::findKitchen($id);
-		$dishes = $kitchen->dishes;
+		$dishes = $kitchen->dishes()->with('medias')->get();
 		return response()->success($dishes);
 	}
 
