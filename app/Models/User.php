@@ -35,28 +35,44 @@ class User extends Authenticatable
 		'remember_token',
 	];
 
-	public static function getValidation()
+	/**
+	 * @return array
+	 */
+	public static function getValidationRule()
 	{
-		return [
+		$rule = array(
 			'first_name' => 'required|max:255',
 			'last_name'  => 'required|max:255',
 			'email'      => 'required|email|max:255|unique:users',
 			'password'   => 'required|min:6|confirmed',
 			'phone'      => 'phone',
-		];
+		);
+
+		return $rule;
 	}
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
 	public function kitchens()
 	{
 		return $this->belongsToMany('App\Models\Kitchen')->withPivot('role', 'verified')->withTimestamps();
 	}
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function reactions()
 	{
 		return $this->hasMany('App\Models\Reaction');
 	}
 
 
+	/**
+	 * @param $id
+	 * @param bool $withMedia
+	 * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+	 */
 	public static function findUser($id, $withMedia = false)
 	{
 		try {
@@ -69,4 +85,5 @@ class User extends Authenticatable
 			throw new YechefException(15501);
 		}
 	}
+
 }

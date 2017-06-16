@@ -50,7 +50,7 @@ class RegisterController extends Controller
 
 	public function register(Request $request)
 	{
-		$validator = $this->validator->make($request->all(), User::getValidation());
+		$validator = $this->validator->make($request->all(), User::getValidationRule());
 
 		if ($validator->fails()) {
 			throw new YechefException(10505, $validator->getMessageBag());

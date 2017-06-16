@@ -45,7 +45,7 @@ Route::post('auth/google', 'Auth\LoginController@google');
 
 Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
 
-Route::get('users/list', 'UserController@index');
+Route::resource('users', 'UserController', ['only' => ['index', 'show', 'update']]);
 
 // Password Reset Routes...
 $this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');

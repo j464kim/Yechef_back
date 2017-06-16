@@ -123,6 +123,9 @@ return [
 	 */
 	// success
 	'15000' => 'Found the User',
+	'15001' => 'Successfully updated User information',
+
 	// fail
 	'15501' => 'Unable to find the user',
+	'15502' => 'Invalid request inputs for User'
 ];
