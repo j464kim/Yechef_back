@@ -68,11 +68,11 @@ class Kitchen extends Model
 	/**
 	 * @return array
 	 */
-	public static function getValidationRule()
+	public static function getValidationRule($kitchenId = null)
 	{
 		$rule = array(
 			'name'        => 'bail|required',
-			'email'       => 'required',
+			'email'       => 'required|email|max:255|unique:kitchens,email,'.$kitchenId,
 			'phone'       => 'required',
 			'address'     => 'required',
 			'description' => 'required',

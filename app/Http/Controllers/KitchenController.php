@@ -172,9 +172,9 @@ class KitchenController extends Controller
 		}
 	}
 
-	private function validateInput(Request $request)
+	private function validateInput(Request $request, $id)
 	{
-		$validationRule = Kitchen::getValidationRule();
+		$validationRule = Kitchen::getValidationRule($id);
 		$validator = $this->validator->make($request->all(), $validationRule);
 
 		if ($validator->fails()) {
