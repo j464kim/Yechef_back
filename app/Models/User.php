@@ -6,6 +6,7 @@ use App\Traits\CanResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Exceptions\YechefException;
 
 class User extends Authenticatable
 {
@@ -38,15 +39,19 @@ class User extends Authenticatable
 	/**
 	 * @return array
 	 */
-	public static function getValidationRule()
+	public static function getValidationRule($userId = null)
 	{
 		$rule = array(
 			'first_name' => 'required|max:255',
 			'last_name'  => 'required|max:255',
-			'email'      => 'required|email|max:255|unique:users',
-			'password'   => 'required|min:6|confirmed',
 			'phone'      => 'phone',
 		);
+
+		// For Update
+		if (!$userId) {
+			$rule['email'] = 'required|email|max:255|unique:users,email';
+			$rule['password'] = 'required|min:6|confirmed';
+		}
 
 		return $rule;
 	}

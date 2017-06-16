@@ -73,7 +73,7 @@ class UserController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		$this->validateInput($request);
+		$this->validateInput($request, $id);
 
 		$user = User::findUser($id);
 
@@ -81,8 +81,6 @@ class UserController extends Controller
 			[
 				'first_name' => $request->input('first_name'),
 				'last_name'  => $request->input('last_name'),
-				'email'      => $request->input('email'),
-				'password'   => $request->input('password'),
 				'phone'      => $request->input('phone'),
 			]
 		);
@@ -94,9 +92,9 @@ class UserController extends Controller
 	/**
 	 * @param Request $request
 	 */
-	private function validateInput(Request $request)
+	private function validateInput(Request $request, $id)
 	{
-		$validationRule = User::getValidationRule();
+		$validationRule = User::getValidationRule($id);
 		$validator = $this->validator->make($request->all(), $validationRule);
 
 		if ($validator->fails()) {
