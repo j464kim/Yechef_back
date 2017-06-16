@@ -26,8 +26,12 @@ $factory->define(App\Models\Dish::class, function (Faker\Generator $faker) {
 	return [
 		'slug'        => $faker->slug,
 		'name'        => $faker->word,
+		'nationality' => 'fusion',
 		'description' => $faker->realText(),
 		'price'       => $faker->randomFloat(2, 5, 25),
+		'vegetarian'  => $faker->boolean(),
+		'vegan'  => $faker->boolean(),
+		'gluten_free'  => $faker->boolean(),
 	];
 });
 
