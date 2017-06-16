@@ -83,7 +83,7 @@ class KitchenController extends Controller
 
 	public function update(Request $request, $id)
 	{
-		$this->validateInput($request);
+		$this->validateInput($request, $id);
 
 		$kitchen = Kitchen::findKitchen($id, true);
 
@@ -161,9 +161,9 @@ class KitchenController extends Controller
 		}
 	}
 
-	private function validateInput(Request $request)
+	private function validateInput(Request $request, $id)
 	{
-		$validationRule = Kitchen::getValidationRule();
+		$validationRule = Kitchen::getValidationRule($id);
 		$validator = $this->validator->make($request->all(), $validationRule);
 
 		if ($validator->fails()) {
