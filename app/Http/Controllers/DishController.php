@@ -55,7 +55,7 @@ class DishController extends Controller
 
 	public function update(Request $request, $id)
 	{
-		$this->validateRequestInputs($request, $id);
+		$this->validateRequestInputs($request);
 		Helper::checkKitchenAccess($request, $request->input('kitchen_id'));
 		$dish = Dish::findDish($id);
 		$dish->update([
@@ -86,9 +86,9 @@ class DishController extends Controller
 		return response()->success($dish, 11003);
 	}
 
-	private function validateRequestInputs($request, $id = null)
+	private function validateRequestInputs($request)
 	{
-		$validator = $this->validator->make($request->all(), Dish::getValidation($id));
+		$validator = $this->validator->make($request->all(), Dish::getValidation());
 		If ($validator->fails()) {
 			$message = '';
 			foreach ($validator->errors()->all() as $error) {
