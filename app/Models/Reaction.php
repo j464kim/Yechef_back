@@ -10,6 +10,7 @@ class Reaction extends Model
 	const DISLIKE = 0;
 	const LIKE = 1;
 	const FORK = 2;
+	const SUBSCRIBE = 3;
 
 	/**
 	 * Get all of the owning reactionable models.

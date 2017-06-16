@@ -46,13 +46,15 @@ class ReactionController extends Controller
 		$numLikes = $reactions->where('kind', Reaction::LIKE)->count();
 		$numDislikes = $reactions->where('kind', Reaction::DISLIKE)->count();
 		$numForks = $reactions->where('kind', Reaction::FORK)->count();
+		$numSubscibes = $reactions->where('kind', Reaction::SUBSCRIBE)->count();
 
 		$reactionResponse = (object)array(
+			'userReactionId'   => $userReactionId,
+			'userReactionKind' => $userReactionKind,
 			'numLikes'         => $numLikes,
 			'numDislikes'      => $numDislikes,
 			'numForks'         => $numForks,
-			'userReactionId'   => $userReactionId,
-			'userReactionKind' => $userReactionKind
+			'numSubscribes'    => $numSubscibes,
 		);
 
 		return response()->success($reactionResponse, 14002);
