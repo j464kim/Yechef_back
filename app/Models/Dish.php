@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use App\Exceptions\YechefException;
+use App\Traits\Reactionable;
 use App\Yechef\DishRatingable as Ratingable;
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Iatstuti\Database\Support\CascadeSoftDeletes;
-use App\Traits\Reactionable;
-use Illuminate\Support\Facades\Log;
 
 class Dish extends Model
 {
@@ -22,7 +21,17 @@ class Dish extends Model
 	 * @var array
 	 */
 	//TODO: Add ingredient
-	protected $fillable = ['slug', 'name', 'description', 'price', 'kitchen_id'];
+	protected $fillable = [
+		'slug',
+		'name',
+		'nationality',
+		'description',
+		'price',
+		'gluten_free',
+		'vegetarian',
+		'vegan',
+		'kitchen_id'
+	];
 
 	/**
 	 * Enable softDeletes & cascade soft-deletes
@@ -78,7 +87,8 @@ class Dish extends Model
 			'name'        => 'bail|required',
 			'description' => 'bail|required',
 			'kitchen_id'  => 'bail|required|integer',
-			'price'       => 'required|numeric',
+			'price'       => 'bail|required|numeric',
+			'nationality' => 'required'
 			//TODO: ingredient
 //			'ingredient_id' => 'integer',
 		];

@@ -83,6 +83,7 @@ class KitchenController extends Controller
 
 	public function update(Request $request, $id)
 	{
+		Helper::checkKitchenAccess($request, $id);
 		$this->validateInput($request);
 
 		$kitchen = Kitchen::findKitchen($id, true);
@@ -107,8 +108,9 @@ class KitchenController extends Controller
 	 * @param  int $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy($id)
+	public function destroy(Request $request, $id)
 	{
+		Helper::checkKitchenAccess($request, $id);
 		$kitchen = Kitchen::findKitchen($id);
 		$kitchen->delete();
 
@@ -126,6 +128,7 @@ class KitchenController extends Controller
 	public function addAdmin(Request $request, $id)
 	{
 		$userId = $this->getUserId($request);
+		Helper::checkKitchenAccess($request, $id);
 		$kitchen = Kitchen::findKitchen($id);
 		$user = User::findUser($userId);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
@@ -139,6 +142,7 @@ class KitchenController extends Controller
 
 	public function removeAdmin(Request $request, $id)
 	{
+		Helper::checkKitchenAccess($request, $id);
 		$userId = $this->getUserId($request);
 		$kitchen = Kitchen::findKitchen($id);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
@@ -148,6 +152,13 @@ class KitchenController extends Controller
 		} else {
 			throw new YechefException(12503);
 		}
+	}
+
+	public function getDishes(Request $request, $id)
+	{
+		$kitchen = Kitchen::findKitchen($id);
+		$dishes = $kitchen->dishes;
+		return response()->success($dishes);
 	}
 
 	private function getUserId(Request $request)
