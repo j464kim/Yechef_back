@@ -44,6 +44,7 @@ Route::post('auth/facebook', 'Auth\LoginController@facebook');
 Route::post('auth/google', 'Auth\LoginController@google');
 
 Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
+Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
 
 Route::get('users/list', 'UserController@index');
 

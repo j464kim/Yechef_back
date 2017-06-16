@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
-use App\Http\Controllers\Controller;
 use App\Models\Dish;
+use App\Models\Kitchen;
 use App\Yechef\Helper;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
@@ -38,6 +38,7 @@ class DishController extends Controller
 	{
 		//TODO: No need to require slug input from the user.
 		$this->validateRequestInputs($request);
+		Helper::checkKitchenAccess($request, $request->input('kitchen_id'));
 		$dish = Dish::create([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
@@ -52,6 +53,7 @@ class DishController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->validateRequestInputs($request, $id);
+		Helper::checkKitchenAccess($request, $request->input('kitchen_id'));
 		$dish = Dish::findDish($id);
 		$dish->update([
 			'slug'        => snake_case($request->input('name')),
@@ -69,6 +71,7 @@ class DishController extends Controller
 		//TODO: Need to delete other relationships to prevent foreign key constraint issues
 		//TODO: Also need to delete associated ratings
 		$dish = Dish::findDish($id);
+		Helper::checkKitchenAccess($request, $dish->kitchen_id);
 		$dish->delete();
 
 		event(new ReactionableDeleted($dish));
