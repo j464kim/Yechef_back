@@ -44,6 +44,7 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Models\Kitchen::class, function (Faker\Generator $faker) {
 	return [
+		'slug'        => $faker->slug,
 		'name'        => $faker->name,
 		'address'     => $faker->address,
 		'phone'       => $faker->phoneNumber,

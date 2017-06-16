@@ -2,34 +2,38 @@
 
 namespace App\Models;
 
-use Laravel\Passport\HasApiTokens;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Traits\CanResetPassword;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
 	use HasApiTokens, Notifiable;
-
 	use CanResetPassword;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'first_name', 'last_name', 'phone', 'email', 'password',
-    ];
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = [
+		'first_name',
+		'last_name',
+		'phone',
+		'email',
+		'password',
+	];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+	/**
+	 * The attributes that should be hidden for arrays.
+	 *
+	 * @var array
+	 */
+	protected $hidden = [
+		'password',
+		'remember_token',
+	];
 
 	public static function getValidation()
 	{
@@ -40,10 +44,29 @@ class User extends Authenticatable
 			'password'   => 'required|min:6|confirmed',
 			'phone'      => 'phone',
 		];
-  }
-    
-  public function reactions()
+	}
+
+	public function kitchens()
+	{
+		return $this->belongsToMany('App\Models\Kitchen')->withPivot('role', 'verified')->withTimestamps();
+	}
+
+	public function reactions()
 	{
 		return $this->hasMany('App\Models\Reaction');
+	}
+
+
+	public static function findUser($id, $withMedia = false)
+	{
+		try {
+			if ($withMedia) {
+				return User::with('medias')->findOrFail($id);
+			} else {
+				return User::findOrFail($id);
+			}
+		} catch (\Exception $e) {
+			throw new YechefException(15501);
+		}
 	}
 }

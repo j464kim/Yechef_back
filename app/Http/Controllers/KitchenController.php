@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Http\Request;
-use App\Yechef\Helper;
 use App\Models\Kitchen;
+use App\Models\User;
+use App\Yechef\Helper;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 
 class KitchenController extends Controller
 {
@@ -18,7 +19,8 @@ class KitchenController extends Controller
 	 * KitchenController constructor.
 	 * @param Application $app
 	 */
-	public function __construct(Application $app) {
+	public function __construct(Application $app)
+	{
 		$this->validator = $app->make('validator');
 	}
 
@@ -42,15 +44,18 @@ class KitchenController extends Controller
 	 */
 	public function store(Request $request)
 	{
+		$user = $request->user();
 		$this->validateInput($request);
 
 		$kitchen = Kitchen::create([
-			'name'        => snake_case($request->input('name')),
+			'slug'        => snake_case($request->input('name')),
+			'name'        => $request->input('name'),
 			'email'       => $request->input('email'),
 			'phone'       => $request->input('phone'),
 			'address'     => $request->input('address'),
-			'description' => $request->input('description')
+			'description' => $request->input('description'),
 		]);
+		$kitchen->users()->save($user, ['role' => 1, 'verified' => true]);
 
 		return response()->success($kitchen);
 	}
@@ -84,7 +89,8 @@ class KitchenController extends Controller
 
 		$kitchen->update(
 			[
-				'name'        => snake_case($request->input('name')),
+				'slug'        => snake_case($request->input('name')),
+				'name'        => $request->input('name'),
 				'email'       => $request->input('email'),
 				'phone'       => $request->input('phone'),
 				'address'     => $request->input('address'),
@@ -109,6 +115,50 @@ class KitchenController extends Controller
 		event(new ReactionableDeleted($kitchen));
 
 		return response()->success(12002);
+	}
+
+	public function getAdmins($id)
+	{
+		$admins = Kitchen::findKitchen($id, false)->users;
+		return response()->success($admins);
+	}
+
+	public function addAdmin(Request $request, $id)
+	{
+		$userId = $this->getUserId($request);
+		$kitchen = Kitchen::findKitchen($id);
+		$user = User::findUser($userId);
+		$admin = $kitchen->users()->where('user_id', $userId)->first();
+		if (!$admin) {
+			$kitchen->users()->save($user, ['verified' => false, 'role' => 1]);
+		} else {
+			throw new YechefException(12502);
+		}
+		return response()->success($user);
+	}
+
+	public function removeAdmin(Request $request, $id)
+	{
+		$userId = $this->getUserId($request);
+		$kitchen = Kitchen::findKitchen($id);
+		$admin = $kitchen->users()->where('user_id', $userId)->first();
+		if ($admin) {
+			$kitchen->users()->detach($userId);
+			return response()->success($admin);
+		} else {
+			throw new YechefException(12503);
+		}
+	}
+
+	private function getUserId(Request $request)
+	{
+		$currentUser = $request->user();
+		$userId = $request->input('user_id');
+		if ($userId === $currentUser->id) {
+			throw new YechefException(12504);
+		} else {
+			return $userId;
+		}
 	}
 
 	private function validateInput(Request $request)

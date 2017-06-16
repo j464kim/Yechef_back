@@ -39,6 +39,15 @@ class ResponseServiceProvider extends ServiceProvider
 				'status' => 'failure',
 				'return_code' => $returnCode,
 				'message' => trans('api.' . $returnCode ) . $message
+            ], 401);
+        });
+
+        // not allowed
+        Response::macro('notallow', function ($returnCode = 3, $message = '') {
+            return Response::json([
+                'status' => 'failure',
+                'return_code' => $returnCode,
+                'message' => trans('api.' . $returnCode ) . $message
             ], 403);
         });
     }
