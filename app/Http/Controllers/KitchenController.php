@@ -161,6 +161,14 @@ class KitchenController extends Controller
 		return response()->success($dishes);
 	}
 
+	public function getSubscribers(Request $request, $id)
+	{
+		$kitchen = Kitchen::findKitchen($id);
+		$subscribers = $kitchen->reactions()->where('kind', 3)->pluck('user_id')->toArray();
+		$subscribers = User::findMany($subscribers);
+		return response()->success($subscribers);
+	}
+
 	private function getUserId(Request $request)
 	{
 		$currentUser = $request->user();
