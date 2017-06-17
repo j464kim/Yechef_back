@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Reaction;
+use App\Models\Kitchen;
 use Illuminate\Http\Request;
 use App\Exceptions\YechefException;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 
 class UserController extends Controller
@@ -88,6 +92,20 @@ class UserController extends Controller
 		return response()->success($user, 15001);
 	}
 
+	public function getSubscriptions(Request $request) {
+
+		$user = $request->user();
+
+		$subscriptionKitchens = DB::table('reactions')
+			->where('user_id', $user->id)
+			->where('kind', Reaction::SUBSCRIBE)
+			->join('kitchens', 'reactions.reactionable_id', '=', 'kitchens.id')
+			->select('kitchens.*')
+			->get();
+
+		Log::info($subscriptionKitchens);
+		return response()->success($subscriptionKitchens);
+	}
 
 	/**
 	 * @param Request $request
