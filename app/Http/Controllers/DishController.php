@@ -51,7 +51,7 @@ class DishController extends Controller
 
 	public function update(Request $request, $id)
 	{
-		$this->validateRequestInputs($request, $id);
+		$this->validateRequestInputs($request);
 		$dish = Dish::findDish($id);
 		$dish->update([
 			'slug'        => snake_case($request->input('name')),
@@ -76,9 +76,9 @@ class DishController extends Controller
 		return response()->success($dish, 11003);
 	}
 
-	private function validateRequestInputs($request, $id = null)
+	private function validateRequestInputs($request)
 	{
-		$validator = $this->validator->make($request->all(), Dish::getValidation($id));
+		$validator = $this->validator->make($request->all(), Dish::getValidation());
 		If ($validator->fails()) {
 			$message = '';
 			foreach ($validator->errors()->all() as $error) {
