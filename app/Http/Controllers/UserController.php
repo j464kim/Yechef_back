@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dish;
 use App\Models\User;
 use App\Models\Reaction;
 use App\Models\Kitchen;
@@ -92,10 +93,13 @@ class UserController extends Controller
 		return response()->success($user, 15001);
 	}
 
-	public function getSubscriptions(Request $request) {
-
+	/**
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function getSubscriptions(Request $request)
+	{
 		$user = $request->user();
-
 		$subscriptionKitchens = Kitchen::with('medias')
 			->join('reactions', 'reactions.reactionable_id', '=', 'kitchens.id')
 			->where('user_id', $user->id)
@@ -103,8 +107,24 @@ class UserController extends Controller
 			->select('kitchens.*')
 			->get();
 
-		Log::info($subscriptionKitchens);
 		return response()->success($subscriptionKitchens);
+	}
+
+	/**
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function getForks(Request $request)
+	{
+		$user = $request->user();
+		$forkedDishes = Dish::with('medias')
+			->join('reactions', 'reactions.reactionable_id', '=', 'dishes.id')
+			->where('user_id', $user->id)
+			->where('kind', Reaction::FORK)
+			->select('dishes.*')
+			->get();
+
+		return response()->success($forkedDishes);
 	}
 
 	/**

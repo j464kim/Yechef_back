@@ -27,7 +27,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
 	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
+	Route::get('users/getForks', 'UserController@getForks');
 });
+
 // TODO Uncomment below 2 lines when auth is all ready
 Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);
 Route::resource('kitchens', 'KitchenController', ['only' => ['index', 'show']]);
