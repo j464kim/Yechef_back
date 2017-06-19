@@ -96,10 +96,10 @@ class UserController extends Controller
 
 		$user = $request->user();
 
-		$subscriptionKitchens = DB::table('reactions')
+		$subscriptionKitchens = Kitchen::with('medias')
+			->join('reactions', 'reactions.reactionable_id', '=', 'kitchens.id')
 			->where('user_id', $user->id)
 			->where('kind', Reaction::SUBSCRIBE)
-			->join('kitchens', 'reactions.reactionable_id', '=', 'kitchens.id')
 			->select('kitchens.*')
 			->get();
 

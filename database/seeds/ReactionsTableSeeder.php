@@ -39,6 +39,18 @@ class ReactionsTableSeeder extends Seeder
 							'updated_at'        => '2017-05-24 05:49:45',
 						),
 				));
+				// Seed Kitchens with Subscribe
+				\DB::table('reactions')->insert(array(
+					0 =>
+						array(
+							'kind'              => 3,
+							'user_id'           => $user->id,
+							'reactionable_id'   => $kitchen->id,
+							'reactionable_type' => get_class($kitchen),
+							'created_at'        => '2017-05-24 05:49:45',
+							'updated_at'        => '2017-05-24 05:49:45',
+						),
+				));
 			}
 
 			// Seed Kitchens with Forks
@@ -64,18 +76,6 @@ class ReactionsTableSeeder extends Seeder
 					0 =>
 						array(
 							'kind'              => 0,
-							'user_id'           => $user->id,
-							'reactionable_id'   => $kitchen->id,
-							'reactionable_type' => get_class($kitchen),
-							'created_at'        => '2017-05-24 05:49:45',
-							'updated_at'        => '2017-05-24 05:49:45',
-						),
-				));
-				// Seed Kitchens with Subscribe
-				\DB::table('reactions')->insert(array(
-					0 =>
-						array(
-							'kind'              => 3,
 							'user_id'           => $user->id,
 							'reactionable_id'   => $kitchen->id,
 							'reactionable_type' => get_class($kitchen),
