@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Iatstuti\Database\Support\CascadeSoftDeletes;
 use App\Traits\Reactionable;
 use Illuminate\Support\Facades\Log;
+use Laravel\Scout\Searchable;
 
 class Dish extends Model
 {
 	use SoftDeletes, CascadeSoftDeletes;
 	use Ratingable, Reactionable;
+	use Searchable;
 
 	/**
 	 * The attributes that are mass assignable.

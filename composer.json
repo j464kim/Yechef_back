@@ -7,6 +7,7 @@
     "require": {
         "php": ">=5.6.4",
         "adaojunior/passport-social-grant": "^2.0",
+        "algolia/algoliasearch-client-php": "^1.18",
         "aws/aws-sdk-php": "^3.27",
         "barryvdh/laravel-cors": "^0.9.2",
         "doctrine/dbal": "^2.5",
@@ -15,6 +16,7 @@
         "iatstuti/laravel-cascade-soft-deletes": "1.0.*",
         "laravel/framework": "5.4.*",
         "laravel/passport": "^2.0",
+        "laravel/scout": "^3.0",
         "laravel/socialite": "^3.0",
         "laravel/tinker": "~1.0",
         "league/flysystem-aws-s3-v3": "~1.0",

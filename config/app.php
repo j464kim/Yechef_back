@@ -185,6 +185,9 @@ return [
 		// passport
 		Laravel\Passport\PassportServiceProvider::class,
 
+		// scout
+		Laravel\Scout\ScoutServiceProvider::class,
+
 		// rating
 		Ghanem\Rating\RatingServiceProvider::class,
         // socialite

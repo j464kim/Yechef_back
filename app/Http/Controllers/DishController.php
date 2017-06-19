@@ -46,6 +46,7 @@ class DishController extends Controller
 			'kitchen_id'  => $request->input('kitchen_id'),
 			//TODO: ingredient
 		]);
+		$dish->save();
 		return response()->success($dish, 11001);
 	}
 
@@ -61,6 +62,7 @@ class DishController extends Controller
 			'kitchen_id'  => $request->input('kitchen_id'),
 			//TODO: ingredient
 		]);
+		$dish->save();
 		return response()->success($dish, 11002);
 	}
 
