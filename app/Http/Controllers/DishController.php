@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
-use App\Http\Controllers\Controller;
 use App\Models\Dish;
 use App\Yechef\Helper;
 use Illuminate\Contracts\Foundation\Application;
@@ -76,6 +75,13 @@ class DishController extends Controller
 		event(new ReactionableDeleted($dish));
 
 		return response()->success($dish, 11003);
+	}
+
+	public function search(Request $request)
+	{
+		$results = Dish::search($request->food)->where('gluten_free', $request->gluten_free)->where('vegan',
+			$request->vegan)->where('vegetarian', $request->vegetarian)->get();
+		return response()->success($results);
 	}
 
 	private function validateRequestInputs($request)

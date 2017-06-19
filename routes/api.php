@@ -47,6 +47,8 @@ Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
 
 Route::get('users/list', 'UserController@index');
 
+Route::get('search/dishes', 'DishController@search');
+
 // Password Reset Routes...
 $this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
 $this->post('password/reset', 'Auth\ResetPasswordController@reset');
