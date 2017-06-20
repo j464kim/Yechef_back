@@ -43,6 +43,7 @@ return [
 	'10000' => 'Access token granted',
 	'10001' => 'Access token refreshed',
 	'10002' => 'Logout success',
+	'10003' => 'Password is changed successfully',
 	// fail
 	'10500' => 'Please provide your email and password',
 	'10501' => 'Your email and password are wrong',
@@ -50,6 +51,8 @@ return [
 	'10503' => 'Fail to refresh access token',
 	'10504' => 'No user session found',
 	'10505' => 'Wrong input for user registration',
+	'10506' => 'Current Password is wrong',
+	'10507' => 'Wrong input for password update',
 
 	/**
 	 * Dish related

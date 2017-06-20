@@ -44,8 +44,8 @@ class KitchenController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$user = $request->user();
 		$this->validateInput($request);
+		$user = $request->user();
 
 		$kitchen = Kitchen::create([
 			'slug'        => snake_case($request->input('name')),
@@ -161,7 +161,7 @@ class KitchenController extends Controller
 		}
 	}
 
-	private function validateInput(Request $request, $id)
+	private function validateInput(Request $request, $id = null)
 	{
 		$validationRule = Kitchen::getValidationRule($id);
 		$validator = $this->validator->make($request->all(), $validationRule);

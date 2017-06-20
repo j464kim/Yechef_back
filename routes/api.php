@@ -28,6 +28,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
 	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
 	Route::get('users/getForks', 'UserController@getForks');
+
+//	Update Password
+	Route::post('password/update', 'Auth\UpdatePasswordController@update');
 });
 
 // TODO Uncomment below 2 lines when auth is all ready
@@ -48,6 +51,7 @@ Route::post('auth/google', 'Auth\LoginController@google');
 
 Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
 
+Route::get('users/list', 'UserController@index');
 Route::resource('users', 'UserController', ['only' => ['index', 'show', 'update']]);
 
 // Password Reset Routes...
