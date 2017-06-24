@@ -21,6 +21,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::resource('media', 'MediaController', ['only' => 'store']);
 	Route::resource('reactions', 'ReactionController',
 		['parameters' => ['reactions' => 'like_id'], 'only' => ['store', 'destroy']]);
+	Route::resource('carts', 'CartController');
 
 	Route::get('users/getMyKitchens', 'UserController@getMyKitchens');
 
@@ -52,3 +53,4 @@ $this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail'
 $this->post('password/reset', 'Auth\ResetPasswordController@reset');
 $this->get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
 $this->get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+

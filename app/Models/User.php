@@ -6,6 +6,7 @@ use App\Traits\CanResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Exceptions\YechefException;
 
 class User extends Authenticatable
 {
@@ -35,6 +36,11 @@ class User extends Authenticatable
 		'remember_token',
 	];
 
+	public function cart()
+	{
+		return $this->hasOne('App\Models\Cart');
+	}
+
 	public static function getValidation()
 	{
 		return [
@@ -57,6 +63,12 @@ class User extends Authenticatable
 	}
 
 
+	/**
+	 * @param $id
+	 * @param bool $withMedia
+	 * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+	 * @throws YechefException
+	 */
 	public static function findUser($id, $withMedia = false)
 	{
 		try {
@@ -68,5 +80,22 @@ class User extends Authenticatable
 		} catch (\Exception $e) {
 			throw new YechefException(15501);
 		}
+	}
+
+	/**
+	 * check if current user has an existing cart, otherwise create one
+	 *
+	 * @return false|\Illuminate\Database\Eloquent\Model
+	 * @throws YechefException
+	 */
+	public function getCart()
+	{
+		try {
+			$cart = $this->cart ?: $this->cart()->save(new Cart);
+		} catch (\Exception $e) {
+			throw new YechefException(18502);
+		}
+
+		return $cart;
 	}
 }

@@ -123,6 +123,22 @@ return [
 	 */
 	// success
 	'15000' => 'Found the User',
+
 	// fail
 	'15501' => 'Unable to find the user',
+
+	/**
+	 * User related
+	 * Success Range 18000 <= x < 18500
+	 * Error Range 18500 <= x < 19000
+	 */
+	// success
+	'18000' => 'The item is added to cart',
+	'18001' => 'Cart item quantity is udpated',
+	'18002' => 'Item quantity is removed from the cart',
+
+	// fail
+	'18501' => 'Wrong inputs for cart items',
+	'18502' => 'Failed to get the cart of the user',
+	'18503' => 'The cart item cannot be found',
 ];
