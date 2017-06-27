@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
-use Session;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Dish;
@@ -22,20 +21,32 @@ class CartController
 	 * KitchenController constructor.
 	 * @param Application $app
 	 */
-	public function __construct(Request $request, Application $app)
+	public function __construct(Application $app)
 	{
 		$this->validator = $app->make('validator');
+	}
 
+	public function initialize(Request $request)
+	{
 		$user = $request->user();
-
 		$this->cart = $user->getCart();
 	}
 
 	/**
 	 * Retrieve signed-in user's shopping cart
 	 */
-	public function index()
+	public function index(Request $request)
 	{
+		$this->initialize($request);
+
+		$items = $this->cart->items;
+		foreach ($items as $item) {
+			$dish = Dish::findDish($item->dish_id);
+			$item->id = $dish->id;
+			$item->name = $dish->name;
+			$item->eachPrice = $dish->price;
+		}
+
 		return response()->success($this->cart);
 	}
 
@@ -47,16 +58,15 @@ class CartController
 	 */
 	public function store(Request $request)
 	{
+		$this->initialize($request);
+
 		$this->validateInput($request);
 
 		// create a cart item
-		$this->cart->items()->save(
-			CartItem::create([
-				'dish_id'  => $request->input('dish_id'),
-				'quantity' => $request->input('quantity'),
-				'price'    => $request->input('price'),
-			])
-		);
+		$cartItem = new CartItem;
+		$cartItem['dish_id'] = $request->input('dish_id');
+		$cartItem['quantity'] = $request->input('quantity');
+		$this->cart->items()->save($cartItem);
 
 		return response()->success($this->cart, 18000);
 	}
@@ -70,16 +80,13 @@ class CartController
 	 */
 	public function update(Request $request, $dishId)
 	{
-		$this->validateInput($request);
+		$this->initialize($request);
+
+		$this->validateInput($request, isset($dishId));
 
 		$item = $this->cart->findItemByDish($dishId);
-
-		$item->update(
-			[
-				'quantity' => $request->input('quantity'),
-				'price'    => $request->input('price')
-			]
-		);
+		$item->quantity = $request->input('quantity');
+		$item->save();
 
 		return response()->success($item, 18001);
 	}
@@ -90,8 +97,10 @@ class CartController
 	 * @param  int $dishId
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy($dishId)
+	public function destroy(Request $request, $dishId)
 	{
+		$this->initialize($request);
+
 		$item = $this->cart->findItemByDish($dishId);
 		$item->delete();
 
@@ -105,13 +114,18 @@ class CartController
 	 * @param Request $request
 	 * @throws YechefException
 	 */
-	private function validateInput(Request $request)
+	private function validateInput(Request $request, $isUpdate = false)
 	{
-		$validationRule = CartItem::getValidationRule();
+		$validationRule = CartItem::getValidationRule($isUpdate);
 		$validator = $this->validator->make($request->all(), $validationRule);
 
+		$message = '';
+		foreach ($validator->errors()->all() as $error) {
+			$message .= "\r\n" . $error;
+		}
+
 		if ($validator->fails()) {
-			throw new YechefException(18501);
+			throw new YechefException(18501, $message);
 		}
 	}
 

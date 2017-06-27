@@ -92,10 +92,12 @@ class User extends Authenticatable
 	{
 		try {
 			$cart = $this->cart ?: $this->cart()->save(new Cart);
+			$cartInfo = $cart->with('items')->firstOrFail();
+
 		} catch (\Exception $e) {
 			throw new YechefException(18502);
 		}
 
-		return $cart;
+		return $cartInfo;
 	}
 }

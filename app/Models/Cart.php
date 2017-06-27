@@ -35,9 +35,9 @@ class Cart extends Model
 	public function findItemByDish($id)
 	{
 		try {
-			return $this->items()->where('dish_id', $id)->firstOrFail;
+			return $this->items()->where('dish_id', $id)->firstOrFail();
 		} catch (\Exception $e) {
-			throw new YechefException(18503);
+			throw new YechefException(18503, $e->getMessage());
 		}
 	}
 

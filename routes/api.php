@@ -12,6 +12,7 @@
 */
 
 Route::group(['middleware' => ['auth:api']], function () {
+
 	Route::post('logout', 'Auth\LoginController@logout');
 	Route::get('logged-in', 'UserController@getLoggedInUser');
 // TODO Change this to proper middleware group later on
@@ -21,12 +22,13 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::resource('media', 'MediaController', ['only' => 'store']);
 	Route::resource('reactions', 'ReactionController',
 		['parameters' => ['reactions' => 'like_id'], 'only' => ['store', 'destroy']]);
-	Route::resource('carts', 'CartController');
 
 	Route::get('users/getMyKitchens', 'UserController@getMyKitchens');
 
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
+	Route::resource('carts', 'CartController', ['except' => ['show']]);
+
 });
 // TODO Uncomment below 2 lines when auth is all ready
 Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);

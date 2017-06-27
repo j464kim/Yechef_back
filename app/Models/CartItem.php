@@ -3,16 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 
 class CartItem extends Model
 {
+	use SoftDeletes, CascadeSoftDeletes;
 
 	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['cart_id', 'dish_id', 'quantity', 'price'];
+	protected $fillable = ['cart_id', 'dish_id', 'quantity'];
 
 	public function cart()
 	{
@@ -24,14 +27,15 @@ class CartItem extends Model
 		return $this->belongsTo('App\Models\Dish');
 	}
 
-	public static function getValidationRule()
+	public static function getValidationRule($isUpdate)
 	{
 		$rule = array(
-			'cart_id'  => 'bail|required',
-			'dish_id'  => 'bail|required',
 			'quantity' => 'bail|required',
-			'price'    => 'bail|required',
 		);
+
+		if (!$isUpdate) {
+			$rule['dish_id'] = 'bail|required';
+		}
 
 		return $rule;
 	}

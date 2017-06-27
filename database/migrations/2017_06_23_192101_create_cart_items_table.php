@@ -20,7 +20,6 @@ class CreateCartItemsTable extends Migration
 			$table->integer('dish_id')->unsigned();
 			$table->foreign('dish_id')->references('id')->on('dishes')->onDelete('cascade');
 			$table->integer('quantity')->unsigned();
-			$table->integer('price')->unsigned();
 			$table->timestamps();
 			$table->softDeletes();
 		});
