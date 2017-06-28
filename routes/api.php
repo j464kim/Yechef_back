@@ -22,6 +22,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::resource('reactions', 'ReactionController',
 		['parameters' => ['reactions' => 'like_id'], 'only' => ['store', 'destroy']]);
 
+	Route::post('dishes/checkOwnership', 'DishController@checkOwnership');
+	Route::post('kitchens/checkOwnership', 'KitchenController@checkOwnership');
+
 	Route::get('users/getMyKitchens', 'UserController@getMyKitchens');
 
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');

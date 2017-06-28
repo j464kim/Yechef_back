@@ -27,8 +27,8 @@ class Helper
 	public static function checkKitchenAccess(Request $request, $kitchenId)
 	{
 		$currentUser = $request->user();
-		$exists = $currentUser->kitchens()->wherePivot('kitchen_id', $kitchenId)->wherePivot('verified', true);
-		if (!$exists) {
+		$exists = $currentUser->kitchens()->wherePivot('kitchen_id', $kitchenId)->wherePivot('verified', true)->get();
+		if ($exists->isEmpty()) {
 			throw new YechefException(12505);
 		}
 	}

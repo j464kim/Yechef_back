@@ -86,6 +86,19 @@ class DishController extends Controller
 		return response()->success($dish, 11003);
 	}
 
+	public function checkOwnership(Request $request)
+	{
+		try {
+			$dishId = $request->input('dish_id');
+			$dish = Dish::findDish($dishId);
+			$kitchenId = $dish->kitchen_id;
+			Helper::checkKitchenAccess($request, $kitchenId);
+		} catch (YechefException $e) {
+			return response()->notallow($e->getMessage());
+		}
+		return response()->success();
+	}
+
 	private function validateRequestInputs($request)
 	{
 		$validator = $this->validator->make($request->all(), Dish::getValidation());
