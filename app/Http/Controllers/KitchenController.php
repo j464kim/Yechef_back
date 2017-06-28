@@ -83,8 +83,8 @@ class KitchenController extends Controller
 
 	public function update(Request $request, $id)
 	{
-		Helper::checkKitchenAccess($request, $id);
-		$this->validateInput($request);
+		$request->user()->isVerifiedKitchenOwner($id);
+		$this->validateInput($request, $id);
 
 		$kitchen = Kitchen::findKitchen($id, true);
 
@@ -110,7 +110,7 @@ class KitchenController extends Controller
 	 */
 	public function destroy(Request $request, $id)
 	{
-		Helper::checkKitchenAccess($request, $id);
+		$request->user()->isVerifiedKitchenOwner($id);
 		$kitchen = Kitchen::findKitchen($id);
 		$kitchen->delete();
 
@@ -128,7 +128,7 @@ class KitchenController extends Controller
 	public function addAdmin(Request $request, $id)
 	{
 		$userId = $this->getUserId($request);
-		Helper::checkKitchenAccess($request, $id);
+		$request->user()->isVerifiedKitchenOwner($id);
 		$kitchen = Kitchen::findKitchen($id);
 		$user = User::findUser($userId);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
@@ -142,7 +142,7 @@ class KitchenController extends Controller
 
 	public function removeAdmin(Request $request, $id)
 	{
-		Helper::checkKitchenAccess($request, $id);
+		$request->user()->isVerifiedKitchenOwner($id);
 		$userId = $this->getUserId($request);
 		$kitchen = Kitchen::findKitchen($id);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
@@ -172,7 +172,7 @@ class KitchenController extends Controller
 	public function checkOwnership(Request $request)
 	{
 		try {
-			Helper::checkKitchenAccess($request, $request->input('kitchen_id'));
+			$request->user()->isVerifiedKitchenOwner($request->input('kitchen_id'));
 		} catch (YechefException $e) {
 			return response()->notallow($e->getMessage());
 		}
@@ -190,7 +190,7 @@ class KitchenController extends Controller
 		}
 	}
 
-	private function validateInput(Request $request, $id)
+	private function validateInput(Request $request, $id = null)
 	{
 		$validationRule = Kitchen::getValidationRule($id);
 		$validator = $this->validator->make($request->all(), $validationRule);

@@ -2,7 +2,6 @@
 
 namespace App\Yechef;
 
-use App\Exceptions\YechefException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -23,14 +22,4 @@ class Helper
 			'query' => $request->query(),
 		]);
 	}
-
-	public static function checkKitchenAccess(Request $request, $kitchenId)
-	{
-		$currentUser = $request->user();
-		$exists = $currentUser->kitchens()->wherePivot('kitchen_id', $kitchenId)->wherePivot('verified', true)->get();
-		if ($exists->isEmpty()) {
-			throw new YechefException(12505);
-		}
-	}
-
 }

@@ -36,8 +36,8 @@ class DishController extends Controller
 	public function store(Request $request)
 	{
 		//TODO: No need to require slug input from the user.
+		$request->user()->isVerifiedKitchenOwner($request->input('kitchen_id'));
 		$this->validateRequestInputs($request);
-		Helper::checkKitchenAccess($request, $request->input('kitchen_id'));
 		$dish = Dish::create([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
@@ -55,8 +55,8 @@ class DishController extends Controller
 
 	public function update(Request $request, $id)
 	{
+		$request->user()->isVerifiedKitchenOwner($request->input('kitchen_id'));
 		$this->validateRequestInputs($request);
-		Helper::checkKitchenAccess($request, $request->input('kitchen_id'));
 		$dish = Dish::findDish($id);
 		$dish->update([
 			'slug'        => snake_case($request->input('name')),
@@ -78,7 +78,7 @@ class DishController extends Controller
 		//TODO: Need to delete other relationships to prevent foreign key constraint issues
 		//TODO: Also need to delete associated ratings
 		$dish = Dish::findDish($id);
-		Helper::checkKitchenAccess($request, $dish->kitchen_id);
+		$request->user()->isVerifiedKitchenOwner($dish->kitchen_id);
 		$dish->delete();
 
 		event(new ReactionableDeleted($dish));
@@ -92,7 +92,7 @@ class DishController extends Controller
 			$dishId = $request->input('dish_id');
 			$dish = Dish::findDish($dishId);
 			$kitchenId = $dish->kitchen_id;
-			Helper::checkKitchenAccess($request, $kitchenId);
+			$request->user()->isVerifiedKitchenOwner($kitchenId);
 		} catch (YechefException $e) {
 			return response()->notallow($e->getMessage());
 		}
