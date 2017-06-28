@@ -79,8 +79,18 @@ class DishController extends Controller
 
 	public function search(Request $request)
 	{
-		$results = Dish::search($request->food)->where('gluten_free', $request->gluten_free)->where('vegan',
-			$request->vegan)->where('vegetarian', $request->vegetarian)->get();
+		$results = Dish::search($request->q)->where('gluten_free', $request->gluten_free)->where('vegan',
+			$request->vegan)->where('vegetarian', $request->vegetarian)->get()->load('medias');
+		if ($request->input('min_price')) {
+			$results = $results->where('price', '>', $request->input('min_price'));
+		}
+		if ($request->input('max_price')) {
+			$results = $results->where('price', '<', $request->input('max_price'));
+		}
+		if ($request->input('nationality') !== 'all') {
+			$results = $results->where('nationality', '=', $request->input('nationality'));
+		}
+		$results = Helper::paginate($request, $results, 18);
 		return response()->success($results);
 	}
 
