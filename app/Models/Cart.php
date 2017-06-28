@@ -27,11 +27,6 @@ class Cart extends Model
 		return $this->belongsTo('App\Models\User');
 	}
 
-	public function add($item, $id)
-	{
-
-	}
-
 	public function findItemByDish($id)
 	{
 		try {
