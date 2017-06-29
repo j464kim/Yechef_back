@@ -36,27 +36,58 @@ class User extends Authenticatable
 		'remember_token',
 	];
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
 	public function cart()
 	{
 		return $this->hasOne('App\Models\Cart');
 	}
 
-	public static function getValidation()
+	/**
+	 * @return array
+	 */
+	public static function getValidationRule($userId = null)
 	{
-		return [
+		$rule = array(
 			'first_name' => 'required|max:255',
 			'last_name'  => 'required|max:255',
-			'email'      => 'required|email|max:255|unique:users',
-			'password'   => 'required|min:6|confirmed',
 			'phone'      => 'phone',
-		];
+		);
+
+		// For Update
+		if (!$userId) {
+			$rule['email'] = 'required|email|max:255|unique:users,email';
+			$rule['password'] = 'required|min:6|confirmed';
+		}
+
+		return $rule;
 	}
 
+	/**
+	 * @return array
+	 */
+	public static function getPasswordValidationRule()
+	{
+		$rule = array(
+			'oldPassword' => 'required',
+			'newPassword' => 'required|min:6|confirmed',
+		);
+
+		return $rule;
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
 	public function kitchens()
 	{
 		return $this->belongsToMany('App\Models\Kitchen')->withPivot('role', 'verified')->withTimestamps();
 	}
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function reactions()
 	{
 		return $this->hasMany('App\Models\Reaction');
@@ -100,4 +131,35 @@ class User extends Authenticatable
 
 		return $cartInfo;
 	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Collection|static[]
+	 */
+	public function getSubscriptions()
+	{
+		$subscriptionKitchens = Kitchen::with('medias')
+			->join('reactions', 'reactions.reactionable_id', '=', 'kitchens.id')
+			->where('user_id', $this->id)
+			->where('kind', Reaction::SUBSCRIBE)
+			->select('kitchens.*')
+			->get();
+
+		return $subscriptionKitchens;
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Collection|static[]
+	 */
+	public function getForkedDishes()
+	{
+		$forkedDishes = Dish::with('medias')
+			->join('reactions', 'reactions.reactionable_id', '=', 'dishes.id')
+			->where('user_id', $this->id)
+			->where('kind', Reaction::FORK)
+			->select('dishes.*')
+			->get();
+
+		return $forkedDishes;
+	}
+
 }

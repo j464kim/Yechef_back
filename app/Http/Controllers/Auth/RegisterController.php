@@ -9,6 +9,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Filesystem\Factory;
+use Illuminate\Support\Facades\Log;
+
 
 class RegisterController extends Controller
 {
@@ -27,7 +30,6 @@ class RegisterController extends Controller
 
 	// DI parameters
 	private $loginCtrl;
-	private $validator;
 
 	/**
 	 * Where to redirect users after registration.
@@ -43,18 +45,16 @@ class RegisterController extends Controller
 	 */
 	public function __construct(Application $app, LoginController $loginController)
 	{
+		parent::__construct($app);
+
 		$this->loginCtrl = $loginController;
 		$this->middleware('guest');
-		$this->validator = $app->make('validator');
 	}
 
 	public function register(Request $request)
 	{
-		$validator = $this->validator->make($request->all(), User::getValidation());
-
-		if ($validator->fails()) {
-			throw new YechefException(10505, $validator->getMessageBag());
-		}
+		$validationRule = User::getValidationRule();
+		$this->validateInput($request, $validationRule);
 
 		$first_name = $request->input('first_name');
 		$last_name = $request->input('last_name');

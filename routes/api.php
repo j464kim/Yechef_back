@@ -29,7 +29,16 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
 	Route::resource('carts', 'CartController', ['except' => ['show']]);
 
+	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
+	Route::get('users/getForkedDishes', 'UserController@getForkedDishes');
+
+//	Update Password
+	Route::post('password/update', 'Auth\UpdatePasswordController@update');
+
+// Checkout
+	Route::post('charge-payment', 'CheckoutController@charge');
 });
+
 // TODO Uncomment below 2 lines when auth is all ready
 Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);
 Route::resource('kitchens', 'KitchenController', ['only' => ['index', 'show']]);
@@ -49,10 +58,10 @@ Route::post('auth/google', 'Auth\LoginController@google');
 Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
 
 Route::get('users/list', 'UserController@index');
+Route::resource('users', 'UserController', ['only' => ['index', 'show', 'update']]);
 
 // Password Reset Routes...
 $this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
 $this->post('password/reset', 'Auth\ResetPasswordController@reset');
 $this->get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
 $this->get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
-
