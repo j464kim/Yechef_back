@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
 	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
-	Route::get('users/getForks', 'UserController@getForks');
+	Route::get('users/getForkedDishes', 'UserController@getForkedDishes');
 
 //	Update Password
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');

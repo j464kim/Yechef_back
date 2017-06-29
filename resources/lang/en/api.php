@@ -52,7 +52,6 @@ return [
 	'10504' => 'No user session found',
 	'10505' => 'Wrong input for user registration',
 	'10506' => 'Current Password is wrong',
-	'10507' => 'Wrong input for password update',
 
 	/**
 	 * Dish related
@@ -69,9 +68,7 @@ return [
 	'11006' => 'Dish rating successfully deleted',
 	// fail
 	'11500' => 'Unable to find the dish',
-	'11501' => 'Invalid request inputs for dish',
-	'11502' => 'Invalid request inputs for dish rating',
-	'11503' => 'Unable to find the dish rating',
+	'11501' => 'Unable to find the dish rating',
 
 	/**
 	 * Kitchen related
@@ -83,11 +80,10 @@ return [
 	'12001' => 'Kitchen is successfully updated',
 	'12002' => 'Kitchen is successfully deleted',
 	// fail
-	'12500' => 'Please make sure all fields filled out',
+	'12500' => 'Cannot add/remove self as kitchen admin',
 	'12501' => 'Kitchen could not be found',
 	'12502' => 'This admin already exists',
 	'12503' => 'Cannot find the kitchen admin',
-	'12504' => 'Cannot add/remove self as kitchen admin',
 
 	/**
 	 * Media related
@@ -100,7 +96,6 @@ return [
 	// fail
 	'13500' => 'File does not exist',
 	'13501' => 'File is not valid',
-	'13502' => 'There are errors in the files',
 
 	/**
 	 * Relation related
@@ -113,7 +108,6 @@ return [
 	'14002' => 'Successfully retrieved the number of reactions',
 
 	// fail
-	'14500' => 'Something is wrong with an action',
 	'14501' => 'Could not find the reaction',
 	'14502' => 'User has more than 1 reactions to the post',
 	'14503' => 'Could not find the reactionable',

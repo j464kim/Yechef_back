@@ -11,19 +11,6 @@ use Illuminate\Contracts\Filesystem\Factory;
 
 class MediaController extends Controller
 {
-	private $validator;
-	private $storage;
-
-	/**
-	 * KitchenController constructor.
-	 * @param Application $app
-	 */
-	public function __construct(Application $app, Factory $factory)
-	{
-		$this->validator = $app->make('validator');
-		$this->storage = $factory;
-	}
-
 	/**
 	 * @param Request $request
 	 * @return \Illuminate\Http\Response
@@ -58,7 +45,8 @@ class MediaController extends Controller
 			$fileUrl = $s3->url($uniqueFileName);
 			$fileSize = $file->getClientSize();
 
-			$this->validateInput($request);
+			$validationRule = Media::getValidationRule();
+			$this->validateInput($request, $validationRule);
 
 			// Save to local db
 			Media::create([
@@ -74,16 +62,6 @@ class MediaController extends Controller
 
 		return response()->success(13000);
 
-	}
-
-	private function validateInput(Request $request)
-	{
-		$validationRule = Media::getValidationRule();
-		$validator = $this->validator->make($request->all(), $validationRule);
-
-		if ($validator->fails()) {
-			throw new YechefException(13502);
-		}
 	}
 
 }

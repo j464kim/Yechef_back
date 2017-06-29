@@ -17,15 +17,6 @@ class UserController extends Controller
 {
 
 	/**
-	 * UserController constructor.
-	 * @param Application $app
-	 */
-	public function __construct(Application $app)
-	{
-		$this->validator = $app->make('validator');
-	}
-
-	/**
 	 * @param Request $request
 	 * @return mixed
 	 */
@@ -78,7 +69,8 @@ class UserController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		$this->validateInput($request, $id);
+		$validationRule = User::getValidationRule($id);
+		$this->validateInput($request, $validationRule);
 
 		$user = User::findUser($id);
 
@@ -100,12 +92,7 @@ class UserController extends Controller
 	public function getSubscriptions(Request $request)
 	{
 		$user = $request->user();
-		$subscriptionKitchens = Kitchen::with('medias')
-			->join('reactions', 'reactions.reactionable_id', '=', 'kitchens.id')
-			->where('user_id', $user->id)
-			->where('kind', Reaction::SUBSCRIBE)
-			->select('kitchens.*')
-			->get();
+		$subscriptionKitchens = $user->getSubscriptions();
 
 		return response()->success($subscriptionKitchens);
 	}
@@ -114,33 +101,11 @@ class UserController extends Controller
 	 * @param Request $request
 	 * @return mixed
 	 */
-	public function getForks(Request $request)
+	public function getForkedDishes(Request $request)
 	{
 		$user = $request->user();
-		$forkedDishes = Dish::with('medias')
-			->join('reactions', 'reactions.reactionable_id', '=', 'dishes.id')
-			->where('user_id', $user->id)
-			->where('kind', Reaction::FORK)
-			->select('dishes.*')
-			->get();
+		$forkedDishes = $user->getForkedDishes();
 
 		return response()->success($forkedDishes);
-	}
-
-	/**
-	 * @param Request $request
-	 */
-	private function validateInput(Request $request, $id)
-	{
-		$validationRule = User::getValidationRule($id);
-		$validator = $this->validator->make($request->all(), $validationRule);
-
-		if ($validator->fails()) {
-			$message = '';
-			foreach ($validator->errors()->all() as $error) {
-				$message .= "\r\n" . $error;
-			}
-			throw new YechefException(15502, $message);
-		}
 	}
 }

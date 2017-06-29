@@ -56,6 +56,16 @@ class User extends Authenticatable
 		return $rule;
 	}
 
+	public static function getPasswordValidationRule()
+	{
+		$rule = array(
+			'oldPassword' => 'required',
+			'newPassword' => 'required|min:6|confirmed',
+		);
+
+		return $rule;
+	}
+
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	 */
@@ -89,6 +99,30 @@ class User extends Authenticatable
 		} catch (\Exception $e) {
 			throw new YechefException(15501);
 		}
+	}
+
+	public function getSubscriptions()
+	{
+		$subscriptionKitchens = Kitchen::with('medias')
+			->join('reactions', 'reactions.reactionable_id', '=', 'kitchens.id')
+			->where('user_id', $this->id)
+			->where('kind', Reaction::SUBSCRIBE)
+			->select('kitchens.*')
+			->get();
+
+		return $subscriptionKitchens;
+	}
+
+	public function getForkedDishes()
+	{
+		$forkedDishes = Dish::with('medias')
+			->join('reactions', 'reactions.reactionable_id', '=', 'dishes.id')
+			->where('user_id', $this->id)
+			->where('kind', Reaction::FORK)
+			->select('dishes.*')
+			->get();
+
+		return $forkedDishes;
 	}
 
 }

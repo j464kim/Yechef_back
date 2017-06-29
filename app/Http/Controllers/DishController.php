@@ -12,12 +12,6 @@ use Illuminate\Http\Request;
 
 class DishController extends Controller
 {
-	private $validator;
-
-	public function __construct(Application $app)
-	{
-		$this->validator = $app->make('validator');
-	}
 
 	public function index(Request $request)
 	{
@@ -37,7 +31,9 @@ class DishController extends Controller
 	public function store(Request $request)
 	{
 		//TODO: No need to require slug input from the user.
-		$this->validateRequestInputs($request);
+		$validationRule = Dish::getValidationRule();
+		$this->validateInput($request, $validationRule);
+
 		$dish = Dish::create([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
@@ -51,7 +47,9 @@ class DishController extends Controller
 
 	public function update(Request $request, $id)
 	{
-		$this->validateRequestInputs($request);
+		$validationRule = Dish::getValidationRule($id);
+		$this->validateInput($request, $validationRule);
+
 		$dish = Dish::findDish($id);
 		$dish->update([
 			'slug'        => snake_case($request->input('name')),
@@ -76,15 +74,4 @@ class DishController extends Controller
 		return response()->success($dish, 11003);
 	}
 
-	private function validateRequestInputs($request)
-	{
-		$validator = $this->validator->make($request->all(), Dish::getValidation());
-		If ($validator->fails()) {
-			$message = '';
-			foreach ($validator->errors()->all() as $error) {
-				$message .= "\r\n" . $error;
-			}
-			throw new YechefException(11501, $message);
-		}
-	}
 }
