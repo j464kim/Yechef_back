@@ -1,5 +1,10 @@
 <?php
 
+use Stripe\Stripe;
+use App\Models\User;
+
+Stripe::setApiKey(config('services.stripe.secret_key'));
+
 return [
 
     /*
@@ -30,10 +35,11 @@ return [
     ],
 
     'stripe' => [
-        'model' => App\User::class,
-        'key' => env('STRIPE_KEY'),
-        'secret' => env('STRIPE_SECRET'),
+        'model' => User::class,
+        'public_key' => env('STRIPE_PUBLIC'),
+        'secret_key' => env('STRIPE_SECRET'),
     ],
+
     'facebook' => [
         'client_id' => env('FACEBOOK_CLIENT_ID'),
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
@@ -50,3 +56,5 @@ return [
         'redirect' => env('GOOGLE_REDIRECT'),
     ],
 ];
+
+
