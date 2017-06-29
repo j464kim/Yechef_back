@@ -6,6 +6,7 @@ use App\Traits\CanResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Exceptions\YechefException;
 
 class User extends Authenticatable
 {
@@ -35,28 +36,58 @@ class User extends Authenticatable
 		'remember_token',
 	];
 
-	public static function getValidation()
+	/**
+	 * @return array
+	 */
+	public static function getValidationRule($userId = null)
 	{
-		return [
+		$rule = array(
 			'first_name' => 'required|max:255',
 			'last_name'  => 'required|max:255',
-			'email'      => 'required|email|max:255|unique:users',
-			'password'   => 'required|min:6|confirmed',
 			'phone'      => 'phone',
-		];
+		);
+
+		// For Update
+		if (!$userId) {
+			$rule['email'] = 'required|email|max:255|unique:users,email';
+			$rule['password'] = 'required|min:6|confirmed';
+		}
+
+		return $rule;
 	}
 
+	public static function getPasswordValidationRule()
+	{
+		$rule = array(
+			'oldPassword' => 'required',
+			'newPassword' => 'required|min:6|confirmed',
+		);
+
+		return $rule;
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
 	public function kitchens()
 	{
 		return $this->belongsToMany('App\Models\Kitchen')->withPivot('role', 'verified')->withTimestamps();
 	}
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function reactions()
 	{
 		return $this->hasMany('App\Models\Reaction');
 	}
 
 
+	/**
+	 * @param $id
+	 * @param bool $withMedia
+	 * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+	 */
 	public static function findUser($id, $withMedia = false)
 	{
 		try {
@@ -69,4 +100,29 @@ class User extends Authenticatable
 			throw new YechefException(15501);
 		}
 	}
+
+	public function getSubscriptions()
+	{
+		$subscriptionKitchens = Kitchen::with('medias')
+			->join('reactions', 'reactions.reactionable_id', '=', 'kitchens.id')
+			->where('user_id', $this->id)
+			->where('kind', Reaction::SUBSCRIBE)
+			->select('kitchens.*')
+			->get();
+
+		return $subscriptionKitchens;
+	}
+
+	public function getForkedDishes()
+	{
+		$forkedDishes = Dish::with('medias')
+			->join('reactions', 'reactions.reactionable_id', '=', 'dishes.id')
+			->where('user_id', $this->id)
+			->where('kind', Reaction::FORK)
+			->select('dishes.*')
+			->get();
+
+		return $forkedDishes;
+	}
+
 }

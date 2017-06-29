@@ -10,16 +10,6 @@ use Illuminate\Support\Facades\Log;
 
 class ReactionController extends Controller
 {
-	private $validator;
-
-	/**
-	 * ReactionController constructor.
-	 * @param Application $app
-	 */
-	public function __construct(Application $app)
-	{
-		$this->validator = $app->make('validator');
-	}
 
 	/**
 	 * @param Request $request
@@ -66,7 +56,8 @@ class ReactionController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$this->validateInput($request);
+		$validationRule = Reaction::getValidationRule();
+		$this->validateInput($request, $validationRule);
 
 		// TODO: placeholder until registration is implemented
 		$reactionableId = $request->input('reactionableId');
@@ -131,17 +122,4 @@ class ReactionController extends Controller
 		return response()->success($userReaction, 14001);
 	}
 
-	/**
-	 * @param Request $request
-	 * @throws YechefException
-	 */
-	private function validateInput(Request $request)
-	{
-		$validationRule = Reaction::getValidationRule();
-		$validator = $this->validator->make($request->all(), $validationRule);
-
-		if ($validator->fails()) {
-			throw new YechefException(14500);
-		}
-	}
 }
