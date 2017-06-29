@@ -73,8 +73,11 @@ class User extends Authenticatable
 
 	public function isVerifiedKitchenOwner($kitchenId)
 	{
-		$exists = $this->kitchens()->wherePivot('kitchen_id', $kitchenId)->wherePivot('verified', true)->get();
-		if ($exists->isEmpty()) {
+		$pivot = $this->kitchens()->wherePivot('kitchen_id', $kitchenId);
+		$exists = $pivot->wherePivot('verified', true)->get();
+		if ($pivot->get()->isEmpty()) {
+			throw new YechefException(12506);
+		} elseif ($exists->isEmpty()) {
 			throw new YechefException(12505);
 		}
 	}

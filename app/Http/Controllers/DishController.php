@@ -88,10 +88,10 @@ class DishController extends Controller
 
 	public function checkOwnership(Request $request)
 	{
+		$dishId = $request->input('dish_id');
+		$dish = Dish::findDish($dishId);
+		$kitchenId = $dish->kitchen_id;
 		try {
-			$dishId = $request->input('dish_id');
-			$dish = Dish::findDish($dishId);
-			$kitchenId = $dish->kitchen_id;
 			$request->user()->isVerifiedKitchenOwner($kitchenId);
 		} catch (YechefException $e) {
 			return response()->notallow($e->getMessage());
