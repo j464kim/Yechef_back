@@ -127,4 +127,15 @@ return [
 	'15000' => 'Found the User',
 	// fail
 	'15501' => 'Unable to find the user',
+
+	/**
+	 * User related
+	 * Success Range 17000 <= x < 17500
+	 * Error Range 17500 <= x < 18000
+	 */
+	// success
+	'17000' => 'Payment was charged successfully',
+	// fail
+	'17501' => 'Error occurred while creating a Stripe account',
+	'17502' => 'Payment charge failed',
 ];

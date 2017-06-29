@@ -29,6 +29,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
+
+	// Checkout
+	Route::post('charge-payment', 'CheckoutController@charge');
 });
 // TODO Uncomment below 2 lines when auth is all ready
 Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);
@@ -57,3 +60,4 @@ $this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail'
 $this->post('password/reset', 'Auth\ResetPasswordController@reset');
 $this->get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
 $this->get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+
