@@ -4,13 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\YechefException;
 use App\Models\Media;
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Filesystem\Factory;
 
 class MediaController extends Controller
 {
+	private $storage;
+
+	public function __construct(Application $app, Factory $factory)
+	{
+		parent::__construct($app);
+
+		$this->storage = $factory;
+	}
+
 	/**
 	 * @param Request $request
 	 * @return \Illuminate\Http\Response

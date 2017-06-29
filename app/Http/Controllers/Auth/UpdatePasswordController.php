@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Log;
 
 class UpdatePasswordController extends Controller
 {
+	private $hash;
+
+	public function __construct(Application $app)
+	{
+		parent::__construct($app);
+
+		$this->hash = $app->make('hash');
+	}
+
 	/**
 	 * Update the password for the user.
 	 *

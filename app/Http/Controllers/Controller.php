@@ -10,6 +10,7 @@ use Illuminate\Foundation\Application;
 use App\Exceptions\YechefException;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Filesystem\Factory;
+use Illuminate\Support\Facades\Log;
 
 
 class Controller extends BaseController
@@ -17,14 +18,12 @@ class Controller extends BaseController
 	use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
 	private $validator;
-	public $hash;
-	public $storage;
 
-	public function __construct(Application $app, Factory $factory)
+	public function __construct(Application $app)
 	{
+		Log::info('base constructor');
+
 		$this->validator = $app->make('validator');
-		$this->hash = $app->make('hash');
-		$this->storage = $factory;
 	}
 
 	public function validateInput(Request $request, $validationRule)

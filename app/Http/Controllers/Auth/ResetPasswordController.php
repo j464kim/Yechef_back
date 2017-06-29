@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Traits\ResetsPasswords;
+use Illuminate\Foundation\Application;
 
 class ResetPasswordController extends Controller
 {
@@ -32,8 +33,10 @@ class ResetPasswordController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Application $app)
     {
+		parent::__construct($app);
+
         $this->middleware('guest');
     }
 }
