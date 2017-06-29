@@ -31,6 +31,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 //	Update Password
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');
+
+// Checkout
+	Route::post('charge-payment', 'CheckoutController@charge');
 });
 
 // TODO Uncomment below 2 lines when auth is all ready
