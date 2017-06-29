@@ -89,12 +89,12 @@ class DishController extends Controller
 		if ($request->vegetarian === '1') {
 			$results = $results->where('vegetarian', '1');
 		}
-		if ($request->input('nationality') !== 'all') {
-			$results = $results->where('nationality', $request->input('nationality'));
-		}
 
 		$results = $results->get()->load('medias');
 
+		if ($request->input('nationality') !== 'all') {
+			$results = $results->where('nationality', '=', $request->input('nationality'));
+		}
 		if ($request->input('min_price')) {
 			$results = $results->where('price', '>', $request->input('min_price'));
 		}
