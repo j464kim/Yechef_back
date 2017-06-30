@@ -11,24 +11,13 @@ use App\Models\User;
 use Illuminate\Foundation\Application;
 use App\Exceptions\YechefException;
 
-class CartController
+class CartController extends Controller
 {
-
-	private $validator;
 	private $cart;
-
-	/**
-	 * KitchenController constructor.
-	 * @param Application $app
-	 */
-	public function __construct(Application $app)
-	{
-		$this->validator = $app->make('validator');
-	}
 
 	public function initialize(Request $request)
 	{
-		$user = $request->user();
+		$user = $this->getUser($request);
 		$this->cart = $user->getCart();
 	}
 
@@ -60,12 +49,13 @@ class CartController
 	{
 		$this->initialize($request);
 
-		$this->validateInput($request);
+		$validationRule = CartItem::getValidationRule(false);
+		$this->validateInput($request, $validationRule);
 
 		// create a cart item
 		$cartItem = new CartItem;
-		$cartItem['dish_id'] = $request->input('dish_id');
-		$cartItem['quantity'] = $request->input('quantity');
+		$cartItem->dish_id = $request->input('dish_id');
+		$cartItem->quantity = $request->input('quantity');
 		$this->cart->items()->save($cartItem);
 
 		return response()->success($this->cart, 18000);
@@ -82,7 +72,8 @@ class CartController
 	{
 		$this->initialize($request);
 
-		$this->validateInput($request, isset($dishId));
+		$validationRule = CartItem::getValidationRule(isset($dishId));
+		$this->validateInput($request, $validationRule);
 
 		$item = $this->cart->findItemByDish($dishId);
 		$item->quantity = $request->input('quantity');
@@ -105,28 +96,6 @@ class CartController
 		$item->delete();
 
 		return response()->success($item, 18002);
-	}
-
-
-	/**
-	 * Validate Cart Item Inputs
-	 *
-	 * @param Request $request
-	 * @throws YechefException
-	 */
-	private function validateInput(Request $request, $isUpdate = false)
-	{
-		$validationRule = CartItem::getValidationRule($isUpdate);
-		$validator = $this->validator->make($request->all(), $validationRule);
-
-		$message = '';
-		foreach ($validator->errors()->all() as $error) {
-			$message .= "\r\n" . $error;
-		}
-
-		if ($validator->fails()) {
-			throw new YechefException(18501, $message);
-		}
 	}
 
 }

@@ -34,7 +34,7 @@ class KitchenController extends Controller
 	{
 		$validationRule = Kitchen::getValidationRule();
 		$this->validateInput($request, $validationRule);
-		$user = $request->user();
+		$user = $this->getUser($request);
 
 		$kitchen = Kitchen::create([
 			'slug'        => snake_case($request->input('name')),
@@ -142,9 +142,9 @@ class KitchenController extends Controller
 
 	private function getUserId(Request $request)
 	{
-		$currentUser = $request->user();
+		$user = $this->getUser($request);
 		$userId = $request->input('user_id');
-		if ($userId === $currentUser->id) {
+		if ($userId === $user->id) {
 			throw new YechefException(12500);
 		} else {
 			return $userId;

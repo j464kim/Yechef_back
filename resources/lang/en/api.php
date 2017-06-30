@@ -123,6 +123,7 @@ return [
 
 	// fail
 	'15501' => 'Unable to find the user',
+	'15502' => 'Failed to retrieve user information from request',
 
 	
 	/**

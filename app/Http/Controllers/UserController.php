@@ -22,7 +22,8 @@ class UserController extends Controller
 	 */
 	public function getMyKitchens(Request $request)
 	{
-		$user = $request->user();
+		$user = $this->getUser($request);
+
 		try {
 			$result = $user->kitchens()->with('medias')->get();
 		} catch (Exception $e) {
@@ -37,7 +38,8 @@ class UserController extends Controller
 	 */
 	public function getLoggedInUser(Request $request)
 	{
-		$user = $request->user();
+		$user = $this->getUser($request);
+
 		return response()->success($user);
 	}
 
@@ -48,6 +50,7 @@ class UserController extends Controller
 	public function index()
 	{
 		$result = User::all();
+
 		return response()->success($result);
 	}
 
@@ -91,7 +94,8 @@ class UserController extends Controller
 	 */
 	public function getSubscriptions(Request $request)
 	{
-		$user = $request->user();
+		$user = $this->getUser($request);
+
 		$subscriptionKitchens = $user->getSubscriptions();
 
 		return response()->success($subscriptionKitchens);
@@ -103,7 +107,8 @@ class UserController extends Controller
 	 */
 	public function getForkedDishes(Request $request)
 	{
-		$user = $request->user();
+		$user = $this->getUser($request);
+
 		$forkedDishes = $user->getForkedDishes();
 
 		return response()->success($forkedDishes);
