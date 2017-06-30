@@ -37,6 +37,14 @@ class User extends Authenticatable
 	];
 
 	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function cart()
+	{
+		return $this->hasOne('App\Models\Cart');
+	}
+
+	/**
 	 * @return array
 	 */
 	public static function getValidationRule($userId = null)
@@ -56,6 +64,9 @@ class User extends Authenticatable
 		return $rule;
 	}
 
+	/**
+	 * @return array
+	 */
 	public static function getPasswordValidationRule()
 	{
 		$rule = array(
@@ -87,6 +98,7 @@ class User extends Authenticatable
 	 * @param $id
 	 * @param bool $withMedia
 	 * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+	 * @throws YechefException
 	 */
 	public static function findUser($id, $withMedia = false)
 	{
@@ -101,6 +113,28 @@ class User extends Authenticatable
 		}
 	}
 
+	/**
+	 * check if current user has an existing cart, otherwise create one
+	 *
+	 * @return false|\Illuminate\Database\Eloquent\Model
+	 * @throws YechefException
+	 */
+	public function getCart()
+	{
+		try {
+			$cart = $this->cart ?: $this->cart()->save(new Cart);
+			$cartInfo = $cart->with('items')->firstOrFail();
+
+		} catch (\Exception $e) {
+			throw new YechefException(18502);
+		}
+
+		return $cartInfo;
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Collection|static[]
+	 */
 	public function getSubscriptions()
 	{
 		$subscriptionKitchens = Kitchen::with('medias')
@@ -113,6 +147,9 @@ class User extends Authenticatable
 		return $subscriptionKitchens;
 	}
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Collection|static[]
+	 */
 	public function getForkedDishes()
 	{
 		$forkedDishes = Dish::with('medias')

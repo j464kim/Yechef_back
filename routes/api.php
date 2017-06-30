@@ -12,6 +12,7 @@
 */
 
 Route::group(['middleware' => ['auth:api']], function () {
+
 	Route::post('logout', 'Auth\LoginController@logout');
 	Route::get('logged-in', 'UserController@getLoggedInUser');
 // TODO Change this to proper middleware group later on
@@ -26,6 +27,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
+	Route::resource('carts', 'CartController', ['except' => ['show']]);
+
 	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
 	Route::get('users/getForkedDishes', 'UserController@getForkedDishes');
 

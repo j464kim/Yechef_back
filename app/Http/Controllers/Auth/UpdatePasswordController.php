@@ -32,7 +32,7 @@ class UpdatePasswordController extends Controller
 		$validationRule = User::getPasswordValidationRule();
 		$this->validateInput($request, $validationRule);
 
-		$user = $request->user();
+		$user = $this->getUser($request);
 		$passwordInDatabase = $user->password;
 
 		if ($this->hash->check($request->oldPassword, $passwordInDatabase)) {

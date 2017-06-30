@@ -123,7 +123,9 @@ return [
 
 	// fail
 	'15501' => 'Unable to find the user',
+	'15502' => 'Failed to retrieve user information from request',
 
+	
 	/**
 	 * User related
 	 * Success Range 17000 <= x < 17500
@@ -134,4 +136,20 @@ return [
 	// fail
 	'17501' => 'Error occurred while creating a Stripe account',
 	'17502' => 'Payment charge failed',
+	
+	
+	/**
+	 * User related
+	 * Success Range 18000 <= x < 18500
+	 * Error Range 18500 <= x < 19000
+	 */
+	// success
+	'18000' => 'The item is added to cart',
+	'18001' => 'Cart item quantity is udpated',
+	'18002' => 'Item is removed from the cart',
+
+	// fail
+	'18501' => 'Wrong inputs for cart items',
+	'18502' => 'Failed to get the cart of the user',
+	'18503' => 'The cart item cannot be found',
 ];

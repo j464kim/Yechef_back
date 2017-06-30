@@ -19,13 +19,36 @@ class Controller extends BaseController
 
 	private $validator;
 
+	/**
+	 * Controller constructor.
+	 * @param Application $app
+	 */
 	public function __construct(Application $app)
 	{
-		Log::info('base constructor');
-
 		$this->validator = $app->make('validator');
 	}
 
+	/**
+	 * @param Request $request
+	 * @return mixed
+	 * @throws YechefException
+	 */
+	public function getUser(Request $request)
+	{
+		try {
+			$user = $request->user();
+		} catch (\Exception $e) {
+			throw new YechefException(15502, $e->getMessage());
+		}
+
+		return $user;
+	}
+
+	/**
+	 * @param Request $request
+	 * @param $validationRule
+	 * @throws YechefException
+	 */
 	public function validateInput(Request $request, $validationRule)
 	{
 		$validator = $this->validator->make($request->all(), $validationRule);
