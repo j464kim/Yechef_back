@@ -53,6 +53,8 @@ class LoginController extends Controller
 	 */
 	public function __construct(Application $app, Client $guzzleClient, Socialite $socialite)
 	{
+		parent::__construct($app);
+
 		$this->guzzleClient = $guzzleClient;
 		$this->cookie = $app->make('cookie');
 		$this->validator = $app->make('validator');

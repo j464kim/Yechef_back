@@ -11,12 +11,6 @@ use Illuminate\Http\Request;
 
 class DishController extends Controller
 {
-	private $validator;
-
-	public function __construct(Application $app)
-	{
-		$this->validator = $app->make('validator');
-	}
 
 	public function index(Request $request)
 	{
@@ -35,14 +29,22 @@ class DishController extends Controller
 
 	public function store(Request $request)
 	{
+		$request->user()->isVerifiedKitchenOwner($request->input('kitchen_id'));
+
 		//TODO: No need to require slug input from the user.
-		$this->validateRequestInputs($request);
+		$validationRule = Dish::getValidationRule();
+		$this->validateInput($request, $validationRule);
+
 		$dish = Dish::create([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
 			'price'       => $request->input('price'),
 			'kitchen_id'  => $request->input('kitchen_id'),
+			'nationality' => $request->input('nationality'),
+			'gluten_free' => $request->input('gluten_free'),
+			'vegetarian'  => $request->input('vegetarian'),
+			'vegan'       => $request->input('vegan'),
 			//TODO: ingredient
 		]);
 		$dish->save();
@@ -51,7 +53,11 @@ class DishController extends Controller
 
 	public function update(Request $request, $id)
 	{
-		$this->validateRequestInputs($request);
+		$request->user()->isVerifiedKitchenOwner($request->input('kitchen_id'));
+
+		$validationRule = Dish::getValidationRule($id);
+		$this->validateInput($request, $validationRule);
+
 		$dish = Dish::findDish($id);
 		$dish->update([
 			'slug'        => snake_case($request->input('name')),
@@ -59,6 +65,10 @@ class DishController extends Controller
 			'description' => $request->input('description'),
 			'price'       => $request->input('price'),
 			'kitchen_id'  => $request->input('kitchen_id'),
+			'nationality' => $request->input('nationality'),
+			'gluten_free' => $request->input('gluten_free'),
+			'vegetarian'  => $request->input('vegetarian'),
+			'vegan'       => $request->input('vegan'),
 			//TODO: ingredient
 		]);
 		$dish->save();
@@ -70,6 +80,7 @@ class DishController extends Controller
 		//TODO: Need to delete other relationships to prevent foreign key constraint issues
 		//TODO: Also need to delete associated ratings
 		$dish = Dish::findDish($id);
+		$request->user()->isVerifiedKitchenOwner($dish->kitchen_id);
 		$dish->delete();
 
 		event(new ReactionableDeleted($dish));
