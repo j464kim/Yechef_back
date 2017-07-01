@@ -72,6 +72,8 @@ class KitchenController extends Controller
 
 	public function update(Request $request, $id)
 	{
+		$request->user()->isVerifiedKitchenOwner($id);
+
 		$validationRule = Kitchen::getValidationRule($id);
 		$this->validateInput($request, $validationRule);
 
@@ -97,8 +99,9 @@ class KitchenController extends Controller
 	 * @param  int $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy($id)
+	public function destroy(Request $request, $id)
 	{
+		$request->user()->isVerifiedKitchenOwner($id);
 		$kitchen = Kitchen::findKitchen($id);
 		$kitchen->delete();
 
@@ -115,10 +118,13 @@ class KitchenController extends Controller
 
 	public function addAdmin(Request $request, $id)
 	{
+		$request->user()->isVerifiedKitchenOwner($id);
+
 		$userId = $this->getUserId($request);
 		$kitchen = Kitchen::findKitchen($id);
 		$user = User::findUser($userId);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
+
 		if (!$admin) {
 			$kitchen->users()->save($user, ['verified' => false, 'role' => 1]);
 		} else {
@@ -129,6 +135,7 @@ class KitchenController extends Controller
 
 	public function removeAdmin(Request $request, $id)
 	{
+		$request->user()->isVerifiedKitchenOwner($id);
 		$userId = $this->getUserId($request);
 		$kitchen = Kitchen::findKitchen($id);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
@@ -138,6 +145,21 @@ class KitchenController extends Controller
 		} else {
 			throw new YechefException(12503);
 		}
+	}
+
+	public function getDishes($id)
+	{
+		$kitchen = Kitchen::findKitchen($id);
+		$dishes = $kitchen->dishes()->with('medias')->get();
+		return response()->success($dishes);
+	}
+
+	public function getSubscribers($id)
+	{
+		$kitchen = Kitchen::findKitchen($id);
+		$subscribers = $kitchen->reactions()->where('kind', 3)->pluck('user_id')->toArray();
+		$subscribers = User::findMany($subscribers);
+		return response()->success($subscribers);
 	}
 
 	private function getUserId(Request $request)

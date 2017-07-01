@@ -23,6 +23,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::resource('reactions', 'ReactionController',
 		['parameters' => ['reactions' => 'like_id'], 'only' => ['store', 'destroy']]);
 
+	Route::post('dishes/checkOwnership', 'UserController@checkOwnership');
+	Route::post('kitchens/checkOwnership', 'UserController@checkOwnership');
+
 	Route::get('users/getMyKitchens', 'UserController@getMyKitchens');
 
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
@@ -56,6 +59,8 @@ Route::post('auth/facebook', 'Auth\LoginController@facebook');
 Route::post('auth/google', 'Auth\LoginController@google');
 
 Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
+Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
+Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');
 
 Route::get('users/list', 'UserController@index');
 Route::resource('users', 'UserController', ['only' => ['index', 'show', 'update']]);

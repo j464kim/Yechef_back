@@ -83,6 +83,9 @@ return [
 	'12501' => 'Kitchen could not be found',
 	'12502' => 'This admin already exists',
 	'12503' => 'Cannot find the kitchen admin',
+	'12504' => 'Cannot add/remove self as kitchen admin',
+	'12505' => 'You did not approve to be a kitchen owner yet',
+	'12506' => 'You are not owning the kitchen',
 
 	/**
 	 * Media related
@@ -125,7 +128,7 @@ return [
 	'15501' => 'Unable to find the user',
 	'15502' => 'Failed to retrieve user information from request',
 
-	
+
 	/**
 	 * User related
 	 * Success Range 17000 <= x < 17500
@@ -136,8 +139,8 @@ return [
 	// fail
 	'17501' => 'Error occurred while creating a Stripe account',
 	'17502' => 'Payment charge failed',
-	
-	
+
+
 	/**
 	 * User related
 	 * Success Range 18000 <= x < 18500

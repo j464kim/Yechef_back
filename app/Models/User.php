@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\YechefException;
 use App\Traits\CanResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -110,6 +111,18 @@ class User extends Authenticatable
 			}
 		} catch (\Exception $e) {
 			throw new YechefException(15501);
+		}
+	}
+
+	public function isVerifiedKitchenOwner($kitchenId)
+	{
+		$kitchenWithPivot = $this->kitchens()->wherePivot('kitchen_id', $kitchenId);
+		$verifiedKitchen = $kitchenWithPivot->wherePivot('verified', true)->get();
+
+		if ($kitchenWithPivot->get()->isEmpty()) {
+			throw new YechefException(12506);
+		} elseif ($verifiedKitchen->isEmpty()) {
+			throw new YechefException(12505);
 		}
 	}
 

@@ -54,6 +54,23 @@ class UserController extends Controller
 		return response()->success($result);
 	}
 
+	public function checkOwnership(Request $request)
+	{
+		if ($dishId = $request->input('dish_id')) {
+			$dish = Dish::findDish($dishId);
+			$kitchenId = $dish->kitchen_id;
+		} else {
+			$kitchenId = $request->input('kitchen_id');
+		}
+
+		try {
+			$request->user()->isVerifiedKitchenOwner($kitchenId);
+		} catch (YechefException $e) {
+			return response()->notallow($e->getMessage());
+		}
+		return response()->success();
+	}
+
 	/**
 	 * @param $id
 	 * @return mixed

@@ -27,8 +27,12 @@ class ReactionController extends Controller
 		}
 
 		$reactions = $reactionable->getReactions();
-		$userReactions = $reactionable->getReactions($userId);
-		$userReaction = $userReactions->first();
+
+		$userReaction = null;
+		if ($userId){
+			$userReactions = $reactionable->getReactions($userId);
+			$userReaction = $userReactions->first();
+		}
 
 		$userReactionId = $userReaction ? $userReaction->id : null;
 		$userReactionKind = $userReaction ? $userReaction->kind : null;
@@ -62,7 +66,7 @@ class ReactionController extends Controller
 		// TODO: placeholder until registration is implemented
 		$reactionableId = $request->input('reactionableId');
 		$reactionableType = $request->input('reactionableType');
-		$userId = $request->input('userId');
+		$userId = $request->user()->id;
 
 		try {
 			$reactionable = $reactionableType::findOrFail($reactionableId);
@@ -108,7 +112,7 @@ class ReactionController extends Controller
 	{
 		$reactionableId = $request->input('reactionableId');
 		$reactionableType = $request->input('reactionableType');
-		$userId = $request->input('userId');
+		$userId = $request->user()->id;
 
 		try {
 			$reactionable = $reactionableType::findOrFail($reactionableId);
