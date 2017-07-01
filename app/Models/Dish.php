@@ -81,7 +81,7 @@ class Dish extends Model
 	 * @param null $id
 	 * @return array
 	 */
-	public static function getValidation($id = null)
+	public static function getValidationRule($id = null)
 	{
 		Return [
 			'name'        => 'bail|required',

@@ -13,18 +13,6 @@ use Illuminate\Http\Request;
 class KitchenController extends Controller
 {
 
-	private $validator;
-
-	/**
-	 * KitchenController constructor.
-	 * @param Application $app
-	 */
-	public function __construct(Application $app)
-	{
-		$this->validator = $app->make('validator');
-	}
-
-
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -44,8 +32,9 @@ class KitchenController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$user = $request->user();
-		$this->validateInput($request);
+		$validationRule = Kitchen::getValidationRule();
+		$this->validateInput($request, $validationRule);
+		$user = $this->getUser($request);
 
 		$kitchen = Kitchen::create([
 			'slug'        => snake_case($request->input('name')),
@@ -84,7 +73,9 @@ class KitchenController extends Controller
 	public function update(Request $request, $id)
 	{
 		$request->user()->isVerifiedKitchenOwner($id);
-		$this->validateInput($request, $id);
+
+		$validationRule = Kitchen::getValidationRule($id);
+		$this->validateInput($request, $validationRule);
 
 		$kitchen = Kitchen::findKitchen($id, true);
 
@@ -127,11 +118,13 @@ class KitchenController extends Controller
 
 	public function addAdmin(Request $request, $id)
 	{
-		$userId = $this->getUserId($request);
 		$request->user()->isVerifiedKitchenOwner($id);
+
+		$userId = $this->getUserId($request);
 		$kitchen = Kitchen::findKitchen($id);
 		$user = User::findUser($userId);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
+
 		if (!$admin) {
 			$kitchen->users()->save($user, ['verified' => false, 'role' => 1]);
 		} else {
@@ -154,14 +147,14 @@ class KitchenController extends Controller
 		}
 	}
 
-	public function getDishes(Request $request, $id)
+	public function getDishes($id)
 	{
 		$kitchen = Kitchen::findKitchen($id);
 		$dishes = $kitchen->dishes()->with('medias')->get();
 		return response()->success($dishes);
 	}
 
-	public function getSubscribers(Request $request, $id)
+	public function getSubscribers($id)
 	{
 		$kitchen = Kitchen::findKitchen($id);
 		$subscribers = $kitchen->reactions()->where('kind', 3)->pluck('user_id')->toArray();
@@ -171,22 +164,13 @@ class KitchenController extends Controller
 
 	private function getUserId(Request $request)
 	{
-		$currentUser = $request->user();
+		$user = $this->getUser($request);
 		$userId = $request->input('user_id');
-		if ($userId === $currentUser->id) {
-			throw new YechefException(12504);
+		if ($userId === $user->id) {
+			throw new YechefException(12500);
 		} else {
 			return $userId;
 		}
 	}
 
-	private function validateInput(Request $request, $id = null)
-	{
-		$validationRule = Kitchen::getValidationRule($id);
-		$validator = $this->validator->make($request->all(), $validationRule);
-
-		if ($validator->fails()) {
-			throw new YechefException(12500);
-		}
-	}
 }

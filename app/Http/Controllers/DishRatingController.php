@@ -13,12 +13,6 @@ use Illuminate\Http\Request;
 
 class DishRatingController extends Controller
 {
-	private $validator;
-
-	public function __construct(Application $app)
-	{
-		$this->validator = $app->make('validator');
-	}
 
 	public function getAvg(Request $request, $dishId)
 	{
@@ -43,7 +37,9 @@ class DishRatingController extends Controller
 	public function store(Request $request, $dishId)
 	{
 		//TODO: No need to require slug input from the user.
-		$this->validateRequestInputs($request);
+		$validationRule = DishRating::getValidationRule();
+		$this->validateInput($request, $validationRule);
+
 		$dish = Dish::findDish($dishId);
 		//TODO: Replace with the real user
 		$user = User::first();
@@ -59,7 +55,9 @@ class DishRatingController extends Controller
 	public function update(Request $request, $dishId, $ratingId)
 	{
 		//TODO: Check if the user has the permission to do so
-		$this->validateRequestInputs($request);
+		$validationRule = DishRating::getValidationRule($ratingId);
+		$this->validateInput($request, $validationRule);
+
 		$rating = Dish::updateRating($ratingId, [
 			'taste_rating'    => $request->input('taste_rating'),
 			'visual_rating'   => $request->input('visual_rating'),
@@ -76,15 +74,4 @@ class DishRatingController extends Controller
 		return response()->success($rating, 11006);
 	}
 
-	private function validateRequestInputs($request)
-	{
-		$validator = $this->validator->make($request->all(), DishRating::getValidation());
-		If ($validator->fails()) {
-			$message = '';
-			foreach ($validator->errors()->all() as $error) {
-				$message .= "\r\n" . $error;
-			}
-			throw new YechefException(11502, $message);
-		}
-	}
 }

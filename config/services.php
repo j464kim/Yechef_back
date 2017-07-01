@@ -1,10 +1,5 @@
 <?php
 
-use Stripe\Stripe;
-use App\Models\User;
-
-Stripe::setApiKey(config('services.stripe.secret_key'));
-
 return [
 
     /*

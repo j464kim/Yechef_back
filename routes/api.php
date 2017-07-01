@@ -12,6 +12,7 @@
 */
 
 Route::group(['middleware' => ['auth:api']], function () {
+
 	Route::post('logout', 'Auth\LoginController@logout');
 	Route::get('logged-in', 'UserController@getLoggedInUser');
 // TODO Change this to proper middleware group later on
@@ -29,10 +30,18 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
+	Route::resource('carts', 'CartController', ['except' => ['show']]);
 
-	// Checkout
+	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
+	Route::get('users/getForkedDishes', 'UserController@getForkedDishes');
+
+//	Update Password
+	Route::post('password/update', 'Auth\UpdatePasswordController@update');
+
+// Checkout
 	Route::post('charge-payment', 'CheckoutController@charge');
 });
+
 // TODO Uncomment below 2 lines when auth is all ready
 Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);
 Route::resource('kitchens', 'KitchenController', ['only' => ['index', 'show']]);
@@ -54,10 +63,10 @@ Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
 Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');
 
 Route::get('users/list', 'UserController@index');
+Route::resource('users', 'UserController', ['only' => ['index', 'show', 'update']]);
 
 // Password Reset Routes...
 $this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
 $this->post('password/reset', 'Auth\ResetPasswordController@reset');
 $this->get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
 $this->get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
-

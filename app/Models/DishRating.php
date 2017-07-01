@@ -106,7 +106,7 @@ class DishRating extends Rating
 			$rating->update($data);
 			return $rating;
 		} catch (ModelNotFoundException $e) {
-			throw new YechefException(11503);
+			throw new YechefException(11501);
 		}
 	}
 
@@ -120,7 +120,7 @@ class DishRating extends Rating
 		try {
 			return static::findOrFail($id)->delete();
 		} catch (ModelNotFoundException $e) {
-			throw new YechefException(11503);
+			throw new YechefException(11501);
 		}
 	}
 
@@ -128,7 +128,7 @@ class DishRating extends Rating
 	 * @param null $id
 	 * @return array
 	 */
-	public static function getValidation($id = null)
+	public static function getValidationRule($id = null)
 	{
 		Return [
 			'dishId'          => 'bail|required',
@@ -149,7 +149,7 @@ class DishRating extends Rating
 		try {
 			return DishRating::findOrFail($id);
 		} catch (ModelNotFoundException $e) {
-			throw new YechefException(11503);
+			throw new YechefException(11501);
 		}
 	}
 }

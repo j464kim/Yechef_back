@@ -43,13 +43,14 @@ return [
 	'10000' => 'Access token granted',
 	'10001' => 'Access token refreshed',
 	'10002' => 'Logout success',
+	'10003' => 'Password is changed successfully',
 	// fail
 	'10500' => 'Please provide your email and password',
 	'10501' => 'Your email and password are wrong',
 	'10502' => 'Refresh token required',
 	'10503' => 'Fail to refresh access token',
 	'10504' => 'No user session found',
-	'10505' => 'Wrong input for user registration',
+	'10506' => 'Current Password is wrong',
 
 	/**
 	 * Dish related
@@ -66,9 +67,7 @@ return [
 	'11006' => 'Dish rating successfully deleted',
 	// fail
 	'11500' => 'Unable to find the dish',
-	'11501' => 'Invalid request inputs for dish',
-	'11502' => 'Invalid request inputs for dish rating',
-	'11503' => 'Unable to find the dish rating',
+	'11501' => 'Unable to find the dish rating',
 
 	/**
 	 * Kitchen related
@@ -80,7 +79,7 @@ return [
 	'12001' => 'Kitchen is successfully updated',
 	'12002' => 'Kitchen is successfully deleted',
 	// fail
-	'12500' => 'Please make sure all fields filled out',
+	'12500' => 'Cannot add/remove self as kitchen admin',
 	'12501' => 'Kitchen could not be found',
 	'12502' => 'This admin already exists',
 	'12503' => 'Cannot find the kitchen admin',
@@ -99,7 +98,6 @@ return [
 	// fail
 	'13500' => 'File does not exist',
 	'13501' => 'File is not valid',
-	'13502' => 'There are errors in the files',
 
 	/**
 	 * Relation related
@@ -112,7 +110,6 @@ return [
 	'14002' => 'Successfully retrieved the number of reactions',
 
 	// fail
-	'14500' => 'Something is wrong with an action',
 	'14501' => 'Could not find the reaction',
 	'14502' => 'User has more than 1 reactions to the post',
 	'14503' => 'Could not find the reactionable',
@@ -125,8 +122,12 @@ return [
 	 */
 	// success
 	'15000' => 'Found the User',
+	'15001' => 'Successfully updated User information',
+
 	// fail
 	'15501' => 'Unable to find the user',
+	'15502' => 'Failed to retrieve user information from request',
+
 
 	/**
 	 * User related
@@ -138,4 +139,20 @@ return [
 	// fail
 	'17501' => 'Error occurred while creating a Stripe account',
 	'17502' => 'Payment charge failed',
+
+
+	/**
+	 * User related
+	 * Success Range 18000 <= x < 18500
+	 * Error Range 18500 <= x < 19000
+	 */
+	// success
+	'18000' => 'The item is added to cart',
+	'18001' => 'Cart item quantity is udpated',
+	'18002' => 'Item is removed from the cart',
+
+	// fail
+	'18501' => 'Wrong inputs for cart items',
+	'18502' => 'Failed to get the cart of the user',
+	'18503' => 'The cart item cannot be found',
 ];
