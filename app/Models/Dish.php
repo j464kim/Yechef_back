@@ -9,8 +9,6 @@ use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Iatstuti\Database\Support\CascadeSoftDeletes;
-use App\Traits\Reactionable;
 use Illuminate\Support\Facades\Log;
 use Laravel\Scout\Searchable;
 
