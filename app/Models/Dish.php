@@ -113,4 +113,5 @@ class Dish extends Model
 			throw new YechefException(11500);
 		}
 	}
+
 }

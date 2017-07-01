@@ -169,16 +169,6 @@ class KitchenController extends Controller
 		return response()->success($subscribers);
 	}
 
-	public function checkOwnership(Request $request)
-	{
-		try {
-			$request->user()->isVerifiedKitchenOwner($request->input('kitchen_id'));
-		} catch (YechefException $e) {
-			return response()->notallow($e->getMessage());
-		}
-		return response()->success();
-	}
-
 	private function getUserId(Request $request)
 	{
 		$currentUser = $request->user();
