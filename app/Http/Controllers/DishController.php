@@ -6,7 +6,6 @@ use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Yechef\Helper;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 
 class DishController extends Controller
@@ -101,7 +100,7 @@ class DishController extends Controller
 			$results = $results->where('vegetarian', '1');
 		}
 
-		$results = $results->get()->load('medias');
+		$results = $results->get()->load('medias')->load('kitchen');
 
 		if ($request->input('nationality') !== 'all') {
 			$results = $results->where('nationality', '=', $request->input('nationality'));
@@ -114,17 +113,5 @@ class DishController extends Controller
 		}
 		$results = Helper::paginate($request, $results, 18);
 		return response()->success($results);
-	}
-
-	private function validateRequestInputs($request)
-	{
-		$validator = $this->validator->make($request->all(), Dish::getValidation());
-		If ($validator->fails()) {
-			$message = '';
-			foreach ($validator->errors()->all() as $error) {
-				$message .= "\r\n" . $error;
-			}
-			throw new YechefException(11501, $message);
-		}
 	}
 }
