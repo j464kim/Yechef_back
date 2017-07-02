@@ -116,15 +116,4 @@ class DishController extends Controller
 		return response()->success($results);
 	}
 
-	private function validateRequestInputs($request)
-	{
-		$validator = $this->validator->make($request->all(), Dish::getValidation());
-		If ($validator->fails()) {
-			$message = '';
-			foreach ($validator->errors()->all() as $error) {
-				$message .= "\r\n" . $error;
-			}
-			throw new YechefException(11501, $message);
-		}
-	}
 }
