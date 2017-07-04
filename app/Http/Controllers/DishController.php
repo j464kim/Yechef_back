@@ -89,6 +89,9 @@ class DishController extends Controller
 
 	public function search(Request $request)
 	{
+		if (!$request->city) {
+			throw new YechefException();
+		}
 		$results = Dish::search($request->q);
 		if ($request->gluten_free === '1') {
 			$results = $results->where('gluten_free', '1');
@@ -100,7 +103,9 @@ class DishController extends Controller
 			$results = $results->where('vegetarian', '1');
 		}
 
-		$results = $results->get()->load('medias')->load('kitchen');
+		$results = $results->get()->load('medias')->load(['kitchen' => function ($query)  use ($request){
+			$query->where('address', 'like', "%$request->city%");
+		}])->where('kitchen', '!=', null);
 
 		if ($request->input('nationality') !== 'all') {
 			$results = $results->where('nationality', '=', $request->input('nationality'));
