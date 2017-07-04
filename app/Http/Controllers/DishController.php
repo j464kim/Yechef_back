@@ -119,8 +119,6 @@ class DishController extends Controller
 		$results = $this->sortBySearch($request, $results);
 		$results = Helper::paginate($request, $results, 18);
 
-		Log::error($results->first()->id);
-
 		return response()->success($results);
 	}
 
