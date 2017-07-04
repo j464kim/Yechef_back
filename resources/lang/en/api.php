@@ -94,10 +94,12 @@ return [
 	 */
 	// success
 	'13000' => 'Successfully uploaded the media',
+	'13001' => 'Successfully deleted the media',
 
 	// fail
 	'13500' => 'File does not exist',
 	'13501' => 'File is not valid',
+	'13502' => 'Unable to find the media',
 
 	/**
 	 * Relation related
@@ -142,7 +144,7 @@ return [
 
 
 	/**
-	 * User related
+	 * Cart related
 	 * Success Range 18000 <= x < 18500
 	 * Error Range 18500 <= x < 19000
 	 */
