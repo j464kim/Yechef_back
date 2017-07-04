@@ -116,8 +116,6 @@ class DishController extends Controller
 			$results = $results->where('price', '<', $request->input('max_price'));
 		}
 
-		Log::info($results->first()->id);
-
 		$results = $this->sortBySearch($request, $results);
 		$results = Helper::paginate($request, $results, 18);
 
@@ -131,7 +129,6 @@ class DishController extends Controller
 		$sortBy = $request->input('sortBy') ?: null;
 
 		if (!$sortBy) {
-			Log::info('not_existing');
 			return $results;
 		}
 
