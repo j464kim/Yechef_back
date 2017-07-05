@@ -92,6 +92,8 @@ class DishController extends Controller
 		if (!$request->city) {
 			throw new YechefException();
 		}
+		$pieces = explode(",", $request->city);
+		$request->city = implode(',', [$pieces[0], $pieces[1]]);
 		$results = Dish::search($request->q);
 		if ($request->gluten_free === '1') {
 			$results = $results->where('gluten_free', '1');
@@ -103,9 +105,11 @@ class DishController extends Controller
 			$results = $results->where('vegetarian', '1');
 		}
 
-		$results = $results->get()->load('medias')->load(['kitchen' => function ($query)  use ($request){
-			$query->where('address', 'like', "%$request->city%");
-		}])->where('kitchen', '!=', null);
+		$results = $results->get()->load('medias')->load([
+			'kitchen' => function ($query) use ($request) {
+				$query->where('address', 'like', "%$request->city%");
+			}
+		])->where('kitchen', '!=', null);
 
 		if ($request->input('nationality') !== 'all') {
 			$results = $results->where('nationality', '=', $request->input('nationality'));
@@ -116,7 +120,14 @@ class DishController extends Controller
 		if ($request->input('max_price')) {
 			$results = $results->where('price', '<', $request->input('max_price'));
 		}
-		$results = Helper::paginate($request, $results, 18);
-		return response()->success($results);
+
+		$filtered = $results->filter(function ($item) use ($request) {
+			$geoCodedAddress = \GoogleMaps::load('geocoding')->setParamByKey('address', $item->kitchen->address)->get();
+			$geoCodedAddress = json_decode($geoCodedAddress);
+			return ($request->NE_lat >= $geoCodedAddress->results[0]->geometry->location->lat) && ($request->NE_lng >= $geoCodedAddress->results[0]->geometry->location->lng) && ($request->SW_lat <= $geoCodedAddress->results[0]->geometry->location->lat) && ($request->SW_lng <= $geoCodedAddress->results[0]->geometry->location->lng);
+		});
+
+		$filtered = Helper::paginate($request, $filtered, 18);
+		return response()->success($filtered);
 	}
 }
