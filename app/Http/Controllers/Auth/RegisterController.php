@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\AppMailer;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
@@ -71,5 +72,17 @@ class RegisterController extends Controller
 		]);
 
 		return $this->loginCtrl->login($request);
+	}
+
+	public function verifyEmail(Request $request, AppMailer $mailer)
+	{
+		$emailToVerify = $request->email;
+
+		// check if the email is unique in db
+		$emailValidation = ['email' => 'required|email|max:255|unique:users,email'];
+		$this->validateInput($request, $emailValidation);
+
+		// if it's unique, send email verification link
+		$mailer->sendConfirmationEmailTo($emailToVerify);
 	}
 }
