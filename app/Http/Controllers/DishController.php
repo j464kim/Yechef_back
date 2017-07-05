@@ -6,6 +6,7 @@ use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Yechef\Helper;
+use GeometryLibrary\SphericalUtil;
 use Illuminate\Http\Request;
 
 class DishController extends Controller
@@ -90,7 +91,7 @@ class DishController extends Controller
 	public function search(Request $request)
 	{
 		if (!$request->city) {
-			throw new YechefException();
+			throw new YechefException(11502);
 		}
 		$pieces = explode(",", $request->city);
 		$request->city = implode(',', [$pieces[0], $pieces[1]]);
@@ -124,7 +125,14 @@ class DishController extends Controller
 		$filtered = $results->filter(function ($item) use ($request) {
 			$geoCodedAddress = \GoogleMaps::load('geocoding')->setParamByKey('address', $item->kitchen->address)->get();
 			$geoCodedAddress = json_decode($geoCodedAddress);
-			return ($request->NE_lat >= $geoCodedAddress->results[0]->geometry->location->lat) && ($request->NE_lng >= $geoCodedAddress->results[0]->geometry->location->lng) && ($request->SW_lat <= $geoCodedAddress->results[0]->geometry->location->lat) && ($request->SW_lng <= $geoCodedAddress->results[0]->geometry->location->lng);
+			$lat = $geoCodedAddress->results[0]->geometry->location->lat;
+			$lng = $geoCodedAddress->results[0]->geometry->location->lng;
+			$item->lat = $lat;
+			$item->lng = $lng;
+			$from = ['lat' => $lat, 'lng' => $lng];
+			$to = ['lat' => $request->userLat, 'lng' => $request->userLng];
+			$item->distance = SphericalUtil::computeDistanceBetween($from, $to);
+			return ($request->NE_lat >= $lat) && ($request->NE_lng >= $lng) && ($request->SW_lat <= $lat) && ($request->SW_lng <= $lng);
 		});
 
 		$filtered = Helper::paginate($request, $filtered, 18);
