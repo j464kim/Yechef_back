@@ -132,7 +132,11 @@ class DishController extends Controller
 			$from = ['lat' => $lat, 'lng' => $lng];
 			$to = ['lat' => $request->userLat, 'lng' => $request->userLng];
 			$item->distance = SphericalUtil::computeDistanceBetween($from, $to);
-			return ($request->NE_lat >= $lat) && ($request->NE_lng >= $lng) && ($request->SW_lat <= $lat) && ($request->SW_lng <= $lng);
+			if ($request->distance && $request->distance != 0) {
+				return ($request->NE_lat >= $lat) && ($request->NE_lng >= $lng) && ($request->SW_lat <= $lat) && ($request->SW_lng <= $lng) && ($request->distance >= $item->distance);
+			} else {
+				return ($request->NE_lat >= $lat) && ($request->NE_lng >= $lng) && ($request->SW_lat <= $lat) && ($request->SW_lng <= $lng);
+			}
 		});
 
 		$filtered = Helper::paginate($request, $filtered, 18);
