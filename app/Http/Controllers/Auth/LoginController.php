@@ -93,7 +93,7 @@ class LoginController extends Controller
 
 		// check if the user's email is verified yet
 		if (!$user->isVerified()) {
-			throw new YechefException(10500);
+			return response()->fail(10500);
 		}
 
 		// grant access token
