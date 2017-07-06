@@ -20,5 +20,6 @@ return [
     'user' => "We can't find a user with that e-mail address.",
 	'password_reset_intro' => 'You are receiving this email because we received a password reset request for your account.',
 	'password_reset_conclusion' => 'If you did not request a password reset, no further action is required.',
+	'reset_password' => 'Reset password',
 
 ];
