@@ -45,7 +45,7 @@ class MediaController extends Controller
 			$s3 = $this->storage->disk('s3');
 
 			// TODO: please leave it commented as it costs money to upload file to S3
-			//$s3->put($uniqueFileName, file_get_contents($file), 'public');
+			$s3->put($uniqueFileName, file_get_contents($file), 'public');
 
 			$mimeType = $file->getClientMimeType();
 			Log::info('mimetype is: ' . $mimeType);

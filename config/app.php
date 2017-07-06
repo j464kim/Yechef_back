@@ -195,6 +195,9 @@ return [
 
 		// passport social grant
 		Adaojunior\Passport\SocialGrantServiceProvider::class,
+
+		//Gmap
+		'GoogleMaps\ServiceProvider\GoogleMapsServiceProvider',
     ],
 
     /*
@@ -244,6 +247,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
-    ],
+		'GoogleMaps' => 'GoogleMaps\Facade\GoogleMapsFacade',
+	],
 
 ];

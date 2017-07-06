@@ -6,9 +6,8 @@ use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Yechef\Helper;
-use Illuminate\Contracts\Foundation\Application;
+use GeometryLibrary\SphericalUtil;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 
 class DishController extends Controller
@@ -92,6 +91,11 @@ class DishController extends Controller
 
 	public function search(Request $request)
 	{
+		if (!$request->city) {
+			throw new YechefException(11502);
+		}
+		$pieces = explode(",", $request->city);
+		$request->city = implode(',', [$pieces[0], $pieces[1]]);
 		$results = Dish::search($request->q);
 
 		if ($request->gluten_free === '1') {
@@ -104,7 +108,11 @@ class DishController extends Controller
 			$results = $results->where('vegetarian', '1');
 		}
 
-		$results = $results->get()->load('medias');
+		$results = $results->get()->load('medias')->load([
+			'kitchen' => function ($query) use ($request) {
+				$query->where('address', 'like', "%$request->city%");
+			}
+		])->where('kitchen', '!=', null);
 
 		if ($request->input('nationality') !== 'all') {
 			$results = $results->where('nationality', '=', $request->input('nationality'));
@@ -116,10 +124,26 @@ class DishController extends Controller
 			$results = $results->where('price', '<', $request->input('max_price'));
 		}
 
-		$results = $this->sortBySearch($request, $results);
-		$results = Helper::paginate($request, $results, 18);
+		$filtered = $results->filter(function ($item) use ($request) {
+			$geoCodedAddress = \GoogleMaps::load('geocoding')->setParamByKey('address', $item->kitchen->address)->get();
+			$geoCodedAddress = json_decode($geoCodedAddress);
+			$lat = $geoCodedAddress->results[0]->geometry->location->lat;
+			$lng = $geoCodedAddress->results[0]->geometry->location->lng;
+			$item->lat = $lat;
+			$item->lng = $lng;
+			$from = ['lat' => $lat, 'lng' => $lng];
+			$to = ['lat' => $request->userLat, 'lng' => $request->userLng];
+			$item->distance = SphericalUtil::computeDistanceBetween($from, $to);
+			if ($request->distance && $request->distance != 0) {
+				return ($request->NE_lat >= $lat) && ($request->NE_lng >= $lng) && ($request->SW_lat <= $lat) && ($request->SW_lng <= $lng) && ($request->distance >= $item->distance);
+			} else {
+				return ($request->NE_lat >= $lat) && ($request->NE_lng >= $lng) && ($request->SW_lat <= $lat) && ($request->SW_lng <= $lng);
+			}
+		});
 
-		return response()->success($results);
+		$filtered = $this->sortBySearch($request, $filtered);
+		$filtered = Helper::paginate($request, $filtered, 18);
+		return response()->success($filtered);
 	}
 
 	private function sortBySearch(Request $request, $results)
@@ -137,7 +161,6 @@ class DishController extends Controller
 		}
 
 		switch ($sortBy) {
-
 			case 'price_asc':
 				$results = $results->sortBy('price');
 				break;
@@ -161,6 +184,8 @@ class DishController extends Controller
 			case 'quantity':
 				$results = $results->sortByDesc('quantity_rating');
 				break;
+			default:
+				break;
 		}
 
 		// reset index of sorted results (necessary since front-end resorts the result based on php collection index)
@@ -169,5 +194,4 @@ class DishController extends Controller
 		return $results;
 
 	}
-
 }
