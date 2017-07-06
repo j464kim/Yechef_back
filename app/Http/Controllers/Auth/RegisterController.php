@@ -6,6 +6,7 @@ use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\AppMailer;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
@@ -74,15 +75,30 @@ class RegisterController extends Controller
 		return $this->loginCtrl->login($request);
 	}
 
-	public function verifyEmail(Request $request, AppMailer $mailer)
+	/**
+	 * @param Request $request
+	 * @param AppMailer $mailer
+	 */
+	public function sendEmailVerifyLink(Request $request, AppMailer $mailer)
 	{
-		$emailToVerify = $request->email;
-
-		// check if the email is unique in db
-		$emailValidation = ['email' => 'required|email|max:255|unique:users,email'];
-		$this->validateInput($request, $emailValidation);
+		$userToVerify = User::whereEmail($request->email)->firstOrFail();
 
 		// if it's unique, send email verification link
-		$mailer->sendConfirmationEmailTo($emailToVerify);
+		$mailer->sendConfirmationEmailTo($userToVerify);
+	}
+
+	/**
+	 * @param $token
+	 * @throws YechefException
+	 */
+	public function confirmEmail($token)
+	{
+		try {
+			$user = User::whereToken($token)->firstOrFail();
+		} catch(ModelNotFoundException $e) {
+			throw new YechefException($e->getMessage());
+		}
+
+		$user->approveEmail();
 	}
 }

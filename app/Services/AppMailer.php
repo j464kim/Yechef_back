@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Contracts\Mail\Mailer;
+use App\Models\User;
 
 class AppMailer
 {
@@ -16,11 +17,13 @@ class AppMailer
 		$this->mailer = $mailer;
 	}
 
-	public function sendConfirmationEmailTo($recipient)
+	public function sendConfirmationEmailTo(User $user)
 	{
-		$this->to = $recipient;
+		$this->to = $user->email;
 		$this->view = 'emails.confirm';
-		$this->data = [];
+
+		// $user variable to be available on template
+		$this->data = compact('user');
 
 		$this->deliver();
 	}

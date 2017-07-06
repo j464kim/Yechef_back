@@ -21,13 +21,14 @@ class UsersTableSeeder extends Seeder
             array (
                 'id' => 1,
                 'first_name' => 'admin',
-                'email' => 'admin@test.com',
+				'last_name' => 'Kim',
+				'phone' => '+1-862-643-1894',
+				'email' => 'admin@test.com',
                 'password' => '$2y$10$VSWjeuoTXs5fiBhzto38reLqFVY2mB3T9GcmEe.naCk3hroA5iT7y',
                 'remember_token' => NULL,
-                'created_at' => '2017-05-24 04:03:52',
-                'updated_at' => '2017-05-24 04:03:52',
-                'last_name' => 'Kim',
-                'phone' => '+1-862-643-1894',
+                'verified' => '1',
+				'created_at' => '2017-05-24 04:03:52',
+				'updated_at' => '2017-05-24 04:03:52',
             ),
         ));
 
