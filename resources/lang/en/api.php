@@ -45,7 +45,7 @@ return [
 	'10002' => 'Logout success',
 	'10003' => 'Password is changed successfully',
 	// fail
-	'10500' => 'Please provide your email and password',
+	'10500' => "Your account email has not yet been verified. Please check your email for confirmation link",
 	'10501' => 'Your email and password are wrong',
 	'10502' => 'Refresh token required',
 	'10503' => 'Fail to refresh access token',

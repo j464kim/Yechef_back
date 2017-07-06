@@ -198,4 +198,13 @@ class User extends Authenticatable
 		$this->save();
 	}
 
+	/**
+	 * Check if the account email is verified
+	 * @return mixed
+	 */
+	public function isVerified()
+	{
+		return $this->verified;
+	}
+
 }

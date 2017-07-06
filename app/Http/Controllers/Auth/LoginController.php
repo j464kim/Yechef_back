@@ -6,6 +6,7 @@ use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use GuzzleHttp\Client;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -73,26 +74,34 @@ class LoginController extends Controller
 	 */
 	public function login(Request $request)
 	{
-		$validator = $this->validator->make($request->all(), [
+		$validationRule = array(
 			'email'    => 'email|required',
 			'password' => 'required'
-		]);
-
-		if ($validator->fails()) {
-			throw new YechefException(10500);
-		}
+		);
+		$this->validateInput($request, $validationRule);
 
 		$email = request()->input('email');
 		$password = request()->input('password');
 
+		try {
+			$user = User::whereEmail($email)->firstOrFail();
+		} catch (ModelNotFoundException $e) {
+			throw new YechefException($e->getMessage());
+		}
 
+		// check if the user's email is verified yet
+		if (!$user->isVerified()) {
+			throw new YechefException(10500);
+		}
+
+		// grant access token
 		try {
 			$result = $this->proxy('password', [
 				'username' => $email,
 				'password' => $password
 			]);
-
 			return response()->success($result, 10000);
+
 		} catch (\Exception $e) {
 			throw new YechefException(10501);
 		}
