@@ -155,4 +155,37 @@ class User extends Authenticatable
 		return $forkedDishes;
 	}
 
+	/**
+	 * Set a unique token to be used for verifying email
+	 */
+	public static function boot()
+	{
+		// listen to any model event that will be fired
+		parent::boot();
+
+		// listen for a new record being created
+		static::creating(function ($user) {
+			$user->token = str_random(30);
+		});
+	}
+
+	/**
+	 * Set the verified flag to true
+	 */
+	public function approveEmail()
+	{
+		$this->verified = true;
+		$this->token = null;
+		$this->save();
+	}
+
+	/**
+	 * Check if the account email is verified
+	 * @return mixed
+	 */
+	public function isVerified()
+	{
+		return $this->verified;
+	}
+
 }

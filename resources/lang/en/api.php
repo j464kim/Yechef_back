@@ -44,13 +44,17 @@ return [
 	'10001' => 'Access token refreshed',
 	'10002' => 'Logout success',
 	'10003' => 'Password is changed successfully',
+	'10004' => 'Success! Please check your email for confirmation link!',
+	'10005' => 'Verified your email successfully! You can now log in!',
 	// fail
-	'10500' => 'Please provide your email and password',
+	'10500' => "Your account email has not yet been verified. Please check your email for confirmation link",
 	'10501' => 'Your email and password are wrong',
 	'10502' => 'Refresh token required',
 	'10503' => 'Fail to refresh access token',
 	'10504' => 'No user session found',
 	'10506' => 'Current Password is wrong',
+	'10507' => 'Could not find user that match with the token',
+	'10508' => 'Could not find user that match with the email',
 
 	/**
 	 * Dish related
