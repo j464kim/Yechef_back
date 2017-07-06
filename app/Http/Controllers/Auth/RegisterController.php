@@ -64,7 +64,7 @@ class RegisterController extends Controller
 		$password = $request->input('password');
 		$phone = $request->input('phone');
 
-		User::create([
+		$user = User::create([
 			'email'      => $email,
 			'password'   => bcrypt($password),
 			'first_name' => $first_name,
@@ -72,7 +72,7 @@ class RegisterController extends Controller
 			'phone'      => $phone,
 		]);
 
-		return $this->loginCtrl->login($request);
+		return response()->success($user, 10004);
 	}
 
 	/**
@@ -83,7 +83,7 @@ class RegisterController extends Controller
 	{
 		$userToVerify = User::whereEmail($request->email)->firstOrFail();
 
-		// if it's unique, send email verification link
+		// if email is unique, send email verification link
 		$mailer->sendConfirmationEmailTo($userToVerify);
 	}
 
@@ -100,5 +100,6 @@ class RegisterController extends Controller
 		}
 
 		$user->approveEmail();
+		return response()->success($user, 10005);
 	}
 }

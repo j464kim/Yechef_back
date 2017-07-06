@@ -44,6 +44,8 @@ return [
 	'10001' => 'Access token refreshed',
 	'10002' => 'Logout success',
 	'10003' => 'Password is changed successfully',
+	'10004' => 'Success! Please check your email for confirmation link!',
+	'10005' => 'Verified your email successfully! You can now log in!',
 	// fail
 	'10500' => "Your account email has not yet been verified. Please check your email for confirmation link",
 	'10501' => 'Your email and password are wrong',

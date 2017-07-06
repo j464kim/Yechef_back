@@ -100,11 +100,13 @@ class LoginController extends Controller
 				'username' => $email,
 				'password' => $password
 			]);
-			return response()->success($result, 10000);
 
 		} catch (\Exception $e) {
 			throw new YechefException(10501);
 		}
+
+		return response()->success($result, 10000);
+
 	}
 
 	/**
