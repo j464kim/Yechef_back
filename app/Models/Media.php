@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\ModelService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\YechefException;
 
@@ -11,6 +12,7 @@ use App\Exceptions\YechefException;
 class Media extends Model
 {
 	use SoftDeletes;
+	use ModelService;
 
 	/**
 	 * The table associated with the model.
@@ -59,17 +61,4 @@ class Media extends Model
 		return $rule;
 	}
 
-	/**
-	 * @param $id
-	 * @return mixed
-	 * @throws YechefException
-	 */
-	public static function findMedia($id)
-	{
-		try {
-			return Media::findOrFail($id);
-		} catch (ModelNotFoundException $e) {
-			throw new YechefException(13502);
-		}
-	}
 }

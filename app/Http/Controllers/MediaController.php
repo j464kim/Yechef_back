@@ -84,7 +84,7 @@ class MediaController extends Controller
 
 	public function destroy($id)
 	{
-		$media = Media::findMedia($id);
+		$media = Media::findById($id);
 		$media->delete();
 
 		return response()->success($media, 13001);

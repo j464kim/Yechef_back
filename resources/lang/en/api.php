@@ -66,7 +66,6 @@ return [
 	'11005' => 'Dish rating successfully updated',
 	'11006' => 'Dish rating successfully deleted',
 	// fail
-	'11500' => 'Unable to find the dish',
 	'11501' => 'Unable to find the dish rating',
 
 	/**
@@ -99,7 +98,6 @@ return [
 	// fail
 	'13500' => 'File does not exist',
 	'13501' => 'File is not valid',
-	'13502' => 'Unable to find the media',
 
 	/**
 	 * Relation related
@@ -112,7 +110,6 @@ return [
 	'14002' => 'Successfully retrieved the number of reactions',
 
 	// fail
-	'14501' => 'Could not find the reaction',
 	'14502' => 'User has more than 1 reactions to the post',
 	'14503' => 'Could not find the reactionable',
 
@@ -127,7 +124,6 @@ return [
 	'15001' => 'Successfully updated User information',
 
 	// fail
-	'15501' => 'Unable to find the user',
 	'15502' => 'Failed to retrieve user information from request',
 
 
@@ -157,4 +153,14 @@ return [
 	'18501' => 'Wrong inputs for cart items',
 	'18502' => 'Failed to get the cart of the user',
 	'18503' => 'The cart item cannot be found',
+
+	/**
+	 * Common Model related
+	 * Success Range 19000 <= x < 19500
+	 * Error Range 19500 <= x < 20000
+	 */
+	// success
+
+	// fail
+	'19500' => 'Could not find a model by the given id',
 ];
