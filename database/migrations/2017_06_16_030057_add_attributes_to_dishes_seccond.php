@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddVerifiedToUsersTable extends Migration
+class AddAttributesToDishesSeccond extends Migration
 {
 	/**
 	 * Run the migrations.
@@ -13,9 +13,11 @@ class AddVerifiedToUsersTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::table('users', function (Blueprint $table) {
-			$table->string('token')->after('remember_token')->nullable();
-			$table->boolean('verified')->after('token')->default(false);
+		Schema::table('dishes', function (Blueprint $table) {
+			$table->string('nationality')->after('name');
+			$table->boolean('gluten_free')->after('price');
+			$table->boolean('vegan')->after('price');
+			$table->boolean('vegetarian')->after('price');
 		});
 	}
 
@@ -26,9 +28,11 @@ class AddVerifiedToUsersTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::table('users', function (Blueprint $table) {
-			$table->dropColumn('token');
-			$table->dropColumn('verified');
+		Schema::table('dishes', function (Blueprint $table) {
+			$table->dropColumn('nationality');
+			$table->dropColumn('gluten_free');
+			$table->dropColumn('vegan');
+			$table->dropColumn('vegetarian');
 		});
 	}
 }
