@@ -11,6 +11,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Log;
+
 
 class LoginController extends Controller
 {
@@ -80,8 +82,8 @@ class LoginController extends Controller
 		);
 		$this->validateInput($request, $validationRule);
 
-		$email = request()->input('email');
-		$password = request()->input('password');
+		$email = $request->input('email');
+		$password = $request->input('password');
 
 		try {
 			$user = User::whereEmail($email)->firstOrFail();
@@ -126,7 +128,7 @@ class LoginController extends Controller
 			throw new YechefException(10502);
 		}
 
-		$refreshToken = request()->input('refresh_token');
+		$refreshToken = $request->input('refresh_token');
 		try {
 			$result = $this->proxy('refresh_token', [
 				'refresh_token' => $refreshToken,

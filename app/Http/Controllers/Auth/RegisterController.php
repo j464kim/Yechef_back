@@ -72,7 +72,7 @@ class RegisterController extends Controller
 			'phone'      => $phone,
 		]);
 
-		return response()->success($user, 10004);
+		return response()->success($user);
 	}
 
 	/**
@@ -81,10 +81,16 @@ class RegisterController extends Controller
 	 */
 	public function sendEmailVerifyLink(Request $request, AppMailer $mailer)
 	{
+		try {
 		$userToVerify = User::whereEmail($request->email)->firstOrFail();
+		} catch (\Exception $e) {
+			throw new YechefException(10508);
+		}
 
 		// if email is unique, send email verification link
 		$mailer->sendConfirmationEmailTo($userToVerify);
+
+		return response()->success($userToVerify, 10004);
 	}
 
 	/**
@@ -95,11 +101,12 @@ class RegisterController extends Controller
 	{
 		try {
 			$user = User::whereToken($token)->firstOrFail();
-		} catch(ModelNotFoundException $e) {
-			throw new YechefException($e->getMessage());
+		} catch (\Exception $e) {
+			throw new YechefException(10507);
 		}
 
 		$user->approveEmail();
+
 		return response()->success($user, 10005);
 	}
 }

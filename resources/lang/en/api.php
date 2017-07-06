@@ -53,6 +53,8 @@ return [
 	'10503' => 'Fail to refresh access token',
 	'10504' => 'No user session found',
 	'10506' => 'Current Password is wrong',
+	'10507' => 'Could not find user that match with the token',
+	'10508' => 'Could not find user that match with the email',
 
 	/**
 	 * Dish related
