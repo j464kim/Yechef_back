@@ -7,11 +7,12 @@ use App\Traits\CanResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Traits\ModelService;
 
 class User extends Authenticatable
 {
 	use HasApiTokens, Notifiable;
-	use CanResetPassword;
+	use CanResetPassword, ModelService;
 
 	/**
 	 * The attributes that are mass assignable.
@@ -91,26 +92,6 @@ class User extends Authenticatable
 	public function reactions()
 	{
 		return $this->hasMany('App\Models\Reaction');
-	}
-
-
-	/**
-	 * @param $id
-	 * @param bool $withMedia
-	 * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
-	 * @throws YechefException
-	 */
-	public static function findUser($id, $withMedia = false)
-	{
-		try {
-			if ($withMedia) {
-				return User::with('medias')->findOrFail($id);
-			} else {
-				return User::findOrFail($id);
-			}
-		} catch (\Exception $e) {
-			throw new YechefException(15501);
-		}
 	}
 
 	public function isVerifiedKitchenOwner($kitchenId)

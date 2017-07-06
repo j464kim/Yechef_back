@@ -57,7 +57,7 @@ class KitchenController extends Controller
 	 */
 	public function show($id)
 	{
-		$kitchen = Kitchen::findKitchen($id, true);
+		$kitchen = Kitchen::findById($id, true);
 
 		return response()->success($kitchen);
 	}
@@ -77,7 +77,7 @@ class KitchenController extends Controller
 		$validationRule = Kitchen::getValidationRule($id);
 		$this->validateInput($request, $validationRule);
 
-		$kitchen = Kitchen::findKitchen($id, true);
+		$kitchen = Kitchen::findById($id, true);
 
 		$kitchen->update(
 			[
@@ -102,7 +102,7 @@ class KitchenController extends Controller
 	public function destroy(Request $request, $id)
 	{
 		$request->user()->isVerifiedKitchenOwner($id);
-		$kitchen = Kitchen::findKitchen($id);
+		$kitchen = Kitchen::findById($id);
 		$kitchen->delete();
 
 		event(new ReactionableDeleted($kitchen));
@@ -112,7 +112,7 @@ class KitchenController extends Controller
 
 	public function getAdmins($id)
 	{
-		$admins = Kitchen::findKitchen($id, false)->users;
+		$admins = Kitchen::findById($id, false)->users;
 		return response()->success($admins);
 	}
 
@@ -121,8 +121,8 @@ class KitchenController extends Controller
 		$request->user()->isVerifiedKitchenOwner($id);
 
 		$userId = $this->getUserId($request);
-		$kitchen = Kitchen::findKitchen($id);
-		$user = User::findUser($userId);
+		$kitchen = Kitchen::findById($id);
+		$user = User::findById($userId);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
 
 		if (!$admin) {
@@ -137,7 +137,7 @@ class KitchenController extends Controller
 	{
 		$request->user()->isVerifiedKitchenOwner($id);
 		$userId = $this->getUserId($request);
-		$kitchen = Kitchen::findKitchen($id);
+		$kitchen = Kitchen::findById($id);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
 		if ($admin) {
 			$kitchen->users()->detach($userId);
@@ -149,14 +149,14 @@ class KitchenController extends Controller
 
 	public function getDishes($id)
 	{
-		$kitchen = Kitchen::findKitchen($id);
+		$kitchen = Kitchen::findById($id);
 		$dishes = $kitchen->dishes()->with('medias')->get();
 		return response()->success($dishes);
 	}
 
 	public function getSubscribers($id)
 	{
-		$kitchen = Kitchen::findKitchen($id);
+		$kitchen = Kitchen::findById($id);
 		$subscribers = $kitchen->reactions()->where('kind', 3)->pluck('user_id')->toArray();
 		$subscribers = User::findMany($subscribers);
 		return response()->success($subscribers);
