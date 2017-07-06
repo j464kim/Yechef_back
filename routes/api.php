@@ -70,3 +70,6 @@ $this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail'
 $this->post('password/reset', 'Auth\ResetPasswordController@reset');
 $this->get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
 $this->get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+Route::get('media/{id}/{modelName}', 'MediaController@show');
+Route::resource('media', 'MediaController', ['only' => 'destroy']);
+

@@ -16,13 +16,13 @@ class DishRatingController extends Controller
 
 	public function getAvg(Request $request, $dishId)
 	{
-		$dishRatingsAvg = Dish::findDish($dishId)->getAvgRatingAttribute();
+		$dishRatingsAvg = Dish::findById($dishId)->getAvgRatingAttribute();
 		return response()->success($dishRatingsAvg);
 	}
 
 	public function index(Request $request, $dishId)
 	{
-		$dishRatings = Dish::findDish($dishId)->ratings;
+		$dishRatings = Dish::findById($dishId)->ratings;
 		// apply pagination
 		$result = Helper::paginate($request, $dishRatings, 10);
 		return response()->success($result);
@@ -30,7 +30,7 @@ class DishRatingController extends Controller
 
 	public function show(Request $request, $dishId, $ratingId)
 	{
-		$dishRating = DishRating::findDishRating($ratingId);
+		$dishRating = DishRating::findById($ratingId);
 		return response()->success($dishRating);
 	}
 
@@ -40,7 +40,7 @@ class DishRatingController extends Controller
 		$validationRule = DishRating::getValidationRule();
 		$this->validateInput($request, $validationRule);
 
-		$dish = Dish::findDish($dishId);
+		$dish = Dish::findById($dishId);
 		//TODO: Replace with the real user
 		$user = User::first();
 		$rating = $dish->rating([
