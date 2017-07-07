@@ -23,7 +23,7 @@ class DishController extends Controller
 
 	public function show(Request $request, $id)
 	{
-		$dish = Dish::findDish($id, true);
+		$dish = Dish::findById($id, true);
 
 		return response()->success($dish);
 	}
@@ -59,7 +59,7 @@ class DishController extends Controller
 		$validationRule = Dish::getValidationRule($id);
 		$this->validateInput($request, $validationRule);
 
-		$dish = Dish::findDish($id);
+		$dish = Dish::findById($id);
 		$dish->update([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
@@ -80,7 +80,7 @@ class DishController extends Controller
 	{
 		//TODO: Need to delete other relationships to prevent foreign key constraint issues
 		//TODO: Also need to delete associated ratings
-		$dish = Dish::findDish($id);
+		$dish = Dish::findById($id);
 		$request->user()->isVerifiedKitchenOwner($dish->kitchen_id);
 		$dish->delete();
 

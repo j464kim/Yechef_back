@@ -57,7 +57,7 @@ class UserController extends Controller
 	public function checkOwnership(Request $request)
 	{
 		if ($dishId = $request->input('dish_id')) {
-			$dish = Dish::findDish($dishId);
+			$dish = Dish::findById($dishId);
 			$kitchenId = $dish->kitchen_id;
 		} else {
 			$kitchenId = $request->input('kitchen_id');
@@ -77,7 +77,7 @@ class UserController extends Controller
 	 */
 	public function show($id)
 	{
-		$user = User::findUser($id);
+		$user = User::findById($id);
 
 		return response()->success($user);
 	}
@@ -92,7 +92,7 @@ class UserController extends Controller
 		$validationRule = User::getValidationRule($id);
 		$this->validateInput($request, $validationRule);
 
-		$user = User::findUser($id);
+		$user = User::findById($id);
 
 		$user->update(
 			[

@@ -73,4 +73,21 @@ class MediaController extends Controller
 
 	}
 
+	public function show($mediableId, $modelName)
+	{
+		$medias = Media::where('mediable_type', 'App\\Models\\' . $modelName)
+			->where('mediable_id', $mediableId)
+			->get();
+
+		return response()->success($medias);
+	}
+
+	public function destroy($id)
+	{
+		$media = Media::findById($id);
+		$media->delete();
+
+		return response()->success($media, 13001);
+	}
+
 }

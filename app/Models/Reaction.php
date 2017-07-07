@@ -52,17 +52,4 @@ class Reaction extends Model
 		return $rule;
 	}
 
-	/**
-	 * @param $id
-	 * @return mixed
-	 */
-	public static function findReaction($id)
-	{
-		try {
-			return Reaction::findOrFail($id);
-		} catch (\Exception $e) {
-			throw new YechefException(14501);
-		}
-	}
-
 }

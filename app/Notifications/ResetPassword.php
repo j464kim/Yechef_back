@@ -46,7 +46,7 @@ class ResetPassword extends Notification
 	{
 		return (new MailMessage)
 			->line(__('passwords.password_reset_intro'))
-			->action('Reset Password', url(config('app.url')) . ':9001/#!/'. 'user/password/reset/' . $this->token)
+			->action(__('passwords.reset_password'), url(config('app.url')) . ':9001/#!/'. 'user/password/reset/' . $this->token)
 			->line(__('passwords.password_reset_conclusion'));
 	}
 }

@@ -7,11 +7,12 @@ use App\Traits\CanResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Traits\ModelService;
 
 class User extends Authenticatable
 {
 	use HasApiTokens, Notifiable;
-	use CanResetPassword;
+	use CanResetPassword, ModelService;
 
 	/**
 	 * The attributes that are mass assignable.
@@ -93,26 +94,6 @@ class User extends Authenticatable
 		return $this->hasMany('App\Models\Reaction');
 	}
 
-
-	/**
-	 * @param $id
-	 * @param bool $withMedia
-	 * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
-	 * @throws YechefException
-	 */
-	public static function findUser($id, $withMedia = false)
-	{
-		try {
-			if ($withMedia) {
-				return User::with('medias')->findOrFail($id);
-			} else {
-				return User::findOrFail($id);
-			}
-		} catch (\Exception $e) {
-			throw new YechefException(15501);
-		}
-	}
-
 	public function isVerifiedKitchenOwner($kitchenId)
 	{
 		$kitchenWithPivot = $this->kitchens()->wherePivot('kitchen_id', $kitchenId);
@@ -172,6 +153,39 @@ class User extends Authenticatable
 			->get();
 
 		return $forkedDishes;
+	}
+
+	/**
+	 * Set a unique token to be used for verifying email
+	 */
+	public static function boot()
+	{
+		// listen to any model event that will be fired
+		parent::boot();
+
+		// listen for a new record being created
+		static::creating(function ($user) {
+			$user->token = str_random(30);
+		});
+	}
+
+	/**
+	 * Set the verified flag to true
+	 */
+	public function approveEmail()
+	{
+		$this->verified = true;
+		$this->token = null;
+		$this->save();
+	}
+
+	/**
+	 * Check if the account email is verified
+	 * @return mixed
+	 */
+	public function isVerified()
+	{
+		return $this->verified;
 	}
 
 }
