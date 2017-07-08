@@ -80,6 +80,22 @@ class Dish extends Model
 		return $this->morphMany('App\Models\Reaction', 'reactionable');
 	}
 
+	public function addRatingAttributes()
+	{
+		$totalRatigSum = 0;
+		$avgRatings = $this->avgRating();
+
+		$this['taste_rating'] = $avgRatings['taste_rating'];
+		$this['visual_rating'] = $avgRatings['visual_rating'];
+		$this['quantity_rating'] = $avgRatings['quantity_rating'];
+
+		foreach($avgRatings as $eachAvg) {
+			$totalRatigSum += $eachAvg;
+		}
+
+		$this['total_rating'] =  $totalRatigSum / sizeof($avgRatings);
+	}
+
 	/**
 	 * @param null $id
 	 * @return array
