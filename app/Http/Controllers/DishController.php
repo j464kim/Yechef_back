@@ -6,7 +6,6 @@ use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Yechef\Helper;
-use GeometryLibrary\SphericalUtil;
 use Illuminate\Http\Request;
 
 
@@ -97,50 +96,7 @@ class DishController extends Controller
 		$pieces = explode(",", $request->city);
 		$request->city = implode(',', [$pieces[0], $pieces[1]]);
 		$results = Dish::search($request->q);
-
-		if ($request->gluten_free === '1') {
-			$results = $results->where('gluten_free', '1');
-		}
-		if ($request->vegan === '1') {
-			$results = $results->where('vegan', '1');
-		}
-		if ($request->vegetarian === '1') {
-			$results = $results->where('vegetarian', '1');
-		}
-
-		$results = $results->get()->load('medias')->load([
-			'kitchen' => function ($query) use ($request) {
-				$query->where('address', 'like', "%$request->city%");
-			}
-		])->where('kitchen', '!=', null);
-
-		if ($request->input('nationality') !== 'all') {
-			$results = $results->where('nationality', '=', $request->input('nationality'));
-		}
-		if ($request->input('min_price')) {
-			$results = $results->where('price', '>', $request->input('min_price'));
-		}
-		if ($request->input('max_price')) {
-			$results = $results->where('price', '<', $request->input('max_price'));
-		}
-
-		$filtered = $results->filter(function ($item) use ($request) {
-			$geoCodedAddress = \GoogleMaps::load('geocoding')->setParamByKey('address', $item->kitchen->address)->get();
-			$geoCodedAddress = json_decode($geoCodedAddress);
-			$lat = $geoCodedAddress->results[0]->geometry->location->lat;
-			$lng = $geoCodedAddress->results[0]->geometry->location->lng;
-			$item->lat = $lat;
-			$item->lng = $lng;
-			$from = ['lat' => $lat, 'lng' => $lng];
-			$to = ['lat' => $request->userLat, 'lng' => $request->userLng];
-			$item->distance = SphericalUtil::computeDistanceBetween($from, $to);
-			if ($request->distance && $request->distance != 0) {
-				return ($request->NE_lat >= $lat) && ($request->NE_lng >= $lng) && ($request->SW_lat <= $lat) && ($request->SW_lng <= $lng) && ($request->distance >= $item->distance);
-			} else {
-				return ($request->NE_lat >= $lat) && ($request->NE_lng >= $lng) && ($request->SW_lat <= $lat) && ($request->SW_lng <= $lng);
-			}
-		});
-
+		$filtered = Dish::filter($request, $results);
 		$filtered = $this->sortBySearch($request, $filtered);
 		$filtered = Helper::paginate($request, $filtered, 18);
 		return response()->success($filtered);
