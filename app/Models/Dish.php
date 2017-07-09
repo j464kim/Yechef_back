@@ -142,6 +142,7 @@ class Dish extends Model
 		}
 
 		return $dishes->filter(function ($item) use ($request) {
+			$item->addRatingAttributes();
 			$geoCodedAddress = \GoogleMaps::load('geocoding')->setParamByKey('address', $item->kitchen->address)->get();
 			$geoCodedAddress = json_decode($geoCodedAddress);
 			$lat = $geoCodedAddress->results[0]->geometry->location->lat;
