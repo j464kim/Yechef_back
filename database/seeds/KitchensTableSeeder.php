@@ -13,7 +13,16 @@ class KitchensTableSeeder extends Seeder
 	 */
 	public function run()
 	{
-		factory(Kitchen::class, 6)->create()->each(function ($u) {
+		\DB::table('kitchens')->delete();
+
+		factory(Kitchen::class, 1)->create(['address' => '10 Noecker St Waterloo, ON N2J 2R2']);
+		factory(Kitchen::class, 1)->create(['address' => '158 King St N, Waterloo, ON N2J 2Y1']);
+		factory(Kitchen::class, 1)->create(['address' => '5060 Circle Road Apt203 Montreal, QC H3W 2A1']);
+		factory(Kitchen::class, 1)->create(['address' => '1345 Croissant Saturne Montreal, QC']);
+		factory(Kitchen::class, 1)->create(['address' => '5939 Boulevard Monk, Montréal, QC H4E 3H5']);
+		factory(Kitchen::class, 1)->create(['address' => '200 University Ave W, Waterloo, ON N2L 3G1']);
+
+	 	Kitchen::all()->each(function ($u) {
 			$user = User::first();
 			$u->users()->save($user, ['verified' => true, 'role' => 1]);
 			$user = User::find(2);

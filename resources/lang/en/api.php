@@ -71,6 +71,7 @@ return [
 	'11006' => 'Dish rating successfully deleted',
 	// fail
 	'11501' => 'Unable to find the dish rating',
+	'11502' => 'City is required for Dish Search',
 
 	/**
 	 * Kitchen related
