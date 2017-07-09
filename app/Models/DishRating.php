@@ -139,17 +139,4 @@ class DishRating extends Rating
 		];
 	}
 
-	/**
-	 * @param $id
-	 * @return mixed
-	 * @throws YechefException
-	 */
-	public static function findDishRating($id)
-	{
-		try {
-			return DishRating::findOrFail($id);
-		} catch (ModelNotFoundException $e) {
-			throw new YechefException(11501);
-		}
-	}
 }

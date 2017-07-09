@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Iatstuti\Database\Support\CascadeSoftDeletes;
 use App\Traits\Reactionable;
+use App\Traits\ModelService;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Log;
 class Kitchen extends Model
 {
 	use SoftDeletes, CascadeSoftDeletes;
-	use Reactionable;
+	use Reactionable, ModelService;
 
 	/**
 	 * Enable softDeletes cascade soft-deletes related models
@@ -79,25 +80,6 @@ class Kitchen extends Model
 		);
 
 		return $rule;
-	}
-
-	/**
-	 * @param $id
-	 * @param bool $withMedia
-	 * @return \Illuminate\Database\Eloquent\Collection|Model
-	 * @throws YechefException
-	 */
-	public static function findKitchen($id, $withMedia = false)
-	{
-		try {
-			if ($withMedia) {
-				return Kitchen::with('medias')->findOrFail($id);
-			} else {
-				return Kitchen::findOrFail($id);
-			}
-		} catch (\Exception $e) {
-			throw new YechefException(12501);
-		}
 	}
 
 }

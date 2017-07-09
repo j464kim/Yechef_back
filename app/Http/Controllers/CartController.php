@@ -30,7 +30,7 @@ class CartController extends Controller
 
 		$items = $this->cart->items;
 		foreach ($items as $item) {
-			$dish = Dish::findDish($item->dish_id);
+			$dish = Dish::findById($item->dish_id);
 			$item->id = $dish->id;
 			$item->name = $dish->name;
 			$item->eachPrice = $dish->price;

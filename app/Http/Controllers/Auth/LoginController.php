@@ -6,10 +6,13 @@ use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use GuzzleHttp\Client;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Log;
+
 
 class LoginController extends Controller
 {
@@ -73,29 +76,39 @@ class LoginController extends Controller
 	 */
 	public function login(Request $request)
 	{
-		$validator = $this->validator->make($request->all(), [
+		$validationRule = array(
 			'email'    => 'email|required',
 			'password' => 'required'
-		]);
+		);
+		$this->validateInput($request, $validationRule);
 
-		if ($validator->fails()) {
-			throw new YechefException(10500);
+		$email = $request->input('email');
+		$password = $request->input('password');
+
+		try {
+			$user = User::whereEmail($email)->firstOrFail();
+		} catch (ModelNotFoundException $e) {
+			throw new YechefException($e->getMessage());
 		}
 
-		$email = request()->input('email');
-		$password = request()->input('password');
+		// check if the user's email is verified yet
+		if (!$user->isVerified()) {
+			return response()->fail(10500);
+		}
 
-
+		// grant access token
 		try {
 			$result = $this->proxy('password', [
 				'username' => $email,
 				'password' => $password
 			]);
 
-			return response()->success($result, 10000);
 		} catch (\Exception $e) {
 			throw new YechefException(10501);
 		}
+
+		return response()->success($result, 10000);
+
 	}
 
 	/**
@@ -115,7 +128,7 @@ class LoginController extends Controller
 			throw new YechefException(10502);
 		}
 
-		$refreshToken = request()->input('refresh_token');
+		$refreshToken = $request->input('refresh_token');
 		try {
 			$result = $this->proxy('refresh_token', [
 				'refresh_token' => $refreshToken,
