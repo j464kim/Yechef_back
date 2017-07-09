@@ -20,6 +20,7 @@ class KitchensTableSeeder extends Seeder
 		factory(Kitchen::class, 1)->create(['address' => '5060 Circle Road Apt203 Montreal, QC H3W 2A1']);
 		factory(Kitchen::class, 1)->create(['address' => '1345 Croissant Saturne Montreal, QC']);
 		factory(Kitchen::class, 1)->create(['address' => '5939 Boulevard Monk, Montréal, QC H4E 3H5']);
+		factory(Kitchen::class, 1)->create(['address' => '200 University Ave W, Waterloo, ON N2L 3G1']);
 
 	 	Kitchen::all()->each(function ($u) {
 			$user = User::first();

@@ -14,9 +14,11 @@ class DishController extends Controller
 
 	public function index(Request $request)
 	{
-		$dish = Dish::with('medias')->get();
+		$dishes = Dish::with('medias')->get();
+		//TODO: add algorithm to get featured dishes (business model)
+		$featuredDishes = $dishes->random(12);
 		// apply pagination
-		$result = Helper::paginate($request, $dish);
+		$result = Helper::paginate($request, $featuredDishes, 6);
 		return response()->success($result);
 	}
 
