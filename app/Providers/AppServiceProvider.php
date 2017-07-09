@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Adaojunior\Passport\SocialUserResolverInterface;
 use App\Yechef\SocialLogin;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,6 +18,8 @@ class AppServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
+		Schema::defaultStringLength(191);
+
 		//Phone Validation. i.g. +1-123-456-7890, 11234567890, +11234567890, +1-(123)-456-7890, +1-123-456-7890
 		Validator::extend('phone', function ($attribute, $value, $parameters, $validator) {
 			return preg_match('%^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$%i',
