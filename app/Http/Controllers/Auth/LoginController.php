@@ -88,7 +88,7 @@ class LoginController extends Controller
 		try {
 			$user = User::whereEmail($email)->firstOrFail();
 		} catch (ModelNotFoundException $e) {
-			throw new YechefException($e->getMessage());
+			throw new YechefException(0, $e->getMessage());
 		}
 
 		// check if the user's email is verified yet
