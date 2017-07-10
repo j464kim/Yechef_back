@@ -11,7 +11,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Facades\Log;
 
 
 class LoginController extends Controller
@@ -104,9 +103,9 @@ class LoginController extends Controller
 			]);
 
 		} catch (\Exception $e) {
-			log::error($e->getMessage());
-			log::error($e->getTraceAsString());
-			log::error($e->getFile());
+			error_log($e->getMessage());
+			error_log($e->getTraceAsString());
+			error_log($e->getFile());
 			throw new YechefException(10501);
 		}
 
