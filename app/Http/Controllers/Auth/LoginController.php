@@ -104,7 +104,7 @@ class LoginController extends Controller
 			]);
 
 		} catch (\Exception $e) {
-			throw new YechefException(10501, $e->getMessage());
+			throw new YechefException(10501);
 		}
 
 		return response()->success($result, 10000);

@@ -53,7 +53,7 @@ $factory->define(App\Models\Kitchen::class, function (Faker\Generator $faker) {
 		'address'     => $faker->address,
 		'phone'       => $faker->phoneNumber,
 		'email'       => $faker->unique()->safeEmail,
-		'description' => str_random(10),
+		'description' => $faker->realText(),
 	];
 });
 
