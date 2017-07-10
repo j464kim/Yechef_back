@@ -186,7 +186,7 @@ class LoginController extends Controller
 			'grant_type'    => $grantType,
 			'scope'         => $scope
 		]);
-
+		error_log(implode("|",$data));
 		$response = $this->guzzleClient->request('POST', url('oauth/token'), [
 			'form_params' => $data
 		])->getBody();
