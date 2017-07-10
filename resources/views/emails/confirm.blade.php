@@ -12,7 +12,7 @@
     </h1>
     <p>
         {{ __('registration.confirmation_body') }}
-        <a href="{{ url(config('app.url')) . ':9001/#!/'. 'user/register/' . $user->token}}">
+        <a href="{{ url(config('app.url_front')) . 'user/register/' . $user->token}}">
             {{ __('registration.confirmation_link') }}
         </a>
     </p>
