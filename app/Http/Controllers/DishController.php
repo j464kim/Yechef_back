@@ -6,17 +6,19 @@ use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Yechef\Helper;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
+
 
 class DishController extends Controller
 {
 
 	public function index(Request $request)
 	{
-		$dish = Dish::with('medias')->get();
+		$dishes = Dish::with('medias')->get();
+		//TODO: add algorithm to get featured dishes (business model)
+		$featuredDishes = $dishes->random(12);
 		// apply pagination
-		$result = Helper::paginate($request, $dish);
+		$result = Helper::paginate($request, $featuredDishes, 6);
 		return response()->success($result);
 	}
 
@@ -47,6 +49,7 @@ class DishController extends Controller
 			'vegan'       => $request->input('vegan'),
 			//TODO: ingredient
 		]);
+		$dish->save();
 		return response()->success($dish, 11001);
 	}
 
@@ -70,6 +73,7 @@ class DishController extends Controller
 			'vegan'       => $request->input('vegan'),
 			//TODO: ingredient
 		]);
+		$dish->save();
 		return response()->success($dish, 11002);
 	}
 
@@ -86,4 +90,66 @@ class DishController extends Controller
 		return response()->success($dish, 11003);
 	}
 
+	public function search(Request $request)
+	{
+		if (!$request->city) {
+			throw new YechefException(11502);
+		}
+		$pieces = explode(",", $request->city);
+		$request->city = implode(',', [$pieces[0], $pieces[1]]);
+		$results = Dish::search($request->q);
+		$filtered = Dish::filter($request, $results);
+		$filtered = $this->sortBySearch($request, $filtered);
+		$filtered = Helper::paginate($request, $filtered, 18);
+		return response()->success($filtered);
+	}
+
+	private function sortBySearch(Request $request, $results)
+	{
+		$sortBy = $request->input('sortBy') ?: null;
+
+		if (!$sortBy) {
+			return $results;
+		}
+
+		foreach ($results as $result) {
+			$result['taste_rating'] = $result->avgRating['taste_rating'];
+			$result['visual_rating'] = $result->avgRating['visual_rating'];
+			$result['quantity_rating'] = $result->avgRating['quantity_rating'];
+		}
+
+		switch ($sortBy) {
+			case 'price_asc':
+				$results = $results->sortBy('price');
+				break;
+
+			case 'price_dsc':
+				$results = $results->sortByDesc('price');
+				break;
+
+			case 'newest':
+				$results = $results->sortBy('created_at');
+				break;
+
+			case 'taste':
+				$results = $results->sortByDesc('taste_rating');
+				break;
+
+			case 'visual':
+				$results = $results->sortByDesc('visual_rating');
+				break;
+
+			case 'quantity':
+				$results = $results->sortByDesc('quantity_rating');
+				break;
+			default:
+				break;
+		}
+
+		// reset index of sorted results (necessary since front-end resorts the result based on php collection index)
+		$results = $results->values();
+
+		return $results;
+
+	}
 }

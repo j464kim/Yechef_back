@@ -58,7 +58,7 @@ class Controller extends BaseController
 			foreach ($validator->errors()->all() as $error) {
 				$message .= "\r\n" . $error;
 			}
-			throw new YechefException($message);
+			throw new YechefException(0, $message);
 		}
 	}
 }

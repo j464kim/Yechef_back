@@ -19,7 +19,7 @@ class CreateKitchenTable extends Migration
             $table->string('address');
             $table->string('phone');
             $table->string('email')->unique();
-            $table->string('description');
+            $table->text('description');
             $table->timestamps();
         });
 

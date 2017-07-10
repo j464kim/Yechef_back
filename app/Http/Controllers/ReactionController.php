@@ -79,7 +79,7 @@ class ReactionController extends Controller
 
 		//$oldReactions must be singular. double check it
 		if (count($oldReactions) > 1) {
-			throw new YechefException($oldReactions, 14502);
+			throw new YechefException(14502, $oldReactions);
 		}
 
 		// add new reaction

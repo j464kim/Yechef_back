@@ -11,7 +11,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Facades\Log;
 
 
 class LoginController extends Controller
@@ -88,7 +87,7 @@ class LoginController extends Controller
 		try {
 			$user = User::whereEmail($email)->firstOrFail();
 		} catch (ModelNotFoundException $e) {
-			throw new YechefException($e->getMessage());
+			throw new YechefException(10501);
 		}
 
 		// check if the user's email is verified yet
@@ -184,7 +183,6 @@ class LoginController extends Controller
 			'grant_type'    => $grantType,
 			'scope'         => $scope
 		]);
-
 		$response = $this->guzzleClient->request('POST', url('oauth/token'), [
 			'form_params' => $data
 		])->getBody();
