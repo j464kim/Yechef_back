@@ -103,9 +103,6 @@ class LoginController extends Controller
 			]);
 
 		} catch (\Exception $e) {
-			error_log($e->getMessage());
-			error_log($e->getTraceAsString());
-			error_log($e->getFile());
 			throw new YechefException(10501);
 		}
 
@@ -186,7 +183,6 @@ class LoginController extends Controller
 			'grant_type'    => $grantType,
 			'scope'         => $scope
 		]);
-		error_log(implode("|",$data));
 		$response = $this->guzzleClient->request('POST', url('oauth/token'), [
 			'form_params' => $data
 		])->getBody();
