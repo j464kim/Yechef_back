@@ -18,7 +18,7 @@ class PasswordLoginClient extends Migration
 			'id' => 10,
 			'name' => 'password',
 			'secret' => 'NWftDkQwYUArTcRcmVQF6jFdtiJoHTNQaItry43q',
-			'redirect' => 'http://localhost',
+			'redirect' => config('app.url'),
 			'personal_access_client' => 0,
 			'password_client' => 1,
 			'revoked' => 0
