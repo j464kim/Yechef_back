@@ -138,10 +138,12 @@ return [
 	 * Error Range 17500 <= x < 18000
 	 */
 	// success
-	'17000' => 'Payment was charged successfully',
+	'17000' => 'Payment was authorized successfully. 
+	The amount will not be charged until you receive the dish',
 	// fail
 	'17501' => 'Error occurred while creating a Stripe account',
 	'17502' => 'Payment charge failed',
+	'17503' => 'Unable to find transaction of the charge_id',
 
 
 	/**

@@ -46,6 +46,23 @@ class User extends Authenticatable
 	}
 
 	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function payment()
+	{
+		return $this->hasOne('App\Models\Payment');
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function transactions()
+	{
+		return $this->hasMany('App\Models\Transaction');
+	}
+
+
+	/**
 	 * @return array
 	 */
 	public static function getValidationRule($userId = null)
@@ -186,6 +203,13 @@ class User extends Authenticatable
 	public function isVerified()
 	{
 		return $this->verified;
+	}
+
+	public function getPaymentAccount()
+	{
+		$paymentAccount = Payment::whereUserId($this->id)->first();
+
+		return $paymentAccount;
 	}
 
 }
