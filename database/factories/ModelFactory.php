@@ -42,6 +42,9 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
 		'password'   => bcrypt('password'),
 		'last_name'  => $faker->lastName,
 		'phone'      => $faker->phoneNumber,
+		'show_phone' => $faker->boolean(),
+		'show_subscription' => $faker->boolean(),
+		'show_forks' => $faker->boolean(),
 	];
 });
 
