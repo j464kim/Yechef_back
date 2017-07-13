@@ -40,9 +40,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 // Checkout
 	Route::post('charge-payment', 'CheckoutController@charge');
+
+	Route::resource('users', 'UserController', ['only' => ['update']]);
 });
 
-// TODO Uncomment below 2 lines when auth is all ready
 Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);
 Route::resource('kitchens', 'KitchenController', ['only' => ['index', 'show']]);
 
@@ -63,7 +64,7 @@ Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
 Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');
 
 Route::get('users/list', 'UserController@index');
-Route::resource('users', 'UserController', ['only' => ['index', 'show', 'update']]);
+Route::resource('users', 'UserController', ['only' => ['index', 'show']]);
 
 Route::get('search/dishes', 'DishController@search');
 

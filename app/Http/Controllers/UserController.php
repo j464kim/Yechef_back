@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Models\User;
-use App\Models\Reaction;
-use App\Models\Kitchen;
 use Illuminate\Http\Request;
-use App\Exceptions\YechefException;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 
 class UserController extends Controller
@@ -96,9 +91,12 @@ class UserController extends Controller
 
 		$user->update(
 			[
-				'first_name' => $request->input('first_name'),
-				'last_name'  => $request->input('last_name'),
-				'phone'      => $request->input('phone'),
+				'first_name'        => $request->input('first_name'),
+				'last_name'         => $request->input('last_name'),
+				'phone'             => $request->input('phone'),
+				'show_phone'        => $request->input('show_phone'),
+				'show_forks'        => $request->input('show_forks'),
+				'show_subscription' => $request->input('show_subscription'),
 			]
 		);
 
