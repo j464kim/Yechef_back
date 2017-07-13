@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\YechefException;
 use App\Traits\ModelService;
 use App\Traits\Reactionable;
 use App\Yechef\DishRatingable as Ratingable;
@@ -89,11 +90,11 @@ class Dish extends Model
 		$this['visual_rating'] = $avgRatings['visual_rating'];
 		$this['quantity_rating'] = $avgRatings['quantity_rating'];
 
-		foreach($avgRatings as $eachAvg) {
+		foreach ($avgRatings as $eachAvg) {
 			$totalRatigSum += $eachAvg;
 		}
 
-		$this['total_rating'] =  $totalRatigSum / sizeof($avgRatings);
+		$this['total_rating'] = $totalRatigSum / sizeof($avgRatings);
 	}
 
 	/**
@@ -145,6 +146,9 @@ class Dish extends Model
 			$item->addRatingAttributes();
 			$geoCodedAddress = \GoogleMaps::load('geocoding')->setParamByKey('address', $item->kitchen->address)->get();
 			$geoCodedAddress = json_decode($geoCodedAddress);
+			if ($geoCodedAddress->error_message) {
+				throw new YechefException(0, $geoCodedAddress->error_message);
+			}
 			$lat = $geoCodedAddress->results[0]->geometry->location->lat;
 			$lng = $geoCodedAddress->results[0]->geometry->location->lng;
 			$item->lat = $lat;
