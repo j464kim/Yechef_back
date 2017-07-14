@@ -59,7 +59,10 @@ class SocialAccount extends Model
 					'email'      => $providerUser->getEmail(),
 					'first_name' => $first_name,
 					'last_name'  => $last_name,
-					'password'   => Hash::make(md5(time()))
+					'password'   => Hash::make(md5(time())),
+					'show_phone' => '1',
+					'show_forks' => '1',
+					'show_subscription' => '1',
 				]);
 
 				$account->user()->associate($user);

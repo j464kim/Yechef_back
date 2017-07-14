@@ -70,6 +70,9 @@ class RegisterController extends Controller
 			'first_name' => $first_name,
 			'last_name'  => $last_name,
 			'phone'      => $phone,
+			'show_phone' => '1',
+			'show_forks' => '1',
+			'show_subscription' => '1',
 		]);
 
 		return response()->success($user);
