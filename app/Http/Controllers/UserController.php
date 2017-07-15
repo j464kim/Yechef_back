@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Models\User;
+use App\Yechef\Helper;
 use Illuminate\Http\Request;
 
 
@@ -24,6 +25,7 @@ class UserController extends Controller
 		} catch (Exception $e) {
 			return response()->fail($e->getMessage());
 		}
+		$result = Helper::paginate($request, $result, $request->perPage);
 		return response()->success($result);
 	}
 
@@ -116,8 +118,9 @@ class UserController extends Controller
 			throw new YechefException(15503);
 		}
 		$subscriptionKitchens = $user->getSubscriptions();
+		$result = Helper::paginate($request, $subscriptionKitchens, $request->perPage);
 
-		return response()->success($subscriptionKitchens);
+		return response()->success($result);
 	}
 
 	/**
@@ -134,7 +137,8 @@ class UserController extends Controller
 		}
 
 		$forkedDishes = $user->getForkedDishes();
+		$result = Helper::paginate($request, $forkedDishes, $request->perPage);
 
-		return response()->success($forkedDishes);
+		return response()->success($result);
 	}
 }
