@@ -26,14 +26,14 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('dishes/checkOwnership', 'UserController@checkOwnership');
 	Route::post('kitchens/checkOwnership', 'UserController@checkOwnership');
 
-	Route::get('users/getMyKitchens', 'UserController@getMyKitchens');
+	Route::get('users/getMyKitchens', 'UserController@getKitchens');
 
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
 	Route::resource('carts', 'CartController', ['except' => ['show']]);
 
-	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
-	Route::get('users/getForkedDishes', 'UserController@getForkedDishes');
+	Route::get('users/getMySubscriptions', 'UserController@getSubscriptions');
+	Route::get('users/getMyForkedDishes', 'UserController@getForkedDishes');
 
 //	Update Password
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');
@@ -80,3 +80,7 @@ $this->get('register/confirm/{token}', 'Auth\RegisterController@confirmEmail');
 Route::get('media/{id}/{modelName}', 'MediaController@show');
 Route::resource('media', 'MediaController', ['only' => 'destroy']);
 
+//Get User INformation for User Show page
+Route::get('users/{userId}/getKitchens', 'UserController@getKitchens');
+Route::get('users/{userId}/getSubscriptions', 'UserController@getSubscriptions');
+Route::get('users/{userId}/getForkedDishes', 'UserController@getForkedDishes');

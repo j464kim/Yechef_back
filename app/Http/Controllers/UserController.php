@@ -15,7 +15,7 @@ class UserController extends Controller
 	 * @param Request $request
 	 * @return mixed
 	 */
-	public function getMyKitchens(Request $request)
+	public function getKitchens(Request $request)
 	{
 		$user = $this->getUser($request);
 
@@ -111,6 +111,10 @@ class UserController extends Controller
 	{
 		$user = $this->getUser($request);
 
+		//Check user's privacy settings
+		if($request->userId && $user->show_subscription == 0) {
+			throw new YechefException(15503);
+		}
 		$subscriptionKitchens = $user->getSubscriptions();
 
 		return response()->success($subscriptionKitchens);
@@ -123,6 +127,11 @@ class UserController extends Controller
 	public function getForkedDishes(Request $request)
 	{
 		$user = $this->getUser($request);
+
+		//Check user's privacy settings
+		if($request->userId && $user->show_subscription == 0) {
+			throw new YechefException(15503);
+		}
 
 		$forkedDishes = $user->getForkedDishes();
 
