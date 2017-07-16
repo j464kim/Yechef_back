@@ -5,17 +5,13 @@ namespace App\Models;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\YechefException;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cart extends Model
 {
+	use SoftDeletes;
 
-	public $totalPrice = 0;
-
-	public function __construct()
-	{
-		parent::__construct();
-		$this->total_price = 0;
-	}
+	protected $fillable = ['kitchen_id', 'total_price'];
 
 	public function items()
 	{

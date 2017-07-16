@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use App\Traits\ModelService;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
@@ -38,11 +39,11 @@ class User extends Authenticatable
 	];
 
 	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
-	public function cart()
+	public function carts()
 	{
-		return $this->hasOne('App\Models\Cart');
+		return $this->hasMany('App\Models\Cart');
 	}
 
 	/**
@@ -125,21 +126,43 @@ class User extends Authenticatable
 
 	/**
 	 * check if current user has an existing cart, otherwise create one
+	 * retrieve cart depending on which kitchen the added dish is coming from
 	 *
-	 * @return false|\Illuminate\Database\Eloquent\Model
+	 * @param null $kitchenId
+	 * @return false|\Illuminate\Database\Eloquent\Model|mixed
 	 * @throws YechefException
 	 */
-	public function getCart()
+	public function getCart($kitchenId = null)
 	{
-		try {
-			$cart = $this->cart ?: $this->cart()->save(new Cart);
-			$cartInfo = $cart->with('items')->firstOrFail();
+		$carts = $this->carts();
 
-		} catch (\Exception $e) {
-			throw new YechefException(18502);
+		// for Index, retrieve every cart of every kitchen
+		if (!$kitchenId) {
+
+			$carts = $carts->with('items')->get();
+			return $carts;
 		}
 
-		return $cartInfo;
+		$carts = $carts->get();
+		// for Store & Update & Destroy
+		// if cart belonging to this kitchen does not exist yet,
+		if ($carts->isEmpty() || !$carts->contains('kitchen_id', $kitchenId)) {
+
+			$cart = new Cart([
+				'kitchen_id'  => $kitchenId,
+				'total_price' => 0
+			]);
+			$cart = $this->carts()->save($cart);
+		}
+
+		if ($carts->contains('kitchen_id', $kitchenId)) {
+
+			// if cart of the kitchen id already exists, retrieve that cart
+			$cart = $carts->where('kitchen_id', $kitchenId)->first();
+		}
+
+		return $cart;
+
 	}
 
 	/**

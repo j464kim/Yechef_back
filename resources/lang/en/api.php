@@ -155,6 +155,7 @@ return [
 	'18000' => 'The item is added to cart',
 	'18001' => 'Cart item quantity is udpated',
 	'18002' => 'Item is removed from the cart',
+	'18003' => 'Your cart is empty',
 
 	// fail
 	'18501' => 'Wrong inputs for cart items',
