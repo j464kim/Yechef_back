@@ -30,7 +30,7 @@ class ReactionController extends Controller
 
 		$userReaction = null;
 		if ($userId){
-			$userReactions = $reactionable->getReactions($userId);
+			$userReactions = $reactionable->getReactions($userId)->where('kind', $request->input('reactionableKind'));
 			$userReaction = $userReactions->first();
 		}
 
