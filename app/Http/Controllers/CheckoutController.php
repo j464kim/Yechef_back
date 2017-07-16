@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Auth\TransactionController;
 use App\Http\Controllers\Auth\PaymentController;
+use App\Services\AppMailer;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -17,17 +18,20 @@ use App\Models\Transaction;
 
 class CheckoutController extends Controller
 {
-	private $paymentCtrl, $transactionCtrl;
+	private $paymentCtrl, $transactionCtrl, $orderCtrl;
+	protected $mailer;
 
 	public function __construct(
 		Application $app,
 		PaymentController $paymentCtrl,
-		TransactionController $transactionCtrl
+		TransactionController $transactionCtrl,
+		OrderController $orderCtrl
 	) {
 		parent::__construct($app);
 
 		$this->paymentCtrl = $paymentCtrl;
 		$this->transactionCtrl = $transactionCtrl;
+		$this->orderCtrl = $orderCtrl;
 	}
 
 	public function charge(Request $request)
@@ -80,10 +84,16 @@ class CheckoutController extends Controller
 		// store it into DB
 		$transaction = $this->transactionCtrl->store($request, $paymentAccount->id, $charge->id);
 
-		// TODO: hardcoded to half the amount for now
-		$amountToCapture = round($transaction->amount / 2);
-		$this->transactionCtrl->captureAmount($charge, $amountToCapture);
+		// create order & its items
+		$order = $this->orderCtrl->store($transaction->id, $transaction->payment->user_id, $request->input('kitchenId'));
 
-		return response()->success(17000);
+		// delete cart
+		$order->cart()->delete();
+
+		// TODO: hardcoded to half the amount for now
+//		$amountToCapture = round($transaction->amount / 2);
+//		$this->transactionCtrl->captureAmount($charge, $amountToCapture);
+
+		return response()->success($order, 17000);
 	}
 }

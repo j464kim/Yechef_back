@@ -19,9 +19,9 @@ class Transaction extends Model
 		'captured',
 	];
 
-	public function user()
+	public function payment()
 	{
-		return $this->belongsTo('App\Models\User');
+		return $this->belongsTo('App\Models\Payment');
 	}
 
 	/**
@@ -30,9 +30,10 @@ class Transaction extends Model
 	public static function getValidationRule()
 	{
 		$rule = array(
-			'token'    => 'bail|required',
-			'amount'   => 'required',
-			'currency' => 'required',
+			'token'     => 'bail|required',
+			'amount'    => 'required',
+			'currency'  => 'required',
+			'kitchenId' => 'required',
 		);
 
 		return $rule;
