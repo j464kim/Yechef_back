@@ -130,4 +130,17 @@ class UserController extends Controller
 
 		return response()->success($forkedDishes);
 	}
+
+	/**
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function getOrders(Request $request)
+	{
+		$user = $this->getUser($request);
+
+		$orderInfo = $user->orders()->with('items.dish', 'kitchen', 'transaction')->get();
+
+		return response()->success($orderInfo);
+	}
 }

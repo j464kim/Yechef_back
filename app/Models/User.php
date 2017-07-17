@@ -62,6 +62,13 @@ class User extends Authenticatable
 		return $this->hasMany('App\Models\Transaction');
 	}
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function orders()
+	{
+		return $this->hasMany('App\Models\Order');
+	}
 
 	/**
 	 * @return array

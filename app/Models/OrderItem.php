@@ -21,4 +21,9 @@ class OrderItem extends Model
 		return $this->belongsTo('App\Models\Order');
 	}
 
+	public function dish()
+	{
+		return $this->belongsTo('App\Models\Dish');
+	}
+
 }

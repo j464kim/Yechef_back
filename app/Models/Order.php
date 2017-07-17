@@ -31,8 +31,24 @@ class Order extends Model
 		return $cart;
 	}
 
+	public function user()
+	{
+		return $this->belongsTo('App\Models\User');
+	}
+
+	public function kitchen()
+	{
+		return $this->belongsTo('App\Models\Kitchen');
+	}
+
 	public function items()
 	{
 		return $this->hasMany('App\Models\OrderItem');
 	}
+
+	public function transaction()
+	{
+		return $this->belongsTo('App\Models\Transaction');
+	}
+
 }

@@ -6,6 +6,7 @@ use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use App\Models\OrderItem;
 use App\Models\User;
+use App\Services\AppMailer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -21,11 +22,16 @@ class OrderController extends Controller
 
 	protected $mailer;
 
-	public function __construct(Application $app)
+	public function __construct(Application $app, AppMailer $mailer)
 	{
 		parent::__construct($app);
 
 		$this->mailer = $mailer;
+	}
+
+	public function sendOrderRequest(Request $request)
+	{
+//		$this->mailer->sendOrderRequest($user, $order);
 	}
 
 	public function store($transactionId, $userId, $kitchenId)

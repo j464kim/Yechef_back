@@ -34,6 +34,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
 	Route::get('users/getForkedDishes', 'UserController@getForkedDishes');
+	Route::get('users/getOrders', 'UserController@getOrders');
 
 //	Update Password
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Contracts\Mail\Mailer;
 use App\Models\User;
+use Stripe\Order;
 
 class AppMailer
 {
@@ -20,10 +21,21 @@ class AppMailer
 	public function sendConfirmationEmailTo(User $user)
 	{
 		$this->to = $user->email;
-		$this->view = 'emails.confirm';
+		$this->view = 'emails.verifyEmail';
 
 		// $user variable to be available on template
 		$this->data = compact('user');
+
+		$this->deliver();
+	}
+
+	public function sendOrderRequest(User $user, Order $order)
+	{
+		$this->to = $user->email;
+		$this->view = 'emails.requestOrder';
+
+		// $user variable to be available on template
+		$this->data = compact('order');
 
 		$this->deliver();
 	}
