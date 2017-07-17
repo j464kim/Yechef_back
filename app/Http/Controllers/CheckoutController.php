@@ -15,6 +15,7 @@ use Stripe\Customer;
 use Stripe\Charge;
 use App\Models\Payment;
 use App\Models\Transaction;
+use App\Models\Kitchen;
 
 class CheckoutController extends Controller
 {
@@ -25,13 +26,15 @@ class CheckoutController extends Controller
 		Application $app,
 		PaymentController $paymentCtrl,
 		TransactionController $transactionCtrl,
-		OrderController $orderCtrl
+		OrderController $orderCtrl,
+		AppMailer $mailer
 	) {
 		parent::__construct($app);
 
 		$this->paymentCtrl = $paymentCtrl;
 		$this->transactionCtrl = $transactionCtrl;
 		$this->orderCtrl = $orderCtrl;
+		$this->mailer = $mailer;
 	}
 
 	public function charge(Request $request)
@@ -89,6 +92,11 @@ class CheckoutController extends Controller
 
 		// delete cart
 		$order->cart()->delete();
+
+		// TODO: CC email to other owners
+		// send order request email to kitchen owner
+		$owner = $order->kitchen->users->first();
+		$this->mailer->sendOrderRequest($owner, $order);
 
 		// TODO: hardcoded to half the amount for now
 //		$amountToCapture = round($transaction->amount / 2);

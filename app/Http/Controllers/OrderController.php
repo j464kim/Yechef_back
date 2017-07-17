@@ -20,18 +20,9 @@ use App\Models\Cart;
 class OrderController extends Controller
 {
 
-	protected $mailer;
-
-	public function __construct(Application $app, AppMailer $mailer)
+	public function __construct(Application $app)
 	{
 		parent::__construct($app);
-
-		$this->mailer = $mailer;
-	}
-
-	public function sendOrderRequest(Request $request)
-	{
-//		$this->mailer->sendOrderRequest($user, $order);
 	}
 
 	public function store($transactionId, $userId, $kitchenId)

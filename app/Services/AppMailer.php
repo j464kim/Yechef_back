@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Contracts\Mail\Mailer;
 use App\Models\User;
-use Stripe\Order;
+use App\Models\Order;
 
 class AppMailer
 {
