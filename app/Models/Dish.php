@@ -94,7 +94,7 @@ class Dish extends Model
 			$totalRatigSum += $eachAvg;
 		}
 
-		$this['total_rating'] = $totalRatigSum / sizeof($avgRatings);
+		$this['total_rating'] = sizeof($avgRatings) == 0 ? 0 : $totalRatigSum / sizeof($avgRatings);
 	}
 
 	/**
