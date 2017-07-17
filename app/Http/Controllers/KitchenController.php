@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Yechef\Helper;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class KitchenController extends Controller
 {
@@ -171,6 +172,15 @@ class KitchenController extends Controller
 		} else {
 			return $userId;
 		}
+	}
+
+	public function getOrders($kitchenId)
+	{
+		$kitchen = Kitchen::findById($kitchenId);
+
+		$orderInfo = $kitchen->orders()->with('items.dish', 'kitchen', 'transaction')->get();
+
+		return response()->success($orderInfo);
 	}
 
 }

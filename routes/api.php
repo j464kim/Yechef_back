@@ -34,7 +34,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
 	Route::get('users/getForkedDishes', 'UserController@getForkedDishes');
-	Route::get('users/getOrders', 'UserController@getOrders');
+	Route::get('users/getOrders', 'UserController@getOrders');;
 
 //	Update Password
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');
@@ -62,6 +62,7 @@ Route::post('auth/google', 'Auth\LoginController@google');
 Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
 Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
 Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');
+Route::get('kitchens/{id}/orders', 'KitchenController@getOrders');
 
 Route::get('users/list', 'UserController@index');
 Route::resource('users', 'UserController', ['only' => ['index', 'show', 'update']]);
