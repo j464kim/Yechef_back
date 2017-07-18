@@ -117,20 +117,14 @@ class ReactionController extends Controller
 	 */
 	public function destroy(Request $request, $reactionId)
 	{
-		$reactionableId = $request->input('reactionableId');
-		$reactionableType = $request->input('reactionableType');
 		$userId = $request->user()->id;
 
-		try {
-			$reactionable = $reactionableType::findOrFail($reactionableId);
-		} catch (\Exception $e) {
-			throw new YechefException(14503);
+		$reaction = Reaction::findById($reactionId);
+		if ($userId == $reaction->user_id) {
+			$reaction->delete();
 		}
 
-		$userReaction = $reactionable->getReactions($userId);
-		$userReaction->first()->delete();
-
-		return response()->success($userReaction, 14001);
+		return response()->success($reaction, 14001);
 	}
 
 }
