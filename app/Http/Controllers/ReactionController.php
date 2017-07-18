@@ -112,10 +112,9 @@ class ReactionController extends Controller
 	}
 
 	/**
-	 * @param $reactionId
 	 * @return mixed
 	 */
-	public function destroy(Request $request, $reactionId)
+	public function destroy(Request $request)
 	{
 		$reactionableId = $request->input('reactionableId');
 		$reactionableType = $request->input('reactionableType');
@@ -127,7 +126,7 @@ class ReactionController extends Controller
 			throw new YechefException(14503);
 		}
 
-		$userReaction = $reactionable->getReactions($userId);
+		$userReaction = $reactionable->getReactions($userId)->where('kind', $request->input('kind'));
 		$userReaction->first()->delete();
 
 		return response()->success($userReaction, 14001);
