@@ -23,15 +23,21 @@ use Stripe\Stripe;
 class OrderController extends Controller
 {
 	private $transactionCtrl;
-	protected $stripe, $secretKey;
+	protected $stripe, $secretKey, $mailer;
+	protected $user, $order, $charge;
 
-	public function __construct(Application $app, TransactionController $transactionCtrl, Stripe $stripe)
-	{
+	public function __construct(
+		Application $app,
+		TransactionController $transactionCtrl,
+		Stripe $stripe,
+		AppMailer $mailer
+	) {
 		parent::__construct($app);
 
 		$this->transactionCtrl = $transactionCtrl;
 		$this->stripe = $stripe;
 		$this->secretKey = config('services.stripe.secret_key');
+		$this->mailer = $mailer;
 	}
 
 	public function store($transactionId, $userId, $kitchenId)
@@ -50,9 +56,9 @@ class OrderController extends Controller
 		foreach ($cart->items as $item) {
 			OrderItem::create(
 				array(
-					"order_id"          => $order->id,
-					"dish_id"           => $item->dish_id,
-					"quantity"          => $item->quantity,
+					"order_id" => $order->id,
+					"dish_id" => $item->dish_id,
+					"quantity" => $item->quantity,
 					"captured_quantity" => 0
 				)
 			);
@@ -63,60 +69,55 @@ class OrderController extends Controller
 
 	public function acceptOrder(Request $request, $kitchenId, $orderId)
 	{
-		$user = $this->getUser($request);
-		$user->isVerifiedKitchenOwner($kitchenId);
+		// get whats needed
+		$this->initialize($request, $orderId);
 
-		$order = Order::findById($orderId);
-		$order->acceptInFull();
+		// check if authorized
+		$this->user->isVerifiedKitchenOwner($kitchenId);
 
-		$order->save();
-
-		// capture amount
-		$this->stripe->setApiKey($this->secretKey);
-
-		$transaction = $order->transaction;
-		$charge = Charge::retrieve($transaction->charge_id);
-
-		$transaction->captureAmount($charge);
+		// process accepting order
+		$this->order->acceptInFull();
+		$this->order->transaction->captureAmount($this->charge);
+		$this->mailer->sendOrderAccepted($this->user, $this->order);
 	}
 
 	public function declineOrder(Request $request, $kitchenId, $orderId)
 	{
-		$user = $this->getUser($request);
-		$order = Order::findById($orderId);
+		// get whats needed
+		$this->initialize($request, $orderId);
 
-		// necessary check before cancelling order
-		$user->isVerifiedKitchenOwner($kitchenId);
-		$order->isCancellable();
+		// check if authorized
+		$this->user->isVerifiedKitchenOwner($kitchenId);
+		$this->order->isCancellable();
 
-		$order->declineInFull();
-
-		// refund amount
-		$this->stripe->setApiKey($this->secretKey);
-
-		$transaction = $order->transaction;
-		$charge = Charge::retrieve($transaction->charge_id);
-
-		$transaction->refundAmount($charge);
+		// process declining order
+		$this->order->declineInFull();
+		$this->order->transaction->refundAmount($this->charge);
+		$this->mailer->sendOrderDeclined($this->user, $this->order);
 	}
 
-	public function cancelOrder(Request $request, $kitchenId, $orderId)
+	public function cancelOrder(Request $request, $orderId)
 	{
-		$user = $this->getUser($request);
-		$order = Order::findById($orderId);
+		// get whats needed
+		$this->initialize($request, $orderId);
 
-		$user->isOrderMaker($orderId);
-		$order->isCancellable();
+		// check if authorized
+		$this->user->isOrderMaker($orderId);
+		$this->order->isCancellable();
 
-		$order->declineInFull();
-
-		// refund amount
-		$this->stripe->setApiKey($this->secretKey);
-
-		$transaction = $order->transaction;
-		$charge = Charge::retrieve($transaction->charge_id);
-
-		$transaction->refundAmount($charge);
+		// process cancelling order
+		$this->order->declineInFull();
+		$this->order->transaction->refundAmount($this->charge);
+		$this->mailer->sendOrderCancelled($this->user, $this->order);
 	}
+
+	public function initialize(Request $request, $orderId)
+	{
+		$this->user = $this->getUser($request);
+		$this->order = Order::findById($orderId);
+		$this->stripe->setApiKey($this->secretKey);
+		$this->charge = Charge::retrieve($this->order->transaction->charge_id);
+	}
+
 
 }
