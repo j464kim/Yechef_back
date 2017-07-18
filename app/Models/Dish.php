@@ -146,7 +146,7 @@ class Dish extends Model
 			$item->addRatingAttributes();
 			$geoCodedAddress = \GoogleMaps::load('geocoding')->setParamByKey('address', $item->kitchen->address)->get();
 			$geoCodedAddress = json_decode($geoCodedAddress);
-			if ($geoCodedAddress->error_message) {
+			if (isset($geoCodedAddress->error_message)) {
 				throw new YechefException(0, $geoCodedAddress->error_message);
 			}
 			$lat = $geoCodedAddress->results[0]->geometry->location->lat;
