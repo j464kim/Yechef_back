@@ -20,8 +20,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::resource('dishes', 'DishController', ['only' => ['store', 'destroy', 'update']]);
 	Route::resource('kitchens', 'KitchenController', ['only' => ['store', 'destroy', 'update']]);
 	Route::resource('media', 'MediaController', ['only' => 'store']);
-	Route::resource('reactions', 'ReactionController', ['only' => ['store']]);
-	Route::delete('reactions', 'ReactionController@destroy');
+	Route::resource('reactions', 'ReactionController',
+		['parameters' => ['reactions' => 'like_id'], 'only' => ['store', 'destroy']]);
 
 	Route::post('dishes/checkOwnership', 'UserController@checkOwnership');
 	Route::post('kitchens/checkOwnership', 'UserController@checkOwnership');
