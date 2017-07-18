@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\YechefException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Stripe\Charge;
 
 class Transaction extends Model
 {
@@ -17,6 +18,8 @@ class Transaction extends Model
 		'amount',
 		'captured_amount',
 		'captured',
+		'refunded_amount',
+		'refunded',
 	];
 
 	public function payment()
@@ -42,7 +45,14 @@ class Transaction extends Model
 	public function storeCapturedAmount($amountToCapture)
 	{
 		$this->captured = 1;
-		$this->captured_amount = $amountToCapture;
+		$this->captured_amount = $amountToCapture ?: $this->amount;
+		$this->save();
+	}
+
+	public function storeRefundedAmount($amountToRefund)
+	{
+		$this->refunded = 1;
+		$this->refunded_amount = $amountToRefund ?: $this->amount;
 		$this->save();
 	}
 
@@ -57,4 +67,39 @@ class Transaction extends Model
 
 		return $transaction;
 	}
+
+	public function captureAmount(Charge $charge, $partialAmount = null)
+	{
+		// convert decimal amount to its integer of times 100 for stripe format
+		$amountToCapture = $partialAmount ? round($partialAmount) : null;
+
+		$argument = [];
+		if ($amountToCapture) {
+			$argument = array(
+				"amount" => $amountToCapture
+			);
+		}
+
+		$charge->capture($argument);
+
+		$this->storeCapturedAmount($amountToCapture);
+	}
+
+	public function refundAmount(Charge $charge, $partialAmount = null)
+	{
+		// convert decimal amount to its integer of times 100 for stripe format
+		$amountToRefund = $partialAmount ? round($partialAmount) : null;
+
+		$argument = [];
+		if ($amountToRefund) {
+			$argument = array(
+				"amount" => $amountToRefund
+			);
+		}
+
+		$charge->refund($argument);
+
+		$this->storeRefundedAmount($amountToRefund);
+	}
+
 }

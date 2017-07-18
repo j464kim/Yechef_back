@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\YechefException;
+use App\Traits\ModelService;
 use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,6 +11,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Order extends Model
 {
 	use SoftDeletes, CascadeSoftDeletes;
+	use ModelService;
+
+	const ACCEPTED = 'accepted';
+	const DECLINED = 'declined';
+	const PARTIAL = 'partial';
 
 	protected $cascadeDeletes = ['items'];
 
@@ -51,4 +57,35 @@ class Order extends Model
 		return $this->belongsTo('App\Models\Transaction');
 	}
 
+	public function acceptInFull()
+	{
+		$this->status = self::ACCEPTED;
+
+		// capture all order items
+		$this->items->each(function ($item) {
+			$item->captured_quantity = $item->quantity;
+			$item->save();
+		});
+
+		$this->save();
+	}
+
+	public function declineInFull()
+	{
+		$this->status = self::DECLINED;
+
+		// capture all order items
+		$this->items->each(function ($item) {
+			$item->delete();
+		});
+
+		$this->save();
+	}
+
+	public function isCancellable()
+	{
+		if ($this->status != 'pending') {
+			throw new YechefException(20502);
+		}
+	}
 }

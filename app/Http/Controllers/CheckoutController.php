@@ -20,14 +20,15 @@ use App\Models\Kitchen;
 class CheckoutController extends Controller
 {
 	private $paymentCtrl, $transactionCtrl, $orderCtrl;
-	protected $mailer;
+	protected $mailer, $stripe;
 
 	public function __construct(
 		Application $app,
 		PaymentController $paymentCtrl,
 		TransactionController $transactionCtrl,
 		OrderController $orderCtrl,
-		AppMailer $mailer
+		AppMailer $mailer,
+		Stripe $stripe
 	) {
 		parent::__construct($app);
 
@@ -35,6 +36,7 @@ class CheckoutController extends Controller
 		$this->transactionCtrl = $transactionCtrl;
 		$this->orderCtrl = $orderCtrl;
 		$this->mailer = $mailer;
+		$this->stripe = $stripe;
 	}
 
 	public function charge(Request $request)
@@ -47,7 +49,7 @@ class CheckoutController extends Controller
 		// Set your secret key: remember to change this to your live secret key in production
 		// See your keys here: https://dashboard.stripe.com/account/apikeys
 		$secretKey = config('services.stripe.secret_key');
-		Stripe::setApiKey($secretKey);
+		$this->stripe->setApiKey($secretKey);
 
 		// Token is created using Stripe.js or Checkout!
 		// Get the payment token submitted by the form:
@@ -97,10 +99,6 @@ class CheckoutController extends Controller
 		// send order request email to kitchen owner
 		$owner = $order->kitchen->users->first();
 		$this->mailer->sendOrderRequest($owner, $order);
-
-		// TODO: hardcoded to half the amount for now
-//		$amountToCapture = round($transaction->amount / 2);
-//		$this->transactionCtrl->captureAmount($charge, $amountToCapture);
 
 		return response()->success($order, 17000);
 	}

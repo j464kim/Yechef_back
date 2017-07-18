@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
+use Illuminate\Foundation\Application;
 use Stripe\Charge;
 
 class TransactionController extends Controller
 {
-
 	public function store($request, $paymentId, $chargeId)
 	{
 		$transaction = Transaction::create(
@@ -19,22 +19,12 @@ class TransactionController extends Controller
 				"amount"          => $request->input('amount'),
 				"captured_amount" => 0,
 				"captured"        => 0,
+				"refunded_amount" => 0,
+				"refunded"        => 0,
 			)
 		);
 
 		return $transaction;
-	}
-
-	public function captureAmount(Charge $charge, $amountToCapture)
-	{
-		// capture amount
-		$charge->capture([
-			"amount" => $amountToCapture
-		]);
-
-		$transaction = Transaction::getTransactionByChargeId($charge->id);
-
-		$transaction->storeCapturedAmount($amountToCapture);
 	}
 
 }

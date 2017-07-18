@@ -22,6 +22,8 @@ class CreateTransactionTable extends Migration
 			$table->decimal('amount', 7, 2);
 			$table->decimal('captured_amount', 7, 2);
 			$table->boolean('captured');
+			$table->decimal('refunded_amount', 7, 2);
+			$table->boolean('refunded');
 			$table->timestamps();
 			$table->softDeletes();
 		});

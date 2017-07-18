@@ -131,6 +131,13 @@ class User extends Authenticatable
 		}
 	}
 
+	public function isOrderMaker($orderId)
+	{
+		if (Order::findById($orderId)->user_id != $this->id) {
+			throw new YechefException(20501);
+		}
+	}
+
 	/**
 	 * check if current user has an existing cart, otherwise create one
 	 * retrieve cart depending on which kitchen the added dish is coming from

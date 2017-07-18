@@ -171,4 +171,16 @@ return [
 
 	// fail
 	'19500' => 'Could not find a model by the given id',
+
+	/**
+	 * Order related
+	 * Success Range 20000 <= x < 20500
+	 * Error Range 20500 <= x < 21000
+	 */
+	// success
+
+	// fail
+	'20501' => 'You are not authorized to make action for this order',
+	'20502' => 'An order must be of pending status to be cancellable',
+
 ];
