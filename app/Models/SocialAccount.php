@@ -44,7 +44,7 @@ class SocialAccount extends Model
 				// TODO: create user account based on these data. create random password, send email in event
 				$first_name = '';
 				$last_name = '';
-				Log::error($providerUser->getAvatar());
+				$avatar = $providerUser->getAvatar();
 				switch ($provider) {
 					case 'google':
 						$first_name = $providerUser->user['name']['givenName'];
@@ -62,9 +62,18 @@ class SocialAccount extends Model
 					'first_name'        => $first_name,
 					'last_name'         => $last_name,
 					'password'          => Hash::make(md5(time())),
-					'show_phone'        => '1',
-					'show_forks'        => '1',
-					'show_subscription' => '1',
+					'show_phone'        => true,
+					'show_forks'        => true,
+					'show_subscription' => true,
+				]);
+
+				Media::create([
+					'slug'          => snake_case($avatar),
+					'url'           => $avatar,
+					// not sure if there is an exact method to determine image or video
+					'type'          => 'image',
+					'mediable_id'   => $user->id,
+					'mediable_type' => User::class
 				]);
 
 				$account->user()->associate($user);
