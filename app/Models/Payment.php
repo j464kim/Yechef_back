@@ -19,4 +19,15 @@ class Payment extends Model
 		return $this->belongsTo('App\Models\User');
 	}
 
+	public static function getValidationRule()
+	{
+		$rule = array(
+			'name'      => 'bail|required',
+			'exp_month' => 'required',
+			'exp_year'  => 'required',
+		);
+
+		return $rule;
+	}
+
 }

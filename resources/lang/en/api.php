@@ -140,6 +140,9 @@ return [
 	// success
 	'17000' => 'Payment was authorized successfully. 
 	The amount will not be charged until you receive the dish',
+	'17001' => 'The card has been removed successfully',
+	'17002' => 'The card has been updated successfully',
+
 	// fail
 	'17501' => 'Error occurred while creating a Stripe account',
 	'17502' => 'Payment charge failed',

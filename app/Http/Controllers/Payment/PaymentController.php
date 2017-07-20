@@ -13,17 +13,19 @@ use Stripe\Stripe;
 
 class PaymentController extends Controller
 {
-	protected $stripe, $customer, $secretKey, $stripeService;
+	protected $stripe, $customer, $secretKey, $stripeService, $payment;
 
 	public function __construct(
 		Application $app,
 		Customer $customer,
-		StripeService $stripeService
+		StripeService $stripeService,
+		Payment $payment
 	) {
 		parent::__construct($app);
 
 		$this->customer = $customer;
 		$this->stripeService = $stripeService;
+		$this->payment = $payment;
 	}
 
 	public function index(Request $request)
@@ -36,6 +38,13 @@ class PaymentController extends Controller
 		}
 
 		return response()->success($customer);
+	}
+
+	public function show(Request $request, $index)
+	{
+		$card = $this->stripeService->showCard($request, $index);
+
+		return response()->success($card);
 	}
 
 	public function store(Request $request)
@@ -55,9 +64,22 @@ class PaymentController extends Controller
 
 	}
 
+	public function update(Request $request, $cardId)
+	{
+		// validate input for update
+		$validationRule = $this->payment->getValidationRule();
+		$this->validateInput($request, $validationRule);
+
+		$updatedCard = $this->stripeService->updateCard($request, $cardId);
+
+		return response()->success($updatedCard, 17002);
+
+	}
+
 	public function destroy(Request $request, $cardId)
 	{
-		$this->stripeService->removeCard($request, $cardId);
+		$removedCard = $this->stripeService->removeCard($request, $cardId);
+		return response()->success($removedCard, 17001);
 	}
 
 }

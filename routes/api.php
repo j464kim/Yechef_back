@@ -42,8 +42,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');
 
 // Checkout
-	Route::post('users/payment/charge', 'Payment\CheckoutController@charge');
-	Route::resource('users/payment', 'Payment\PaymentController',['only' => ['index', 'store', 'update', 'destroy']]);
+	Route::post('payment/charge', 'Payment\CheckoutController@charge');
+	Route::resource('payment', 'Payment\PaymentController',['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
 //	My Kitchen
 	Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');

@@ -27,6 +27,17 @@ class StripeService
 		$this->stripe->setApiKey($secretKey);
 	}
 
+	public function showCard($request, $index)
+	{
+		$user = $this->controller->getUser($request);
+		$paymentAccount = $user->payment;
+
+		$customer = $this->customer->retrieve($paymentAccount->stripe_id);
+		$card = $customer->sources->data[$index];
+
+		return $card;
+	}
+
 	public function addCard(Request $request)
 	{
 		$user = $this->controller->getUser($request);
@@ -45,18 +56,14 @@ class StripeService
 					'source' => $request->input('token')
 				]
 			);
-			Log::info('new card was added to customer');
-			Log::info($newCard);
 
 			if (in_array($newCard->fingerprint, $cardFingerprints)) {
-				Log::info('same card was added, so it is being deleted');
 				$customer->sources->retrieve($newCard->id)->delete();
 			}
 
 		} else {
 			// Otherwise, create one
 			try {
-				Log::info($request->input('token'));
 				$customer = $this->customer->create(
 					[
 						'email'  => $user->email,
@@ -71,13 +78,32 @@ class StripeService
 		return $customer;
 	}
 
+	public function updateCard(Request $request, $cardId)
+	{
+		$user = $this->controller->getUser($request);
+		$paymentAccount = $user->payment;
+
+		$customer = $this->customer->retrieve($paymentAccount->stripe_id);
+		$card = $customer->sources->retrieve($cardId);
+
+		$card->name = $request->input('name');
+		$card->exp_month = $request->input('exp_month');
+		$card->exp_year = $request->input('exp_year');
+		$card->save();
+
+		return $card;
+	}
+
 	public function removeCard(Request $request, $cardId)
 	{
 		$user = $this->controller->getUser($request);
 		$paymentAccount = $user->payment;
 
 		$customer = $this->customer->retrieve($paymentAccount->stripe_id);
-		$customer->sources->retrieve($cardId)->delete();
+		$card = $customer->sources->retrieve($cardId);
+		$card->delete();
+
+		return $card;
 	}
 
 	public function chargeCustomer(Request $request, $customerId)
