@@ -71,6 +71,15 @@ class StripeService
 		return $customer;
 	}
 
+	public function removeCard(Request $request, $cardId)
+	{
+		$user = $this->controller->getUser($request);
+		$paymentAccount = $user->payment;
+
+		$customer = $this->customer->retrieve($paymentAccount->stripe_id);
+		$customer->sources->retrieve($cardId)->delete();
+	}
+
 	public function chargeCustomer(Request $request, $customerId)
 	{
 		try {
@@ -89,4 +98,5 @@ class StripeService
 
 		return $charge;
 	}
+
 }

@@ -29,7 +29,6 @@ class PaymentController extends Controller
 	public function index(Request $request)
 	{
 		$user = $this->getUser($request);
-
 		$customer = null;
 
 		if ($paymentAccount = $user->payment) {
@@ -54,6 +53,11 @@ class PaymentController extends Controller
 
 		return response()->success($paymentInfo);
 
+	}
+
+	public function destroy(Request $request, $cardId)
+	{
+		$this->stripeService->removeCard($request, $cardId);
 	}
 
 }
