@@ -9,6 +9,10 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use App\Traits\ModelService;
 
+/**
+ * Class User
+ * @package App\Models
+ */
 class User extends Authenticatable
 {
 	use HasApiTokens, Notifiable;
@@ -46,6 +50,14 @@ class User extends Authenticatable
 	public function cart()
 	{
 		return $this->hasOne('App\Models\Cart');
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 */
+	public function medias()
+	{
+		return $this->morphMany('App\Models\Media', 'mediable');
 	}
 
 	/**

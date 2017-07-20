@@ -74,7 +74,7 @@ class UserController extends Controller
 	 */
 	public function show($id)
 	{
-		$user = User::findById($id);
+		$user = User::findById($id, true);
 
 		return response()->success($user);
 	}
