@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Yechef;
 
 use Adaojunior\Passport\SocialGrantException;
@@ -20,8 +21,26 @@ class SocialLogin implements SocialUserResolverInterface
 	 */
 	public function resolve($provider, $accessToken, $accessTokenSecret = null)
 	{
-		$providerUser = Socialite::driver($provider)->userFromToken($accessToken);
+		$providerUser = null;
 
+		switch ($provider) {
+			case 'google':
+				$providerUser = Socialite::driver($provider)->userFromToken($accessToken);
+				break;
+			case 'facebook':
+				$providerUser = Socialite::driver($provider)->fields([
+					'name',
+					'first_name',
+					'last_name',
+					'email',
+					'gender',
+					'verified'
+				])->userFromToken($accessToken);
+				break;
+			default:
+				$providerUser = Socialite::driver($provider)->userFromToken($accessToken);
+				break;
+		}
 		return SocialAccount::createOrGetUser($provider, $providerUser);
 	}
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Contracts\User as ProviderUser;
 
 class SocialAccount extends Model
@@ -43,6 +44,7 @@ class SocialAccount extends Model
 				// TODO: create user account based on these data. create random password, send email in event
 				$first_name = '';
 				$last_name = '';
+				Log::error($providerUser->getAvatar());
 				switch ($provider) {
 					case 'google':
 						$first_name = $providerUser->user['name']['givenName'];
@@ -56,12 +58,12 @@ class SocialAccount extends Model
 
 				}
 				$user = User::create([
-					'email'      => $providerUser->getEmail(),
-					'first_name' => $first_name,
-					'last_name'  => $last_name,
-					'password'   => Hash::make(md5(time())),
-					'show_phone' => '1',
-					'show_forks' => '1',
+					'email'             => $providerUser->getEmail(),
+					'first_name'        => $first_name,
+					'last_name'         => $last_name,
+					'password'          => Hash::make(md5(time())),
+					'show_phone'        => '1',
+					'show_forks'        => '1',
 					'show_subscription' => '1',
 				]);
 
