@@ -35,21 +35,23 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
 	Route::get('users/getForkedDishes', 'UserController@getForkedDishes');
 	Route::get('users/getOrders', 'UserController@getOrders');
-	Route::get('users/cancelOrder/{orderId}', 'OrderController@cancelOrder');
+	Route::get('users/cancelOrder/{orderId}', 'Payment\OrderController@cancelOrder');
+
 
 //	Update Password
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');
 
 // Checkout
-	Route::post('charge-payment', 'CheckoutController@charge');
+	Route::post('users/payment/charge', 'Payment\CheckoutController@charge');
+	Route::resource('users/payment', 'Payment\PaymentController',['only' => ['index', 'store', 'update', 'destroy']]);
 
 //	My Kitchen
 	Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
 	Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
 	Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');
 	Route::get('kitchens/{id}/orders', 'KitchenController@getOrders');
-	Route::get('kitchens/{id}/acceptOrder/{orderId}', 'OrderController@acceptOrder');
-	Route::get('kitchens/{id}/declineOrder/{orderId}', 'OrderController@declineOrder');
+	Route::get('kitchens/{id}/acceptOrder/{orderId}', 'Payment\OrderController@acceptOrder');
+	Route::get('kitchens/{id}/declineOrder/{orderId}', 'Payment\OrderController@declineOrder');
 });
 
 // TODO Uncomment below 2 lines when auth is all ready

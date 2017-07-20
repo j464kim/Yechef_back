@@ -20,7 +20,7 @@ class CreateOrderItemTable extends Migration
 			$table->unsignedInteger('dish_id');
 			$table->foreign('dish_id')->references('id')->on('dishes');
 			$table->unsignedInteger('quantity');
-			$table->unsignedInteger('captured_quantity');
+			$table->unsignedInteger('captured_quantity')->default(0);
 			$table->timestamps();
 			$table->softDeletes();
 		});

@@ -242,11 +242,4 @@ class User extends Authenticatable
 		return $this->verified;
 	}
 
-	public function getPaymentAccount()
-	{
-		$paymentAccount = Payment::whereUserId($this->id)->first();
-
-		return $paymentAccount;
-	}
-
 }

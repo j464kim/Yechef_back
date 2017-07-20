@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Payment;
 
 use App\Exceptions\YechefException;
-use App\Http\Controllers\Auth\TransactionController;
 use App\Http\Controllers\Controller;
 use App\Models\OrderItem;
 use App\Models\User;
