@@ -35,7 +35,7 @@ class UserController extends Controller
 	 */
 	public function getLoggedInUser(Request $request)
 	{
-		$user = $this->getUser($request);
+		$user = $this->getUser($request)->load('medias');
 
 		return response()->success($user);
 	}
