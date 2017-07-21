@@ -23,6 +23,7 @@ class DishRatingController extends Controller
 	public function index(Request $request, $dishId)
 	{
 		$dishRatings = Dish::findById($dishId)->ratings;
+		$dishRatings->load('user');
 		// apply pagination
 		$result = Helper::paginate($request, $dishRatings, 10);
 		return response()->success($result);
