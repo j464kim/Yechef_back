@@ -37,7 +37,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('users/getOrders', 'UserController@getOrders');
 	Route::get('users/cancelOrder/{orderId}', 'Payment\OrderController@cancelOrder');
 
-
 //	Update Password
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');
 

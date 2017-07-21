@@ -74,11 +74,6 @@ class Order extends Model
 	{
 		$this->status = self::DECLINED;
 
-		// capture all order items
-		$this->items->each(function ($item) {
-			$item->delete();
-		});
-
 		$this->save();
 	}
 
