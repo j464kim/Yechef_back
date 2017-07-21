@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\ModelService;
 use Illuminate\Database\Eloquent\Model;
-use App\Exceptions\YechefException;
 
 class Reaction extends Model
 {
+	use ModelService;
+
 	const DISLIKE = 0;
 	const LIKE = 1;
 	const FORK = 2;
