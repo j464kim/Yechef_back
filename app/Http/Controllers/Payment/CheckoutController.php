@@ -61,10 +61,10 @@ class CheckoutController extends Controller
 		// store it into DB
 		$transaction = Transaction::create(
 			[
-				"payment_id"      => $paymentInfo->id,
-				"charge_id"       => $charge->id,
-				"currency"        => $request->input('currency'),
-				"amount"          => $request->input('amount'),
+				"payment_id" => $paymentInfo->id,
+				"charge_id"  => $charge->id,
+				"currency"   => $request->input('currency'),
+				"amount"     => $request->input('amount'),
 			]
 		);
 

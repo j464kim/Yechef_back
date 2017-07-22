@@ -164,7 +164,6 @@ class User extends Authenticatable
 
 			$cart = new Cart([
 				'kitchen_id'  => $kitchenId,
-				'total_price' => 0
 			]);
 			$cart = $this->carts()->save($cart);
 		}

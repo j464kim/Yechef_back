@@ -16,7 +16,7 @@ class Cart extends Model
 
 	protected $dates = ['deleted_at'];
 
-	protected $fillable = ['kitchen_id', 'total_price'];
+	protected $fillable = ['kitchen_id'];
 
 	public function items()
 	{

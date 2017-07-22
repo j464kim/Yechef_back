@@ -80,11 +80,7 @@ class StripeService
 
 	public function updateCard(Request $request, $cardId)
 	{
-		$user = $this->controller->getUser($request);
-		$paymentAccount = $user->payment;
-
-		$customer = $this->customer->retrieve($paymentAccount->stripe_id);
-		$card = $customer->sources->retrieve($cardId);
+		$card = $this->getCardById($request, $cardId);
 
 		$card->name = $request->input('name');
 		$card->exp_month = $request->input('exp_month');
@@ -96,11 +92,8 @@ class StripeService
 
 	public function removeCard(Request $request, $cardId)
 	{
-		$user = $this->controller->getUser($request);
-		$paymentAccount = $user->payment;
+		$card = $this->getCardById($request, $cardId);
 
-		$customer = $this->customer->retrieve($paymentAccount->stripe_id);
-		$card = $customer->sources->retrieve($cardId);
 		$card->delete();
 
 		return $card;
@@ -123,6 +116,17 @@ class StripeService
 		}
 
 		return $charge;
+	}
+
+	public function getCardById(Request $request, $cardId)
+	{
+		$user = $this->controller->getUser($request);
+		$paymentAccount = $user->payment;
+
+		$customer = $this->customer->retrieve($paymentAccount->stripe_id);
+		$card = $customer->sources->retrieve($cardId);
+
+		return $card;
 	}
 
 }

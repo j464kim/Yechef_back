@@ -70,8 +70,6 @@ class CartController extends Controller
 		);
 
 		$this->cart->kitchen_id = $dish->kitchen_id;
-		// TODO: hard-coded for now
-		$this->cart->total_price = 10;
 		$this->cart->save();
 
 		return response()->success($cartItem, 18000);
