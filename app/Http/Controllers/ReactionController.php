@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\YechefException;
-use Illuminate\Http\Request;
-use Illuminate\Contracts\Foundation\Application;
 use App\Models\Reaction;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class ReactionController extends Controller
 {
@@ -29,8 +27,13 @@ class ReactionController extends Controller
 		$reactions = $reactionable->getReactions();
 
 		$userReaction = null;
-		if ($userId){
+		if ($userId) {
 			$userReactions = $reactionable->getReactions($userId);
+			if ($request->input('reactionableKind') != Reaction::LIKE) {
+				$userReactions = $userReactions->where('kind', $request->input('reactionableKind'));
+			} else {
+				$userReactions = $userReactions->whereIn('kind', [Reaction::LIKE, Reaction::DISLIKE]);
+			}
 			$userReaction = $userReactions->first();
 		}
 
@@ -68,6 +71,11 @@ class ReactionController extends Controller
 		$reactionableType = $request->input('reactionableType');
 		$userId = $request->user()->id;
 
+		// add new reaction
+		$newReaction = new Reaction;
+		$newReaction->kind = $request->input('kind');
+		$newReaction->user_id = $userId;
+
 		try {
 			$reactionable = $reactionableType::findOrFail($reactionableId);
 		} catch (\Exception $e) {
@@ -75,17 +83,17 @@ class ReactionController extends Controller
 		}
 
 		// get existing reactions to be deleted
-		$oldReactions = $reactionable->getReactions($userId);
+		if ($newReaction->kind == Reaction::LIKE || $newReaction->kind == Reaction::DISLIKE) {
+			$oldReactions = $reactionable->getReactions($userId)->whereIn('kind', [Reaction::LIKE, Reaction::DISLIKE]);
+		} else {
+			$oldReactions = $reactionable->getReactions($userId)->where('kind', $newReaction->kind);
+		}
 
 		//$oldReactions must be singular. double check it
 		if (count($oldReactions) > 1) {
 			throw new YechefException(14502, $oldReactions);
 		}
 
-		// add new reaction
-		$newReaction = new Reaction;
-		$newReaction->kind = $request->input('kind');
-		$newReaction->user_id = $userId;
 
 		// associate polymorphic relationship
 		$reactionable->reactions()->save($newReaction);
@@ -104,26 +112,19 @@ class ReactionController extends Controller
 	}
 
 	/**
-	 * TODO: we don't use $reactionId for now until registration branch is in
 	 * @param $reactionId
 	 * @return mixed
 	 */
 	public function destroy(Request $request, $reactionId)
 	{
-		$reactionableId = $request->input('reactionableId');
-		$reactionableType = $request->input('reactionableType');
 		$userId = $request->user()->id;
 
-		try {
-			$reactionable = $reactionableType::findOrFail($reactionableId);
-		} catch (\Exception $e) {
-			throw new YechefException(14503);
+		$reaction = Reaction::findById($reactionId);
+		if ($userId == $reaction->user_id) {
+			$reaction->delete();
 		}
 
-		$userReaction = $reactionable->getReactions($userId);
-		$userReaction->first()->delete();
-
-		return response()->success($userReaction, 14001);
+		return response()->success($reaction, 14001);
 	}
 
 }
