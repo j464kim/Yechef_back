@@ -73,7 +73,7 @@ class SocialAccount extends Model
 					// not sure if there is an exact method to determine image or video
 					'type'          => 'image',
 					'mediable_id'   => $user->id,
-					'mediable_type' => User::class
+					'mediable_type' => get_class($user),
 				]);
 
 				$account->user()->associate($user);
