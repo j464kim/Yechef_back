@@ -225,6 +225,10 @@ class User extends Authenticatable
 			->select('dishes.*')
 			->get();
 
+		foreach($forkedDishes as $dish) {
+			$dish->addRatingAttributes();
+		}
+
 		return $forkedDishes;
 	}
 
