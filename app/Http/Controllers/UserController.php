@@ -76,7 +76,7 @@ class UserController extends Controller
 	{
 		$user = User::findById($id, true);
 		if (!$user->setting->show_phone) {
-			$user->phone = 'PRIVATE';
+			$user->phone = '';
 		}
 
 		return response()->success($user);
