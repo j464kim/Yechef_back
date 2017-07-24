@@ -39,17 +39,19 @@ class RegisterController extends Controller
 	 * @var string
 	 */
 	protected $redirectTo = '/home';
+	protected $mailer;
 
 	/**
 	 * Create a new controller instance.
 	 *
 	 * @return void
 	 */
-	public function __construct(Application $app, LoginController $loginController)
+	public function __construct(Application $app, LoginController $loginController, AppMailer $mailer)
 	{
 		parent::__construct($app);
 
 		$this->loginCtrl = $loginController;
+		$this->mailer = $mailer;
 		$this->middleware('guest');
 	}
 
@@ -79,7 +81,7 @@ class RegisterController extends Controller
 	 * @param Request $request
 	 * @param AppMailer $mailer
 	 */
-	public function sendEmailVerifyLink(Request $request, AppMailer $mailer)
+	public function sendEmailVerifyLink(Request $request)
 	{
 		try {
 		$userToVerify = User::whereEmail($request->email)->firstOrFail();
@@ -88,7 +90,7 @@ class RegisterController extends Controller
 		}
 
 		// if email is unique, send email verification link
-		$mailer->sendConfirmationEmailTo($userToVerify);
+		$this->mailer->sendConfirmationEmailTo($userToVerify);
 
 		return response()->success($userToVerify, 10004);
 	}

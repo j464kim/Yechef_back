@@ -2,20 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\YechefException;
 
 class Cart extends Model
 {
+	protected $cascadeDeletes = ['items'];
 
-	public $totalPrice = 0;
-
-	public function __construct()
-	{
-		parent::__construct();
-		$this->total_price = 0;
-	}
+	protected $fillable = ['kitchen_id'];
 
 	public function items()
 	{
