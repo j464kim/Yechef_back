@@ -30,7 +30,7 @@ class ChangeDescriptionDataTypeToText extends Migration
     public function down()
     {
 		Schema::table('dishes', function (Blueprint $table) {
-			$table->string('description')->change();
+			$table->text('description')->change();
 		});
 
 		Schema::table('kitchens', function (Blueprint $table) {
