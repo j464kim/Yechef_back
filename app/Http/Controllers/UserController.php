@@ -75,6 +75,9 @@ class UserController extends Controller
 	public function show($id)
 	{
 		$user = User::findById($id, true);
+		if (!$user->setting->show_phone) {
+			$user->phone = 'XXX-XXX-XXXX';
+		}
 
 		return response()->success($user);
 	}
@@ -93,12 +96,9 @@ class UserController extends Controller
 
 		$user->update(
 			[
-				'first_name'        => $request->input('first_name'),
-				'last_name'         => $request->input('last_name'),
-				'phone'             => $request->input('phone'),
-				'show_phone'        => $request->input('show_phone'),
-				'show_forks'        => $request->input('show_forks'),
-				'show_subscription' => $request->input('show_subscription'),
+				'first_name' => $request->input('first_name'),
+				'last_name'  => $request->input('last_name'),
+				'phone'      => $request->input('phone'),
 			]
 		);
 
@@ -114,8 +114,8 @@ class UserController extends Controller
 		$user = $this->getUser($request);
 
 		//Check user's privacy settings
-		if($request->userId && $user->show_subscription == 0) {
-			throw new YechefException(15503);
+		if ($request->userId && $user->setting->show_subscription == 0) {
+			return response()->fail(15503);
 		}
 		$subscriptionKitchens = $user->getSubscriptions();
 		$result = Helper::paginate($request, $subscriptionKitchens, $request->perPage);
@@ -132,8 +132,8 @@ class UserController extends Controller
 		$user = $this->getUser($request);
 
 		//Check user's privacy settings
-		if($request->userId && $user->show_subscription == 0) {
-			throw new YechefException(15503);
+		if ($request->userId && $user->setting->show_forks == 0) {
+			return response()->fail(15503);
 		}
 
 		$forkedDishes = $user->getForkedDishes();

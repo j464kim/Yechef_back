@@ -5,14 +5,11 @@ namespace App\Http\Controllers\Auth;
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserSetting;
 use App\Services\AppMailer;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Contracts\Filesystem\Factory;
-use Illuminate\Support\Facades\Log;
 
 
 class RegisterController extends Controller
@@ -70,11 +67,14 @@ class RegisterController extends Controller
 			'first_name' => $first_name,
 			'last_name'  => $last_name,
 			'phone'      => $phone,
-			'show_phone' => true,
-			'show_forks' => true,
-			'show_subscription' => true,
 		]);
 
+		UserSetting::create([
+			'user_id'           => $user->id,
+			'show_phone'        => true,
+			'show_forks'        => true,
+			'show_subscription' => true,
+		]);
 		return response()->success($user);
 	}
 
@@ -85,7 +85,7 @@ class RegisterController extends Controller
 	public function sendEmailVerifyLink(Request $request, AppMailer $mailer)
 	{
 		try {
-		$userToVerify = User::whereEmail($request->email)->firstOrFail();
+			$userToVerify = User::whereEmail($request->email)->firstOrFail();
 		} catch (\Exception $e) {
 			throw new YechefException(10508);
 		}

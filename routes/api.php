@@ -22,6 +22,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::resource('media', 'MediaController', ['only' => 'store']);
 	Route::resource('reactions', 'ReactionController',
 		['parameters' => ['reactions' => 'like_id'], 'only' => ['store', 'destroy']]);
+	Route::resource('userSettings', 'UserSettingController', ['only' => ['show', 'update']]);
+
 
 	Route::post('dishes/checkOwnership', 'UserController@checkOwnership');
 	Route::post('kitchens/checkOwnership', 'UserController@checkOwnership');

@@ -4,10 +4,10 @@ namespace App\Models;
 
 use App\Exceptions\YechefException;
 use App\Traits\CanResetPassword;
+use App\Traits\ModelService;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
-use App\Traits\ModelService;
 
 /**
  * Class User
@@ -29,9 +29,6 @@ class User extends Authenticatable
 		'phone',
 		'email',
 		'password',
-		'show_phone',
-		'show_forks',
-		'show_subscription',
 	];
 
 	/**
@@ -107,6 +104,14 @@ class User extends Authenticatable
 	public function reactions()
 	{
 		return $this->hasMany('App\Models\Reaction');
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function setting()
+	{
+		return $this->hasOne('App\Models\UserSetting');
 	}
 
 	public function isVerifiedKitchenOwner($kitchenId)

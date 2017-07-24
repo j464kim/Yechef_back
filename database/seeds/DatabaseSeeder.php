@@ -24,8 +24,10 @@ class DatabaseSeeder extends Seeder
 		\DB::table('reactions')->truncate();
 		\DB::table('users')->truncate();
 		\DB::table('kitchen_user')->truncate();
+		\DB::table('user_settings')->truncate();
 
 		$this->call(UsersTableSeeder::class);
+		$this->call(UserSettingsTableSeeder::class);
 		$this->call(KitchensTableSeeder::class);
 		$this->call(DishesTableSeeder::class);
 		$this->call(RatingsTableSeeder::class);

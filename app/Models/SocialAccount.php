@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\UserSetting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -62,8 +63,12 @@ class SocialAccount extends Model
 					'first_name'        => $first_name,
 					'last_name'         => $last_name,
 					'password'          => Hash::make(md5(time())),
-					'show_phone'        => true,
-					'show_forks'        => true,
+				]);
+
+				UserSetting::create([
+					'user_id' => $user->id,
+					'show_phone' => true,
+					'show_forks' => true,
 					'show_subscription' => true,
 				]);
 
