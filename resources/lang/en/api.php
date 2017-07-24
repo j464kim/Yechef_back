@@ -139,10 +139,15 @@ return [
 	 * Error Range 17500 <= x < 18000
 	 */
 	// success
-	'17000' => 'Payment was charged successfully',
+	'17000' => 'Payment was authorized successfully. 
+	The amount will not be charged until you receive the dish',
+	'17001' => 'The card has been removed successfully',
+	'17002' => 'The card has been updated successfully',
+
 	// fail
 	'17501' => 'Error occurred while creating a Stripe account',
 	'17502' => 'Payment charge failed',
+	'17503' => 'Unable to find transaction of the charge_id',
 
 
 	/**
@@ -154,6 +159,7 @@ return [
 	'18000' => 'The item is added to cart',
 	'18001' => 'Cart item quantity is udpated',
 	'18002' => 'Item is removed from the cart',
+	'18003' => 'Your cart is empty',
 
 	// fail
 	'18501' => 'Wrong inputs for cart items',
@@ -169,4 +175,16 @@ return [
 
 	// fail
 	'19500' => 'Could not find a model by the given id',
+
+	/**
+	 * Order related
+	 * Success Range 20000 <= x < 20500
+	 * Error Range 20500 <= x < 21000
+	 */
+	// success
+
+	// fail
+	'20501' => 'You are not authorized to make action for this order',
+	'20502' => 'An order must be of pending status to be cancellable',
+
 ];

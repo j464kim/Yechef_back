@@ -3,13 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Iatstuti\Database\Support\CascadeSoftDeletes;
 
 class CartItem extends Model
 {
-	use SoftDeletes, CascadeSoftDeletes;
-
 	/**
 	 * The attributes that are mass assignable.
 	 *

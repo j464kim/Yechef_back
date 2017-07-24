@@ -34,6 +34,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	Route::get('users/getMySubscriptions', 'UserController@getSubscriptions');
 	Route::get('users/getMyForkedDishes', 'UserController@getForkedDishes');
+	Route::get('users/getOrders', 'UserController@getOrders');
+	Route::get('users/cancelOrder/{orderId}', 'Payment\OrderController@cancelOrder');
 
 //	Update Password
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');
@@ -46,6 +48,17 @@ Route::group(['middleware' => ['auth:api']], function () {
 // user settings
 	Route::get('userSetting', 'UserSettingController@show');
 	Route::put('userSetting', 'UserSettingController@update');
+  
+	Route::post('payment/charge', 'Payment\CheckoutController@charge');
+	Route::resource('payment', 'Payment\PaymentController',['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+
+//	My Kitchen
+	Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
+	Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
+	Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');
+	Route::get('kitchens/{id}/orders', 'KitchenController@getOrders');
+	Route::get('kitchens/{id}/acceptOrder/{orderId}', 'Payment\OrderController@acceptOrder');
+	Route::get('kitchens/{id}/declineOrder/{orderId}', 'Payment\OrderController@declineOrder');
 });
 
 Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);
@@ -62,10 +75,6 @@ Route::post('login', 'Auth\LoginController@login');
 Route::post('register', 'Auth\RegisterController@register');
 Route::post('auth/facebook', 'Auth\LoginController@facebook');
 Route::post('auth/google', 'Auth\LoginController@google');
-
-Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
-Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
-Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');
 
 Route::get('users/list', 'UserController@index');
 Route::resource('users', 'UserController', ['only' => ['index', 'show']]);

@@ -57,6 +57,11 @@ class Kitchen extends Model
 		return $this->belongsToMany('App\Models\User')->withPivot('role', 'verified')->withTimestamps();
 	}
 
+	public function orders()
+	{
+		return $this->hasMany('App\Models\Order');
+	}
+
 	/**
 	 * Get all of the Dish's reactions.
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
@@ -73,7 +78,7 @@ class Kitchen extends Model
 	{
 		$rule = array(
 			'name'        => 'bail|required',
-			'email'       => 'required|email|max:255|unique:kitchens,email,'.$kitchenId,
+			'email'       => 'required|email|max:255|unique:kitchens,email,' . $kitchenId,
 			'phone'       => 'required',
 			'address'     => 'required',
 			'description' => 'required',

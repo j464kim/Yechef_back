@@ -15,10 +15,10 @@ class CartController extends Controller
 {
 	private $cart;
 
-	public function initialize(Request $request)
+	public function retrieveCart(Request $request, $kitchenId = null)
 	{
 		$user = $this->getUser($request);
-		$this->cart = $user->getCart();
+		$this->cart = $user->getCart($kitchenId);
 	}
 
 	/**
@@ -26,14 +26,21 @@ class CartController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		$this->initialize($request);
+		$this->retrieveCart($request);
 
-		$items = $this->cart->items;
-		foreach ($items as $item) {
-			$dish = Dish::findById($item->dish_id);
-			$item->id = $dish->id;
-			$item->name = $dish->name;
-			$item->eachPrice = $dish->price;
+		if (!$this->cart) {
+			return response()->success(18003);
+		}
+
+		foreach($this->cart as $cart) {
+			$items = $cart->items;
+			foreach ($items as $item) {
+				$dish = Dish::findById($item->dish_id);
+				$item->id = $dish->id;
+				$item->name = $dish->name;
+				$item->eachPrice = $dish->price;
+				$item->kitchenId = $dish->kitchen_id;
+			}
 		}
 
 		return response()->success($this->cart);
@@ -47,18 +54,25 @@ class CartController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$this->initialize($request);
-
 		$validationRule = CartItem::getValidationRule(false);
 		$this->validateInput($request, $validationRule);
 
-		// create a cart item
-		$cartItem = new CartItem;
-		$cartItem->dish_id = $request->input('dish_id');
-		$cartItem->quantity = $request->input('quantity');
-		$this->cart->items()->save($cartItem);
+		$dish = Dish::findById($request->input('dish_id'));
+		$this->retrieveCart($request, $dish->kitchen_id);
 
-		return response()->success($this->cart, 18000);
+		// create a cart item
+		$cartItem = CartItem::create(
+			array(
+				"cart_id" => $this->cart->id,
+				"dish_id" => $request->input('dish_id'),
+				"quantity" => $request->input('quantity'),
+			)
+		);
+
+		$this->cart->kitchen_id = $dish->kitchen_id;
+		$this->cart->save();
+
+		return response()->success($cartItem, 18000);
 	}
 
 	/**
@@ -70,10 +84,11 @@ class CartController extends Controller
 	 */
 	public function update(Request $request, $dishId)
 	{
-		$this->initialize($request);
-
 		$validationRule = CartItem::getValidationRule(isset($dishId));
 		$this->validateInput($request, $validationRule);
+
+		$dish = Dish::findById($dishId);
+		$this->retrieveCart($request, $dish->kitchen_id);
 
 		$item = $this->cart->findItemByDish($dishId);
 		$item->quantity = $request->input('quantity');
@@ -90,10 +105,16 @@ class CartController extends Controller
 	 */
 	public function destroy(Request $request, $dishId)
 	{
-		$this->initialize($request);
+		$dish = Dish::findById($dishId);
+		$this->retrieveCart($request, $dish->kitchen_id);
 
 		$item = $this->cart->findItemByDish($dishId);
 		$item->delete();
+
+		// if there is no more item in cart, remove it
+		if ($this->cart->items->isEmpty()) {
+			$this->cart->delete();
+		}
 
 		return response()->success($item, 18002);
 	}
