@@ -22,8 +22,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::resource('media', 'MediaController', ['only' => 'store']);
 	Route::resource('reactions', 'ReactionController',
 		['parameters' => ['reactions' => 'like_id'], 'only' => ['store', 'destroy']]);
-	Route::resource('userSettings', 'UserSettingController', ['only' => ['show', 'update']]);
-
 
 	Route::post('dishes/checkOwnership', 'UserController@checkOwnership');
 	Route::post('kitchens/checkOwnership', 'UserController@checkOwnership');
@@ -44,6 +42,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('charge-payment', 'CheckoutController@charge');
 
 	Route::resource('users', 'UserController', ['only' => ['update']]);
+
+// user settings
+	Route::get('userSetting', 'UserSettingController@show');
+	Route::put('userSetting', 'UserSettingController@update');
 });
 
 Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);

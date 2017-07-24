@@ -11,7 +11,6 @@ class UserSettingController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\UserSetting $userSetting
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show(Request $request)
@@ -25,13 +24,12 @@ class UserSettingController extends Controller
 	 * Update the specified resource in storage.
 	 *
 	 * @param  \Illuminate\Http\Request $request
-	 * @param  \App\Models\UserSetting $userSetting
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request)
 	{
 		//
-		$validationRule = UserSetting::getValidationRule($id);
+		$validationRule = UserSetting::getValidationRule();
 		$this->validateInput($request, $validationRule);
 		$user = $request->user();
 		$setting = $user->setting;
