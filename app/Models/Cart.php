@@ -2,19 +2,12 @@
 
 namespace App\Models;
 
-use Iatstuti\Database\Support\CascadeSoftDeletes;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\YechefException;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cart extends Model
 {
-	use SoftDeletes, CascadeSoftDeletes;
-
 	protected $cascadeDeletes = ['items'];
-
-	protected $dates = ['deleted_at'];
 
 	protected $fillable = ['kitchen_id'];
 
