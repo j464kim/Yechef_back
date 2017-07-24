@@ -15,7 +15,7 @@ class UserSettingController extends Controller
 	 */
 	public function show(Request $request)
 	{
-		$user = $request->user();
+		$user = $this->getUser($request);
 		$result = $user->setting;
 		return response()->success($result);
 	}

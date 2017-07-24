@@ -70,13 +70,7 @@ class RegisterController extends Controller
 			'last_name'  => $last_name,
 			'phone'      => $phone,
 		]);
-
-		UserSetting::create([
-			'user_id'           => $user->id,
-			'show_phone'        => true,
-			'show_forks'        => true,
-			'show_subscription' => true,
-		]);
+		$user->setting()->save(new UserSetting());
 		return response()->success($user);
 	}
 

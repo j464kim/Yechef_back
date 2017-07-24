@@ -9,6 +9,13 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SocialLogin implements SocialUserResolverInterface
 {
+	private $socialite;
+
+	public function __construct(Socialite $socialite)
+	{
+		$this->socialite = $socialite;
+	}
+
 	/**
 	 * Resolves user by given provider and access token.
 	 *
@@ -25,10 +32,10 @@ class SocialLogin implements SocialUserResolverInterface
 
 		switch ($provider) {
 			case 'google':
-				$providerUser = Socialite::driver($provider)->userFromToken($accessToken);
+				$providerUser = $this->socialite::driver($provider)->userFromToken($accessToken);
 				break;
 			case 'facebook':
-				$providerUser = Socialite::driver($provider)->fields([
+				$providerUser = $this->socialite::driver($provider)->fields([
 					'name',
 					'first_name',
 					'last_name',
@@ -38,7 +45,7 @@ class SocialLogin implements SocialUserResolverInterface
 				])->userFromToken($accessToken);
 				break;
 			default:
-				$providerUser = Socialite::driver($provider)->userFromToken($accessToken);
+				$providerUser = $this->socialite::driver($provider)->userFromToken($accessToken);
 				break;
 		}
 		return SocialAccount::createOrGetUser($provider, $providerUser);

@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\UserSetting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Contracts\User as ProviderUser;
 
 class SocialAccount extends Model
@@ -59,18 +57,12 @@ class SocialAccount extends Model
 
 				}
 				$user = User::create([
-					'email'             => $providerUser->getEmail(),
-					'first_name'        => $first_name,
-					'last_name'         => $last_name,
-					'password'          => Hash::make(md5(time())),
+					'email'      => $providerUser->getEmail(),
+					'first_name' => $first_name,
+					'last_name'  => $last_name,
+					'password'   => Hash::make(md5(time())),
 				]);
-
-				UserSetting::create([
-					'user_id' => $user->id,
-					'show_phone' => true,
-					'show_forks' => true,
-					'show_subscription' => true,
-				]);
+				$user->setting()->save(new UserSetting());
 
 				Media::create([
 					'slug'          => snake_case($avatar),

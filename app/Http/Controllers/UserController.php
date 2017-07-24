@@ -76,7 +76,7 @@ class UserController extends Controller
 	{
 		$user = User::findById($id, true);
 		if (!$user->setting->show_phone) {
-			$user->phone = 'XXX-XXX-XXXX';
+			$user->phone = 'PRIVATE';
 		}
 
 		return response()->success($user);
@@ -114,12 +114,14 @@ class UserController extends Controller
 		$user = $this->getUser($request);
 
 		//Check user's privacy settings
+		// userId is required to determine if the request is coming from MyProfile page or User Show Page.
 		if ($request->userId && $user->setting->show_subscription == 0) {
-			return response()->fail(15503);
-		}
-		$subscriptionKitchens = $user->getSubscriptions();
-		$result = Helper::paginate($request, $subscriptionKitchens, $request->perPage);
+			$result = null;
+		} else {
+			$subscriptionKitchens = $user->getSubscriptions();
+			$result = Helper::paginate($request, $subscriptionKitchens, $request->perPage);
 
+		}
 		return response()->success($result);
 	}
 
@@ -132,13 +134,13 @@ class UserController extends Controller
 		$user = $this->getUser($request);
 
 		//Check user's privacy settings
+		// userId is required to determine if the request is coming from MyProfile page or User Show Page.
 		if ($request->userId && $user->setting->show_forks == 0) {
-			return response()->fail(15503);
+			$result = null;
+		} else {
+			$forkedDishes = $user->getForkedDishes();
+			$result = Helper::paginate($request, $forkedDishes, $request->perPage);
 		}
-
-		$forkedDishes = $user->getForkedDishes();
-		$result = Helper::paginate($request, $forkedDishes, $request->perPage);
-
 		return response()->success($result);
 	}
 
