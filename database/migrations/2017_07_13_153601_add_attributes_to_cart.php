@@ -14,7 +14,7 @@ class AddAttributesToCart extends Migration
 	public function up()
 	{
 		Schema::table('carts', function (Blueprint $table) {
-			$table->unsignedInteger('kitchen_id')->nullable()->after('user_id');
+			$table->unsignedInteger('kitchen_id')->after('user_id');
 			$table->foreign('kitchen_id')->references('id')->on('kitchens');
 			$table->dropColumn('total_price');
 		});

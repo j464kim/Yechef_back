@@ -65,7 +65,7 @@ class CartController extends Controller
 			array(
 				"cart_id" => $this->cart->id,
 				"dish_id" => $request->input('dish_id'),
-				"quantity" => $request->input('quantity')
+				"quantity" => $request->input('quantity'),
 			)
 		);
 
@@ -110,6 +110,11 @@ class CartController extends Controller
 
 		$item = $this->cart->findItemByDish($dishId);
 		$item->delete();
+
+		// if there is no more item in cart, remove it
+		if ($this->cart->items->isEmpty()) {
+			$this->cart->delete();
+		}
 
 		return response()->success($item, 18002);
 	}
