@@ -130,6 +130,7 @@ return [
 
 	// fail
 	'15502' => 'Failed to retrieve user information from request',
+	'15503' => 'The User has set this information private',
 
 
 	/**

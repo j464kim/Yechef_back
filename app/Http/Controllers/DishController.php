@@ -17,6 +17,9 @@ class DishController extends Controller
 		$dishes = Dish::with('medias')->get();
 		//TODO: add algorithm to get featured dishes (business model)
 		$featuredDishes = $dishes->random(12);
+		$featuredDishes->filter(function (Dish $item) {
+			$item->addRatingAttributes();
+		});
 		// apply pagination
 		$result = Helper::paginate($request, $featuredDishes, 6);
 		return response()->success($result);

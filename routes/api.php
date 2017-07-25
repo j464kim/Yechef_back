@@ -26,14 +26,14 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('dishes/checkOwnership', 'UserController@checkOwnership');
 	Route::post('kitchens/checkOwnership', 'UserController@checkOwnership');
 
-	Route::get('users/getMyKitchens', 'UserController@getMyKitchens');
+	Route::get('users/getMyKitchens', 'UserController@getKitchens');
 
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
 	Route::resource('carts', 'CartController', ['except' => ['show']]);
 
-	Route::get('users/getSubscriptions', 'UserController@getSubscriptions');
-	Route::get('users/getForkedDishes', 'UserController@getForkedDishes');
+	Route::get('users/getMySubscriptions', 'UserController@getSubscriptions');
+	Route::get('users/getMyForkedDishes', 'UserController@getForkedDishes');
 	Route::get('users/getOrders', 'UserController@getOrders');
 	Route::get('users/cancelOrder/{orderId}', 'Payment\OrderController@cancelOrder');
 
@@ -41,19 +41,24 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');
 
 // Checkout
+	Route::post('charge-payment', 'CheckoutController@charge');
+
+	Route::resource('users', 'UserController', ['only' => ['update']]);
+
+// user settings
+	Route::get('userSetting', 'UserSettingController@show');
+	Route::put('userSetting', 'UserSettingController@update');
+
 	Route::post('payment/charge', 'Payment\CheckoutController@charge');
-	Route::resource('payment', 'Payment\PaymentController',['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+	Route::resource('payment', 'Payment\PaymentController',
+		['only' => ['index', 'show', 'store', 'update', 'destroy']]);
 
 //	My Kitchen
-	Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
-	Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
-	Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');
 	Route::get('kitchens/{id}/orders', 'KitchenController@getOrders');
 	Route::get('kitchens/{id}/acceptOrder/{orderId}', 'Payment\OrderController@acceptOrder');
 	Route::get('kitchens/{id}/declineOrder/{orderId}', 'Payment\OrderController@declineOrder');
 });
 
-// TODO Uncomment below 2 lines when auth is all ready
 Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);
 Route::resource('kitchens', 'KitchenController', ['only' => ['index', 'show']]);
 
@@ -70,7 +75,7 @@ Route::post('auth/facebook', 'Auth\LoginController@facebook');
 Route::post('auth/google', 'Auth\LoginController@google');
 
 Route::get('users/list', 'UserController@index');
-Route::resource('users', 'UserController', ['only' => ['index', 'show', 'update']]);
+Route::resource('users', 'UserController', ['only' => ['index', 'show']]);
 
 Route::get('search/dishes', 'DishController@search');
 
@@ -86,3 +91,12 @@ $this->get('register/confirm/{token}', 'Auth\RegisterController@confirmEmail');
 Route::get('media/{id}/{modelName}', 'MediaController@show');
 Route::resource('media', 'MediaController', ['only' => 'destroy']);
 
+//Get User INformation for User Show page
+Route::get('users/{userId}/getKitchens', 'UserController@getKitchens');
+Route::get('users/{userId}/getSubscriptions', 'UserController@getSubscriptions');
+Route::get('users/{userId}/getForkedDishes', 'UserController@getForkedDishes');
+
+// MyKitchen
+Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
+Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
+Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');

@@ -4,12 +4,15 @@ namespace App\Models;
 
 use App\Exceptions\YechefException;
 use App\Traits\CanResetPassword;
+use App\Traits\ModelService;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
-use App\Traits\ModelService;
-use Illuminate\Support\Facades\Log;
 
+/**
+ * Class User
+ * @package App\Models
+ */
 class User extends Authenticatable
 {
 	use HasApiTokens, Notifiable;
@@ -71,6 +74,14 @@ class User extends Authenticatable
 	}
 
 	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 */
+	public function medias()
+	{
+		return $this->morphMany('App\Models\Media', 'mediable');
+	}
+
+	/**
 	 * @return array
 	 */
 	public static function getValidationRule($userId = null)
@@ -119,6 +130,14 @@ class User extends Authenticatable
 		return $this->hasMany('App\Models\Reaction');
 	}
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function setting()
+	{
+		return $this->hasOne('App\Models\UserSetting');
+	}
+
 	public function isVerifiedKitchenOwner($kitchenId)
 	{
 		$kitchenWithPivot = $this->kitchens()->wherePivot('kitchen_id', $kitchenId);
@@ -163,7 +182,7 @@ class User extends Authenticatable
 		if ($carts->isEmpty() || !$carts->contains('kitchen_id', $kitchenId)) {
 
 			$cart = new Cart([
-				'kitchen_id'  => $kitchenId,
+				'kitchen_id' => $kitchenId,
 			]);
 			$cart = $this->carts()->save($cart);
 		}
@@ -204,6 +223,10 @@ class User extends Authenticatable
 			->where('kind', Reaction::FORK)
 			->select('dishes.*')
 			->get();
+
+		foreach ($forkedDishes as $dish) {
+			$dish->addRatingAttributes();
+		}
 
 		return $forkedDishes;
 	}

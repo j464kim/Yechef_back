@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Yechef;
 
 use Adaojunior\Passport\SocialGrantException;
@@ -8,6 +9,13 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SocialLogin implements SocialUserResolverInterface
 {
+	private $socialite;
+
+	public function __construct(Socialite $socialite)
+	{
+		$this->socialite = $socialite;
+	}
+
 	/**
 	 * Resolves user by given provider and access token.
 	 *
@@ -20,8 +28,26 @@ class SocialLogin implements SocialUserResolverInterface
 	 */
 	public function resolve($provider, $accessToken, $accessTokenSecret = null)
 	{
-		$providerUser = Socialite::driver($provider)->userFromToken($accessToken);
+		$providerUser = null;
 
+		switch ($provider) {
+			case 'google':
+				$providerUser = $this->socialite::driver($provider)->userFromToken($accessToken);
+				break;
+			case 'facebook':
+				$providerUser = $this->socialite::driver($provider)->fields([
+					'name',
+					'first_name',
+					'last_name',
+					'email',
+					'gender',
+					'verified'
+				])->userFromToken($accessToken);
+				break;
+			default:
+				$providerUser = $this->socialite::driver($provider)->userFromToken($accessToken);
+				break;
+		}
 		return SocialAccount::createOrGetUser($provider, $providerUser);
 	}
 }

@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Models\User;
-use App\Models\Reaction;
-use App\Models\Kitchen;
+use App\Yechef\Helper;
 use Illuminate\Http\Request;
-use App\Exceptions\YechefException;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 
 class UserController extends Controller
@@ -20,7 +16,7 @@ class UserController extends Controller
 	 * @param Request $request
 	 * @return mixed
 	 */
-	public function getMyKitchens(Request $request)
+	public function getKitchens(Request $request)
 	{
 		$user = $this->getUser($request);
 
@@ -29,6 +25,7 @@ class UserController extends Controller
 		} catch (Exception $e) {
 			return response()->fail($e->getMessage());
 		}
+		$result = Helper::paginate($request, $result, $request->perPage);
 		return response()->success($result);
 	}
 
@@ -38,7 +35,7 @@ class UserController extends Controller
 	 */
 	public function getLoggedInUser(Request $request)
 	{
-		$user = $this->getUser($request);
+		$user = $this->getUser($request)->load('medias');
 
 		return response()->success($user);
 	}
@@ -77,7 +74,10 @@ class UserController extends Controller
 	 */
 	public function show($id)
 	{
-		$user = User::findById($id);
+		$user = User::findById($id, true);
+		if (!$user->setting->show_phone) {
+			$user->phone = '';
+		}
 
 		return response()->success($user);
 	}
@@ -113,9 +113,16 @@ class UserController extends Controller
 	{
 		$user = $this->getUser($request);
 
-		$subscriptionKitchens = $user->getSubscriptions();
+		//Check user's privacy settings
+		// userId is required to determine if the request is coming from MyProfile page or User Show Page.
+		if ($request->userId && $user->setting->show_subscription == 0) {
+			$result = null;
+		} else {
+			$subscriptionKitchens = $user->getSubscriptions();
+			$result = Helper::paginate($request, $subscriptionKitchens, $request->perPage);
 
-		return response()->success($subscriptionKitchens);
+		}
+		return response()->success($result);
 	}
 
 	/**
@@ -126,9 +133,15 @@ class UserController extends Controller
 	{
 		$user = $this->getUser($request);
 
-		$forkedDishes = $user->getForkedDishes();
-
-		return response()->success($forkedDishes);
+		//Check user's privacy settings
+		// userId is required to determine if the request is coming from MyProfile page or User Show Page.
+		if ($request->userId && $user->setting->show_forks == 0) {
+			$result = null;
+		} else {
+			$forkedDishes = $user->getForkedDishes();
+			$result = Helper::paginate($request, $forkedDishes, $request->perPage);
+		}
+		return response()->success($result);
 	}
 
 	/**

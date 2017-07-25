@@ -30,7 +30,7 @@ class AddAttributesToCart extends Migration
 		Schema::table('carts', function (Blueprint $table) {
 			$table->dropForeign('carts_kitchen_id_foreign');
 			$table->dropColumn('kitchen_id');
-			$table->float('total_price');
+			$table->integer('total_price');
 		});
 	}
 }

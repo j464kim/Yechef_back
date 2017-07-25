@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Application;
 use App\Exceptions\YechefException;
+use App\Models\User;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Filesystem\Factory;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Routing\Controller as BaseController;
 
 
 class Controller extends BaseController
@@ -29,6 +28,8 @@ class Controller extends BaseController
 	}
 
 	/**
+	 * This method returns the user specified by the Request's userId parameter.
+	 * If the userId param is not provided, the currently logged in user will be returned
 	 * @param Request $request
 	 * @return mixed
 	 * @throws YechefException
@@ -36,7 +37,12 @@ class Controller extends BaseController
 	public function getUser(Request $request)
 	{
 		try {
-			$user = $request->user();
+			$user = null;
+			if ($request->userId) {
+				$user = User::findById($request->userId);
+			} else {
+				$user = $request->user();
+			}
 		} catch (\Exception $e) {
 			throw new YechefException(15502, $e->getMessage());
 		}

@@ -13,7 +13,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Models\Media::class, function (Faker\Generator $faker) {
-	$randomNumber = $faker->numberBetween(0,10);
+	$randomNumber = $faker->numberBetween(0, 10);
 	return [
 		'slug' => str_random(10),
 		'url'  => "http://lorempixel.com/400/200/food/$randomNumber/YeChef/"
@@ -30,8 +30,8 @@ $factory->define(App\Models\Dish::class, function (Faker\Generator $faker) {
 		'description' => $faker->realText(),
 		'price'       => $faker->randomFloat(2, 5, 25),
 		'vegetarian'  => $faker->boolean(),
-		'vegan'  => $faker->boolean(),
-		'gluten_free'  => $faker->boolean(),
+		'vegan'       => $faker->boolean(),
+		'gluten_free' => $faker->boolean(),
 	];
 });
 
@@ -64,5 +64,13 @@ $factory->define(App\Models\DishRating::class, function (Faker\Generator $faker)
 		'visual_rating'   => $faker->numberBetween(1, 5),
 		'quantity_rating' => $faker->numberBetween(1, 5),
 		'comment'         => $faker->text(),
+	];
+});
+
+$factory->define(App\Models\UserSetting::class, function (Faker\Generator $faker) {
+	return [
+		'show_phone'        => $faker->boolean(),
+		'show_subscription' => $faker->boolean(),
+		'show_forks'        => $faker->boolean(),
 	];
 });

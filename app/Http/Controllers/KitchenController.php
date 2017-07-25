@@ -7,9 +7,7 @@ use App\Exceptions\YechefException;
 use App\Models\Kitchen;
 use App\Models\User;
 use App\Yechef\Helper;
-use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class KitchenController extends Controller
 {
@@ -113,7 +111,7 @@ class KitchenController extends Controller
 
 	public function getAdmins($id)
 	{
-		$admins = Kitchen::findById($id, false)->users;
+		$admins = Kitchen::findById($id, false)->users->load('medias');
 		return response()->success($admins);
 	}
 
@@ -152,6 +150,9 @@ class KitchenController extends Controller
 	{
 		$kitchen = Kitchen::findById($id);
 		$dishes = $kitchen->dishes()->with('medias')->get();
+		foreach ($dishes as $dish) {
+			$dish->addRatingAttributes();
+		}
 		return response()->success($dishes);
 	}
 

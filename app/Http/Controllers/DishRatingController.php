@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\YechefException;
-use App\Http\Controllers\Controller;
 use App\Models\Dish;
 use App\Models\DishRating;
 use App\Models\User;
 use App\Yechef\Helper;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 
 class DishRatingController extends Controller
@@ -23,6 +20,11 @@ class DishRatingController extends Controller
 	public function index(Request $request, $dishId)
 	{
 		$dishRatings = Dish::findById($dishId)->ratings;
+		$dishRatings->load([
+			'user' => function ($query) {
+				$query->with('medias');
+			}
+		]);
 		// apply pagination
 		$result = Helper::paginate($request, $dishRatings, 10);
 		return response()->success($result);
