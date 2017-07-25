@@ -8,7 +8,6 @@ use App\Traits\ModelService;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Class User
@@ -183,7 +182,7 @@ class User extends Authenticatable
 		if ($carts->isEmpty() || !$carts->contains('kitchen_id', $kitchenId)) {
 
 			$cart = new Cart([
-				'kitchen_id'  => $kitchenId,
+				'kitchen_id' => $kitchenId,
 			]);
 			$cart = $this->carts()->save($cart);
 		}
@@ -225,7 +224,7 @@ class User extends Authenticatable
 			->select('dishes.*')
 			->get();
 
-		foreach($forkedDishes as $dish) {
+		foreach ($forkedDishes as $dish) {
 			$dish->addRatingAttributes();
 		}
 
