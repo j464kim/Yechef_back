@@ -22,12 +22,12 @@
         "laravel/tinker": "~1.0",
         "league/flysystem-aws-s3-v3": "~1.0",
         "orangehill/iseed": "dev-master",
-        "stripe/stripe-php": "4.*",
-        "fzaninotto/faker": "~1.4"
+        "stripe/stripe-php": "4.*"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~5.7"
+        "phpunit/phpunit": "~5.7",
+        "fzaninotto/faker": "~1.4"
     },
     "autoload": {
         "classmap": [
