@@ -6,6 +6,7 @@ use App\Exceptions\YechefException;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Stripe\Account;
 use Stripe\Charge;
 use Stripe\Customer;
 use App\Http\Controllers\Controller;
@@ -14,20 +15,26 @@ use Stripe\Stripe;
 class StripeService
 {
 	private $controller;
-	protected $customer, $charge, $stripe;
+	protected $customer, $charge, $stripe, $account;
 
-	function __construct(Customer $customer, Controller $controller, Charge $charge, Stripe $stripe)
-	{
+	function __construct(
+		Customer $customer,
+		Controller $controller,
+		Charge $charge,
+		Stripe $stripe,
+		Account $account
+	) {
 		$this->customer = $customer;
 		$this->controller = $controller;
 		$this->charge = $charge;
 		$this->stripe = $stripe;
+		$this->account = $account;
 
 		$secretKey = config('services.stripe.secret_key');
 		$this->stripe->setApiKey($secretKey);
 	}
 
-	public function showCard($request, $index)
+	public function showCard(Request $request, $index)
 	{
 		$user = $this->controller->getUser($request);
 		$paymentAccount = $user->payment;
@@ -38,7 +45,28 @@ class StripeService
 		return $card;
 	}
 
-	public function addCard(Request $request)
+	public function getOrCreateConnect(Request $request)
+	{
+		$user = $this->controller->getUser($request);
+
+		// If user already has a payout method, retrieve that
+		if ($payoutAccount = $user->payoutAccount) {
+			$connect = $this->account->retrieve($payoutAccount->connect_id);
+		} else {
+			// Otherwise, create one
+			$connect = $this->account->create(
+				[
+					"country" => $request->input('country'),
+					"type"    => "custom",
+					"email"   => $user->email,
+				]
+			);
+		}
+
+		return $connect;
+	}
+
+	public function addOrCreateCustomer(Request $request)
 	{
 		$user = $this->controller->getUser($request);
 

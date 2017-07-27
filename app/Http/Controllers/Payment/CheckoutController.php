@@ -45,7 +45,7 @@ class CheckoutController extends Controller
 		$user = $this->getUser($request);
 
 		// If a user already has a stripe account, retrieve that. Otherwise, create one
-		$customer = $this->stripeService->addCard($request);
+		$customer = $this->stripeService->addOrCreateCustomer($request);
 
 		// retrieve payment info from DB or create one
 		$paymentInfo = Payment::firstOrCreate(

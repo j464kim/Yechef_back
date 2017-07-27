@@ -58,6 +58,14 @@ class User extends Authenticatable
 	}
 
 	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function payoutAccount()
+	{
+		return $this->hasOne('App\Models\PayoutAccount');
+	}
+
+	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
 	public function transactions()
