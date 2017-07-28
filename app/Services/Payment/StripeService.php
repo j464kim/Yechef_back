@@ -55,8 +55,11 @@ class StripeService
 
 		// If user already has a payout method, retrieve that
 		if ($payoutAccount = $user->payoutAccount) {
+
 			$connect = $this->account->retrieve($payoutAccount->connect_id);
+
 		} elseif ($country = $request->input('country')) {
+
 			// Otherwise, create one
 			$connect = $this->account->create(
 				[
@@ -69,7 +72,8 @@ class StripeService
 		return $connect;
 	}
 
-	public function getBalance($connectId) {
+	public function getBalance($connectId)
+	{
 		return $this->balance->retrieve([
 			'stripe_account' => $connectId
 		]);
