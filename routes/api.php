@@ -46,7 +46,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 		['only' => ['index', 'show', 'store', 'update', 'destroy']]
 	);
 	Route::resource('payout', 'Payment\PayoutController',
-		['only' => ['store']]
+		['only' => ['index', 'store']]
 	);
 
 	Route::resource('users', 'UserController', ['only' => ['update']]);

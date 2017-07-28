@@ -7,6 +7,7 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\Account;
+use Stripe\Balance;
 use Stripe\Charge;
 use Stripe\Customer;
 use App\Http\Controllers\Controller;
@@ -15,20 +16,22 @@ use Stripe\Stripe;
 class StripeService
 {
 	private $controller;
-	protected $customer, $charge, $stripe, $account;
+	protected $customer, $charge, $stripe, $account, $balance;
 
 	function __construct(
 		Customer $customer,
 		Controller $controller,
 		Charge $charge,
 		Stripe $stripe,
-		Account $account
+		Account $account,
+		Balance $balance
 	) {
 		$this->customer = $customer;
 		$this->controller = $controller;
 		$this->charge = $charge;
 		$this->stripe = $stripe;
 		$this->account = $account;
+		$this->balance = $balance;
 
 		$secretKey = config('services.stripe.secret_key');
 		$this->stripe->setApiKey($secretKey);
@@ -48,22 +51,28 @@ class StripeService
 	public function getOrCreateConnect(Request $request)
 	{
 		$user = $this->controller->getUser($request);
+		$connect = null;
 
 		// If user already has a payout method, retrieve that
 		if ($payoutAccount = $user->payoutAccount) {
 			$connect = $this->account->retrieve($payoutAccount->connect_id);
-		} else {
+		} elseif ($country = $request->input('country')) {
 			// Otherwise, create one
 			$connect = $this->account->create(
 				[
-					"country" => $request->input('country'),
+					"country" => $country,
 					"type"    => "custom",
 					"email"   => $user->email,
 				]
 			);
 		}
-
 		return $connect;
+	}
+
+	public function getBalance($connectId) {
+		return $this->balance->retrieve([
+			'stripe_account' => $connectId
+		]);
 	}
 
 	public function addOrCreateCustomer(Request $request)

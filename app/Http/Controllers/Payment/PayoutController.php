@@ -30,6 +30,23 @@ class PayoutController extends Controller
 		$this->payout = $payout;
 	}
 
+	public function index(Request $request)
+	{
+		$connect = $this->stripeService->getOrCreateConnect($request);
+		$balance = $this->stripeService->getBalance($connect->id);
+
+		Log::info($balance);
+		$payoutInfo = (object)array(
+			'country'          => $connect->country,
+			'default_currency' => $connect->default_currency,
+			'email'            => $connect->email,
+			'external_account' => $connect->external_accounts->has_more,
+			'balance'          => $balance->available[0]->amount
+		);
+
+		return response()->success($payoutInfo);
+	}
+
 	public function store(Request $request)
 	{
 		$user = $this->getUser($request);
