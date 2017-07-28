@@ -14,8 +14,8 @@ class AddCoordsToKitchens extends Migration
 	public function up()
 	{
 		Schema::table('kitchens', function (Blueprint $table) {
-			$table->float('lat')->after('address');
-			$table->float('lng')->after('lat');
+			$table->double('lat')->after('address');
+			$table->double('lng')->after('lat');
 		});
 	}
 
