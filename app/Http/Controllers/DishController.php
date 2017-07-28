@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Events\ReactionableDeleted;
-use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Yechef\Helper;
 use Illuminate\Http\Request;
@@ -95,11 +94,6 @@ class DishController extends Controller
 
 	public function search(Request $request)
 	{
-		if (!$request->city) {
-			throw new YechefException(11502);
-		}
-		$pieces = explode(",", $request->city);
-		$request->city = implode(',', [$pieces[0], $pieces[1]]);
 		$results = Dish::search($request->q);
 		$filtered = Dish::filter($request, $results);
 		$filtered = $this->sortBySearch($request, $filtered);

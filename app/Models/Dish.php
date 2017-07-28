@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Exceptions\YechefException;
 use App\Traits\ModelService;
 use App\Traits\Reactionable;
 use App\Yechef\DishRatingable as Ratingable;
@@ -128,7 +127,8 @@ class Dish extends Model
 
 		$dishes = $dishes->get()->load('medias')->load([
 			'kitchen' => function ($query) use ($request) {
-				$query->where('address', 'like', "%$request->city%");
+				$query->where('lat', '>', $request->sw_lat)->where('lng', '>', $request->sw_lng)
+					->where('lat', '<', $request->ne_lat)->where('lng', '<', $request->ne_lng);
 			}
 		])->where('kitchen', '!=', null);
 
@@ -142,26 +142,23 @@ class Dish extends Model
 			$dishes = $dishes->where('price', '<', $request->input('max_price'));
 		}
 
-		return $dishes->filter(function ($item) use ($request) {
+		$userLocationPermitted = $request->userLat && $request->userLng;
+		return $dishes->filter(function ($item) use ($request, $userLocationPermitted) {
 			$item->addRatingAttributes();
-			$geoCodedAddress = \GoogleMaps::load('geocoding')->setParamByKey('address', $item->kitchen->address)->get();
-			$geoCodedAddress = json_decode($geoCodedAddress);
-			if (isset($geoCodedAddress->error_message)) {
-				throw new YechefException(0, $geoCodedAddress->error_message);
+			$dishLat = $item->kitchen->lat;
+			$dishLng = $item->kitchen->lng;
+			$from = ['lat' => $dishLat, 'lng' => $dishLng];
+			if ($userLocationPermitted) {
+				$to = ['lat' => $request->userLat, 'lng' => $request->userLng];
+			} else {
+				$to = ['lat' => $dishLat, 'lng' => $dishLng];
 			}
-			$lat = $geoCodedAddress->results[0]->geometry->location->lat;
-			$lng = $geoCodedAddress->results[0]->geometry->location->lng;
-			$item->lat = $lat;
-			$item->lng = $lng;
-			$from = ['lat' => $lat, 'lng' => $lng];
-			$to = ['lat' => $request->userLat, 'lng' => $request->userLng];
 			$item->distance = SphericalUtil::computeDistanceBetween($from, $to);
 			if ($request->distance && $request->distance != 0) {
-				return ($request->NE_lat >= $lat) && ($request->NE_lng >= $lng) && ($request->SW_lat <= $lat) && ($request->SW_lng <= $lng) && ($request->distance >= $item->distance);
+				return ($request->ne_lat >= $dishLat) && ($request->ne_lng >= $dishLng) && ($request->sw_lat <= $dishLat) && ($request->sw_lng <= $dishLng) && ($request->distance >= $item->distance);
 			} else {
-				return ($request->NE_lat >= $lat) && ($request->NE_lng >= $lng) && ($request->SW_lat <= $lat) && ($request->SW_lng <= $lng);
+				return ($request->ne_lat >= $dishLat) && ($request->ne_lng >= $dishLng) && ($request->sw_lat <= $dishLat) && ($request->sw_lng <= $dishLng);
 			}
 		});
 	}
-
 }
