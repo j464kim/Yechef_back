@@ -16,6 +16,7 @@ class Transaction extends Model
 		'charge_id',
 		'currency',
 		'amount',
+		'service_fee',
 		'captured_amount',
 		'captured',
 		'refunded_amount',
@@ -40,6 +41,26 @@ class Transaction extends Model
 		);
 
 		return $rule;
+	}
+
+	public function setAmountAttribute($value)
+	{
+		$this->attributes['amount'] = stripe_to_db($value);
+	}
+
+	public function setServiceFeeAttribute($value)
+	{
+		$this->attributes['service_fee'] = stripe_to_db($value);
+	}
+
+	public function getAmountAttribute($value)
+	{
+		return db_to_stripe($value);
+	}
+
+	public function getServiceFeeAttribute($value)
+	{
+		return db_to_stripe($value);
 	}
 
 	public function storeCapturedAmount($amountToCapture)

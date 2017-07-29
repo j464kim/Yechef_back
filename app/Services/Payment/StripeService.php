@@ -141,22 +141,22 @@ class StripeService
 		return $card;
 	}
 
-	public function chargeCustomer(Request $request, $customerId, $kitchenId)
+	public function chargeCustomer(Request $request, $customerId)
 	{
-		$kitchen = Kitchen::findById($kitchenId);
+		$totalCharge = $request->input('amount') + $request->input('serviceFee');
+		$kitchen = Kitchen::findById($request->input('kitchenId'));
 		$boss = $kitchen->getBoss();
-		Log::info($boss->payoutAccount->connect_id);
 
 		try {
 			$charge = $this->charge->create(
 				[
-					"amount"      => $request->input('amount'),
+					"amount"      => $totalCharge,
 					"currency"    => $request->input('currency'),
 					"customer"    => $customerId,
 					"capture"     => false,
 					"description" => "Example charge",
 					"destination" => [
-						"amount" => $request->input('amtBeforeService'),
+						"amount"  => $request->input('amount'),
 						"account" => $boss->payoutAccount->connect_id,
 					],
 				]
