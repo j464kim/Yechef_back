@@ -3,6 +3,7 @@
 namespace App\Services\Payment;
 
 use App\Exceptions\YechefException;
+use App\Models\Kitchen;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -140,8 +141,12 @@ class StripeService
 		return $card;
 	}
 
-	public function chargeCustomer(Request $request, $customerId)
+	public function chargeCustomer(Request $request, $customerId, $kitchenId)
 	{
+		$kitchen = Kitchen::findById($kitchenId);
+		$boss = $kitchen->getBoss();
+		Log::info($boss->payoutAccount->connect_id);
+
 		try {
 			$charge = $this->charge->create(
 				[
@@ -150,12 +155,16 @@ class StripeService
 					"customer"    => $customerId,
 					"capture"     => false,
 					"description" => "Example charge",
+					"destination" => [
+						"account" => $boss->payoutAccount->connect_id,
+					],
 				]
 			);
 		} catch (\Exception $e) {
 			throw new YechefException(17502, $e->getMessage());
 		}
 
+		Log::info($charge);
 		return $charge;
 	}
 

@@ -62,6 +62,12 @@ class Kitchen extends Model
 		return $this->hasMany('App\Models\Order');
 	}
 
+	// TODO: Boss is the person who receives money. Position of 'boss' can be granted to others by current boss
+	public function getBoss()
+	{
+		return $this->users()->firstOrFail();
+	}
+
 	/**
 	 * Get all of the Dish's reactions.
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
