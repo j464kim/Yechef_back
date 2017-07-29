@@ -156,6 +156,7 @@ class StripeService
 					"capture"     => false,
 					"description" => "Example charge",
 					"destination" => [
+						"amount" => $request->input('amtBeforeService'),
 						"account" => $boss->payoutAccount->connect_id,
 					],
 				]
