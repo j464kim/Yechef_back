@@ -89,6 +89,11 @@ trait DishRatingable
 		]);
 	}
 
+	public function countRatings()
+	{
+		return $this->ratings()->count();
+	}
+
 	/**
 	 * @param $data
 	 * @param Model $author

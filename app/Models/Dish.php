@@ -92,6 +92,8 @@ class Dish extends Model
 		}
 
 		$this['total_rating'] = sizeof($avgRatings) == 0 ? 0 : $totalRatingSum / sizeof($avgRatings);
+
+		$this['ratingsCount'] = $this->countRatings();
 	}
 
 	/**
