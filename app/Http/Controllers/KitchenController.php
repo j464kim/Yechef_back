@@ -74,7 +74,7 @@ class KitchenController extends Controller
 	public function show($id)
 	{
 		$kitchen = Kitchen::findById($id, true);
-
+		$kitchen->addRatingAttributes();
 		return response()->success($kitchen);
 	}
 
