@@ -70,31 +70,6 @@ class Transaction extends Model
 		$this->attributes['refunded_amount'] = stripe_to_db($value);
 	}
 
-	public function getTotalAttribute($value)
-	{
-		return db_to_stripe($value);
-	}
-
-	public function getBuyerFeeAttribute($value)
-	{
-		return db_to_stripe($value);
-	}
-
-	public function getSellerFeeAttribute($value)
-	{
-		return db_to_stripe($value);
-	}
-
-	public function getCapturedAmountAttribute($value)
-	{
-		return db_to_stripe($value);
-	}
-
-	public function getRefundedAmountAttribute($value)
-	{
-		return db_to_stripe($value);
-	}
-
 	public function storeCapturedAmount($amountToCapture)
 	{
 		$this->captured_amount = $amountToCapture ?: $this->total;

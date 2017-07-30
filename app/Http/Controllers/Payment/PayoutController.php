@@ -44,8 +44,9 @@ class PayoutController extends Controller
 			'default_currency'  => strtoupper($connect->default_currency),
 			'email'             => $connect->email,
 			'external_account'  => $connect->external_accounts->has_more,
-			'available_balance' => $balance->available[0]->amount,
-			'pending_balance'   => $balance->pending[0]->amount
+			'available_balance' => stripe_to_db($balance->available[0]->amount),
+			'pending_balance'   => stripe_to_db($balance->pending[0]->amount)
+
 		);
 
 		return response()->success($payoutInfo);
