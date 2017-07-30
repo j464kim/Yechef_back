@@ -54,18 +54,19 @@ class CheckoutController extends Controller
 				'stripe_id' => $customer->id,
 			]
 		);
-
 		// charge customer (hold it until captured)
 		$charge = $this->stripeService->chargeCustomer($request, $customer->id);
 
 		// store it into DB
 		$transaction = Transaction::create(
 			[
-				"payment_id"  => $paymentInfo->id,
-				"charge_id"   => $charge->id,
-				"currency"    => $request->input('currency'),
-				"amount"      => $request->input('amount'),
-				"service_fee" => $request->input('serviceFee'),
+				"payment_id" => $paymentInfo->id,
+				"kitchen_id" => $request->input('kitchenId'),
+				"charge_id"  => $charge->id,
+				"currency"   => $request->input('currency'),
+				"total"      => $request->input('total'),
+				"buyer_fee"  => $request->input('serviceFee'),
+				"seller_fee" => $request->input('serviceFee'),
 			]
 		);
 

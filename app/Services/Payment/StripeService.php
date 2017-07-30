@@ -143,20 +143,22 @@ class StripeService
 
 	public function chargeCustomer(Request $request, $customerId)
 	{
-		$totalCharge = $request->input('amount') + $request->input('serviceFee');
+//		Take identical Service Fee from both buyers & sellers for now
+		$totalCharged = $request->input('total');
+		$amountToSeller = $request->input('total') - $request->input('serviceFee') - $request->input('serviceFee');
 		$kitchen = Kitchen::findById($request->input('kitchenId'));
 		$boss = $kitchen->getBoss();
 
 		try {
 			$charge = $this->charge->create(
 				[
-					"amount"      => $totalCharge,
+					"amount"      => $totalCharged,
 					"currency"    => $request->input('currency'),
 					"customer"    => $customerId,
 					"capture"     => false,
 					"description" => "Example charge",
 					"destination" => [
-						"amount"  => $request->input('amount'),
+						"amount"  => $amountToSeller,
 						"account" => $boss->payoutAccount->connect_id,
 					],
 				]
