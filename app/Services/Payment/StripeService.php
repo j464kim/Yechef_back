@@ -182,4 +182,18 @@ class StripeService
 		return $card;
 	}
 
+	public function addExternalAccount(Request $request)
+	{
+		$user = $this->controller->getUser($request);
+		$payoutAccount = $user->payoutAccount;
+
+		$connect = $this->account->retrieve($payoutAccount->connect_id);
+		$connect->external_accounts->create(
+			[
+				"external_account" => $request->token,
+			]
+		);
+		
+		return $connect;
+	}
 }

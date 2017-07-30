@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::resource('payout', 'Payment\PayoutController',
 		['only' => ['index', 'store', 'update']]
 	);
+	Route::post('payout/externalAccount', 'Payment\PayoutController@createExternalAccount');
 
 	Route::resource('users', 'UserController', ['only' => ['update']]);
 	// user settings

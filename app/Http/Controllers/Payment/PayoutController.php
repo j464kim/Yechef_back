@@ -37,13 +37,14 @@ class PayoutController extends Controller
 		$payoutAccount = PayoutAccount::firstOrCreate(
 			['connect_id' => $connect->id]
 		);
+		Log::info($connect);
 		Log::info($balance);
 		$payoutInfo = (object)array(
 			'id'                => $payoutAccount->id,
 			'country'           => $connect->country,
 			'default_currency'  => strtoupper($connect->default_currency),
 			'email'             => $connect->email,
-			'external_account'  => $connect->external_accounts->has_more,
+			'total_count'       => $connect->external_accounts->total_count,
 			'available_balance' => stripe_to_db($balance->available[0]->amount),
 			'pending_balance'   => stripe_to_db($balance->pending[0]->amount)
 
@@ -85,5 +86,12 @@ class PayoutController extends Controller
 		$connect->save();
 
 		Log::info($connect);
+	}
+
+	public function createExternalAccount(Request $request)
+	{
+		$this->stripeService->addExternalAccount($request);
+
+		return response()->success();
 	}
 }
