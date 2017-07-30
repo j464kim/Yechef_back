@@ -206,4 +206,11 @@ class KitchenController extends Controller
 		return response()->success($orderInfo);
 	}
 
+	public function getRating($id)
+	{
+		$kitchen = Kitchen::findById($id);
+		$kitchen->addRatingAttributes();
+		return response()->success($kitchen);
+	}
+
 }

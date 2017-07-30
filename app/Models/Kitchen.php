@@ -75,6 +75,30 @@ class Kitchen extends Model
 		return $this->morphMany('App\Models\Reaction', 'reactionable');
 	}
 
+	public function addRatingAttributes()
+	{
+		$dishes = $this->dishes()->get();
+
+		$this['totalTasteRating'] = 0;
+		$this['totalVisualRating'] = 0;
+		$this['totalQuantityRating'] = 0;
+		$this['totalRating'] = 0;
+
+		if (sizeof($dishes) > 0) {
+			foreach ($dishes as $dish) {
+				$avgRatings = $dish->avgRating();
+				$this['totalTasteRating'] += $avgRatings['taste_rating'];
+				$this['totalVisualRating'] += $avgRatings['visual_rating'];
+				$this['totalQuantityRating'] += $avgRatings['quantity_rating'];
+			}
+			$this['totalTasteRating'] /= sizeof($dishes);
+			$this['totalVisualRating'] /= sizeof($dishes);
+			$this['totalQuantityRating'] = sizeof($dishes);
+			$this['totalRating'] = ($this['totalTasteRating'] + $this['totalVisualRating'] + $this['totalQuantityRating']) / 3;
+		}
+
+	}
+
 	/**
 	 * @return array
 	 */

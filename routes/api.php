@@ -105,3 +105,4 @@ Route::get('users/{userId}/getForkedDishes', 'UserController@getForkedDishes');
 Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
 Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
 Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');
+Route::get('kitchens/{id}/rating', 'KitchenController@getRating');
