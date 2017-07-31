@@ -46,8 +46,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 		['only' => ['index', 'show', 'store', 'update', 'destroy']]
 	);
 	Route::resource('payout', 'Payment\PayoutController',
-		['only' => ['index', 'show', 'store', 'update']]
+		['only' => ['index', 'store', 'update']]
 	);
+	Route::get('payout/externalAccount', 'Payment\PayoutController@getExternalAccounts');
 	Route::post('payout/externalAccount', 'Payment\PayoutController@createExternalAccount');
 
 	Route::resource('users', 'UserController', ['only' => ['update']]);

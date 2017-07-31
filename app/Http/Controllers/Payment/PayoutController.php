@@ -53,7 +53,7 @@ class PayoutController extends Controller
 		return response()->success($payoutInfo);
 	}
 
-	public function show(Request $request)
+	public function getExternalAccounts(Request $request)
 	{
 		$connect = $this->stripeService->getOrCreateConnect($request);
 		Log::info($connect);
