@@ -109,4 +109,11 @@ class PayoutController extends Controller
 
 		return response()->success();
 	}
+
+	public function switchDefaultAccount(Request $request)
+	{
+		$this->stripeService->switchDefaultExternalAccount($request);
+		
+		return response()->success();
+	}
 }

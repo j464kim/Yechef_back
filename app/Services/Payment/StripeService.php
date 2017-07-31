@@ -213,9 +213,20 @@ class StripeService
 	{
 		$user = $this->controller->getUser($request);
 		$payoutAccount = $user->payoutAccount;
-
 		$connect = $this->account->retrieve($payoutAccount->connect_id);
 
-		$connect->external_accounts->retrieve($id)->delete();
+		$externalAccount = $connect->external_accounts->retrieve($id);
+		$externalAccount->delete();
+	}
+
+	public function switchDefaultExternalAccount(Request $request)
+	{
+		$user = $this->controller->getUser($request);
+		$payoutAccount = $user->payoutAccount;
+		$connect = $this->account->retrieve($payoutAccount->connect_id);
+
+		$externalAccount = $connect->external_accounts->retrieve($request->input('id'));
+		$externalAccount->default_for_currency = true;
+		$externalAccount->save();
 	}
 }
