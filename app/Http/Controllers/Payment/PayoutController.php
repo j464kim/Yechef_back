@@ -102,4 +102,11 @@ class PayoutController extends Controller
 
 		return response()->success();
 	}
+
+	public function destroyExternalAccount(Request $request, $id)
+	{
+		$this->stripeService->deleteExternalAccount($request, $id);
+
+		return response()->success();
+	}
 }

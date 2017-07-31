@@ -50,6 +50,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	);
 	Route::get('payout/externalAccount', 'Payment\PayoutController@getExternalAccounts');
 	Route::post('payout/externalAccount', 'Payment\PayoutController@createExternalAccount');
+	Route::delete('payout/externalAccount/{id}', 'Payment\PayoutController@destroyExternalAccount');
 
 	Route::resource('users', 'UserController', ['only' => ['update']]);
 	// user settings

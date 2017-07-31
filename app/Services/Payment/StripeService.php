@@ -207,7 +207,15 @@ class StripeService
 			$connect->external_accounts->retrieve($newBank->id)->delete();
 			Log::info('the same account is not being added twice');
 		}
-		
-		return $connect;
+	}
+
+	public function deleteExternalAccount(Request $request, $id)
+	{
+		$user = $this->controller->getUser($request);
+		$payoutAccount = $user->payoutAccount;
+
+		$connect = $this->account->retrieve($payoutAccount->connect_id);
+
+		$connect->external_accounts->retrieve($id)->delete();
 	}
 }
