@@ -188,11 +188,25 @@ class StripeService
 		$payoutAccount = $user->payoutAccount;
 
 		$connect = $this->account->retrieve($payoutAccount->connect_id);
-		$connect->external_accounts->create(
+
+		$bankFingerprints = [];
+		$banks = $connect->external_accounts->data;
+		foreach ($banks as $index => $bank) {
+			array_push($bankFingerprints, $bank->fingerprint);
+		}
+
+		$newBank = $connect->external_accounts->create(
 			[
 				"external_account" => $request->token,
 			]
 		);
+
+		Log::info($newBank);
+
+		if (in_array($newBank->fingerprint, $bankFingerprints)) {
+			$connect->external_accounts->retrieve($newBank->id)->delete();
+			Log::info('the same account is not being added twice');
+		}
 		
 		return $connect;
 	}
