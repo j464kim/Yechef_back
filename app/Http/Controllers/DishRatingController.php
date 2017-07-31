@@ -43,8 +43,8 @@ class DishRatingController extends Controller
 		$this->validateInput($request, $validationRule);
 
 		$dish = Dish::findById($dishId);
-		//TODO: Replace with the real user
-		$user = User::first();
+
+		$user =$request->user();
 		$rating = $dish->rating([
 			'taste_rating'    => $request->input('taste_rating'),
 			'visual_rating'   => $request->input('visual_rating'),
