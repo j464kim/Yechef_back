@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use App\Exceptions\YechefException;
+use App\Traits\ModelService;
+use App\Traits\Reactionable;
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Iatstuti\Database\Support\CascadeSoftDeletes;
-use App\Traits\Reactionable;
-use App\Traits\ModelService;
-use Illuminate\Support\Facades\Log;
 
 /**
  *
@@ -37,7 +35,7 @@ class Kitchen extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['slug', 'name', 'address', 'phone', 'email', 'description'];
+	protected $fillable = ['slug', 'name', 'address', 'phone', 'email', 'description', 'lat', 'lng'];
 
 	/**
 	 * Get all of the Kitchen's medias.
@@ -82,6 +80,8 @@ class Kitchen extends Model
 			'phone'       => 'required',
 			'address'     => 'required',
 			'description' => 'required',
+			'lat'         => 'required|numeric',
+			'lng'         => 'required|numeric'
 		);
 
 		return $rule;
