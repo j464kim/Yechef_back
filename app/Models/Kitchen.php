@@ -83,17 +83,23 @@ class Kitchen extends Model
 		$this['totalVisualRating'] = 0;
 		$this['totalQuantityRating'] = 0;
 		$this['totalRating'] = 0;
+		$dishesWithoutRating = 0;
 
 		if (sizeof($dishes) > 0) {
 			foreach ($dishes as $dish) {
 				$avgRatings = $dish->avgRating();
-				$this['totalTasteRating'] += $avgRatings['taste_rating'];
-				$this['totalVisualRating'] += $avgRatings['visual_rating'];
-				$this['totalQuantityRating'] += $avgRatings['quantity_rating'];
+				if ($avgRatings['taste_rating'] < 0 && $avgRatings['visual_rating'] < 0 && $avgRatings['quantity_rating_rating'] < 0) {
+					$dishesWithoutRating++;
+				} else {
+					$this['totalTasteRating'] += $avgRatings['taste_rating'];
+					$this['totalVisualRating'] += $avgRatings['visual_rating'];
+					$this['totalQuantityRating'] += $avgRatings['quantity_rating'];
+				}
 			}
-			$this['totalTasteRating'] /= sizeof($dishes);
-			$this['totalVisualRating'] /= sizeof($dishes);
-			$this['totalQuantityRating'] = sizeof($dishes);
+			$dishesWithRating = sizeof($dishes) - $dishesWithoutRating;
+			$this['totalTasteRating'] /= sizeof($dishesWithRating);
+			$this['totalVisualRating'] /= sizeof($dishesWithRating);
+			$this['totalQuantityRating'] /= sizeof($dishesWithRating);
 			$this['totalRating'] = ($this['totalTasteRating'] + $this['totalVisualRating'] + $this['totalQuantityRating']) / sizeof($avgRatings);
 		}
 
