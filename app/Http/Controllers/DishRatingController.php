@@ -8,20 +8,30 @@ use App\Models\DishRating;
 use App\Models\OrderItem;
 use App\Yechef\Helper;
 use Carbon\Carbon;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
 class DishRatingController extends Controller
 {
+	protected $dishRating, $dish;
+
+	public function __construct(Application $app, DishRating $dishRating, Dish $dish)
+	{
+		parent::__construct($app);
+
+		$this->dishRating = $dishRating;
+		$this->dish = $dish;
+	}
 
 	public function getAvg(Request $request, $dishId)
 	{
-		$dishRatingsAvg = Dish::findById($dishId)->getAvgRatingAttribute();
+		$dishRatingsAvg = $this->dish->findById($dishId)->getAvgRatingAttribute();
 		return response()->success($dishRatingsAvg);
 	}
 
 	public function index(Request $request, $dishId)
 	{
-		$dishRatings = Dish::findById($dishId)->ratings;
+		$dishRatings = $this->dish->findById($dishId)->ratings;
 		$dishRatings->load([
 			'user' => function ($query) {
 				$query->with('medias');
@@ -34,32 +44,19 @@ class DishRatingController extends Controller
 
 	public function show(Request $request, $dishId, $ratingId)
 	{
-		$dishRating = DishRating::findById($ratingId);
+		$dishRating = $this->dishRating->findById($ratingId);
 		return response()->success($dishRating);
 	}
 
 	public function store(Request $request, $dishId)
 	{
-		$validationRule = DishRating::getValidationRule();
+		$validationRule = $this->dishRating->getValidationRule();
 		$this->validateInput($request, $validationRule);
 
-		$dish = Dish::findById($dishId);
+		$dish = $this->dish->findById($dishId);
 		$orderItem = OrderItem::findById($request->orderItemId);
-		$order = $orderItem->order;
 		$user = $this->getUser($request);
-
-		//Check user access
-		if ($user->id != $order->user_id) {
-			throw new YechefException(11503);
-		}
-		//Expiration check
-		if (Carbon::now()->diffInHours($order->updated_at) > 24) {
-			throw new YechefException(11504);
-		}
-		//Check if already rated
-		if ($orderItem->dish_rating_id != null) {
-			throw new YechefException(11505);
-		}
+		$this->isStoreAllowed($orderItem, $user);
 
 		$rating = $dish->rating([
 			'taste_rating'    => $request->input('taste_rating'),
@@ -75,17 +72,17 @@ class DishRatingController extends Controller
 
 	public function update(Request $request, $dishId, $ratingId)
 	{
-		$validationRule = DishRating::getValidationRule($ratingId);
+		$validationRule = $this->dishRating->getValidationRule($ratingId);
 		$this->validateInput($request, $validationRule);
 		$user = $this->getUser($request);
-		$dishRating = DishRating::findById($ratingId);
+		$dishRating = $this->dishRating->findById($ratingId);
 
 		//check user access
 		if ($dishRating->user_id != $user->id) {
 			throw new YechefException(15503);
 		}
 
-		$rating = Dish::updateRating($ratingId, [
+		$rating = $this->dish->updateRating($ratingId, [
 			'taste_rating'    => $request->input('taste_rating'),
 			'visual_rating'   => $request->input('visual_rating'),
 			'quantity_rating' => $request->input('quantity_rating'),
@@ -97,8 +94,26 @@ class DishRatingController extends Controller
 	public function destroy(Request $request, $dishId, $ratingId)
 	{
 		//TODO: Check if the user has the permission to do so
-		$rating = Dish::deleteRating($ratingId);
+		$rating = $this->dish->deleteRating($ratingId);
 		return response()->success($rating, 11006);
+	}
+
+	private function isStoreAllowed($orderItem, $user)
+	{
+		$order = $orderItem->order;
+
+		//Check user access
+		if ($user->id != $order->user_id) {
+			throw new YechefException(11503);
+		}
+		//Expiration check
+		if (Carbon::now()->diffInHours($order->updated_at) > 24) {
+			throw new YechefException(11504);
+		}
+		//Check if already rated
+		if ($orderItem->dish_rating_id != null) {
+			throw new YechefException(11505);
+		}
 	}
 
 }

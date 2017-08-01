@@ -94,7 +94,7 @@ class Kitchen extends Model
 			$this['totalTasteRating'] /= sizeof($dishes);
 			$this['totalVisualRating'] /= sizeof($dishes);
 			$this['totalQuantityRating'] = sizeof($dishes);
-			$this['totalRating'] = ($this['totalTasteRating'] + $this['totalVisualRating'] + $this['totalQuantityRating']) / 3;
+			$this['totalRating'] = ($this['totalTasteRating'] + $this['totalVisualRating'] + $this['totalQuantityRating']) / sizeof($avgRatings);
 		}
 
 	}
