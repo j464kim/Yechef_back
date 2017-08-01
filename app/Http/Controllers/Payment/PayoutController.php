@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\Controller;
-use App\Models\Payment;
 use App\Services\Payment\StripeService;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -11,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 use Stripe\Customer;
 use Stripe\Payout;
 use App\Models\PayoutAccount;
-use Stripe\Stripe;
 
 class PayoutController extends Controller
 {
