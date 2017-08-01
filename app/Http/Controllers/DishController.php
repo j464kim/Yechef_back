@@ -4,16 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Events\ReactionableDeleted;
 use App\Models\Dish;
+use App\Services\SearchService;
 use App\Yechef\Helper;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
 
 class DishController extends Controller
 {
 
+	protected $dish, $searchService;
+
+	public function __construct(Application $app, Dish $dish, SearchService $searchService)
+	{
+		parent::__construct($app);
+
+		$this->dish = $dish;
+		$this->searchService = $searchService;
+	}
+
 	public function index(Request $request)
 	{
-		$dishes = Dish::with('medias')->get();
+		$dishes = $this->dish->with('medias')->get();
 		//TODO: add algorithm to get featured dishes (business model)
 		$featuredDishes = $dishes->random(12);
 		$featuredDishes->filter(function (Dish $item) {
@@ -26,7 +38,7 @@ class DishController extends Controller
 
 	public function show(Request $request, $id)
 	{
-		$dish = Dish::findById($id, true);
+		$dish = $this->dish->findById($id, true);
 
 		return response()->success($dish);
 	}
@@ -36,10 +48,10 @@ class DishController extends Controller
 		$request->user()->isVerifiedKitchenOwner($request->input('kitchen_id'));
 
 		//TODO: No need to require slug input from the user.
-		$validationRule = Dish::getValidationRule();
+		$validationRule = $this->dish->getValidationRule();
 		$this->validateInput($request, $validationRule);
 
-		$dish = Dish::create([
+		$dish = $this->dish->create([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
 			'description' => $request->input('description'),
@@ -59,10 +71,10 @@ class DishController extends Controller
 	{
 		$request->user()->isVerifiedKitchenOwner($request->input('kitchen_id'));
 
-		$validationRule = Dish::getValidationRule($id);
+		$validationRule = $this->dish->getValidationRule($id);
 		$this->validateInput($request, $validationRule);
 
-		$dish = Dish::findById($id);
+		$dish = $this->dish->findById($id);
 		$dish->update([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
@@ -83,7 +95,7 @@ class DishController extends Controller
 	{
 		//TODO: Need to delete other relationships to prevent foreign key constraint issues
 		//TODO: Also need to delete associated ratings
-		$dish = Dish::findById($id);
+		$dish = $this->dish->findById($id);
 		$request->user()->isVerifiedKitchenOwner($dish->kitchen_id);
 		$dish->delete();
 
@@ -94,59 +106,10 @@ class DishController extends Controller
 
 	public function search(Request $request)
 	{
-		$results = Dish::search($request->q);
-		$filtered = Dish::filter($request, $results);
-		$filtered = $this->sortBySearch($request, $filtered);
+		$results = $this->dish->search($request->q);
+		$filtered = $this->searchService->filter($request, $results);
+		$filtered = $this->searchService->sortBySearch($request, $filtered);
 		$filtered = Helper::paginate($request, $filtered, 18);
 		return response()->success($filtered);
-	}
-
-	private function sortBySearch(Request $request, $results)
-	{
-		$sortBy = $request->input('sortBy') ?: null;
-
-		if (!$sortBy) {
-			return $results;
-		}
-
-		foreach ($results as $result) {
-			$result['taste_rating'] = $result->avgRating['taste_rating'];
-			$result['visual_rating'] = $result->avgRating['visual_rating'];
-			$result['quantity_rating'] = $result->avgRating['quantity_rating'];
-		}
-
-		switch ($sortBy) {
-			case 'price_asc':
-				$results = $results->sortBy('price');
-				break;
-
-			case 'price_dsc':
-				$results = $results->sortByDesc('price');
-				break;
-
-			case 'newest':
-				$results = $results->sortBy('created_at');
-				break;
-
-			case 'taste':
-				$results = $results->sortByDesc('taste_rating');
-				break;
-
-			case 'visual':
-				$results = $results->sortByDesc('visual_rating');
-				break;
-
-			case 'quantity':
-				$results = $results->sortByDesc('quantity_rating');
-				break;
-			default:
-				break;
-		}
-
-		// reset index of sorted results (necessary since front-end resorts the result based on php collection index)
-		$results = $results->values();
-
-		return $results;
-
 	}
 }
