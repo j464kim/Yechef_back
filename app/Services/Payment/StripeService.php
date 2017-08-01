@@ -148,12 +148,11 @@ class StripeService
 		$amountToSeller = $request->input('total') - $request->input('serviceFee') - $request->input('serviceFee');
 		$kitchen = Kitchen::findById($request->input('kitchenId'));
 		$boss = $kitchen->getBoss();
-
 		try {
 			$charge = $this->charge->create(
 				[
 					"amount"      => $totalCharged,
-					"currency"    => $request->input('currency'),
+					"currency"    => get_currency($kitchen->country),
 					"customer"    => $customerId,
 					"capture"     => false,
 					"description" => "Example charge",

@@ -63,7 +63,7 @@ class CheckoutController extends Controller
 				"payment_id" => $paymentInfo->id,
 				"kitchen_id" => $request->input('kitchenId'),
 				"charge_id"  => $charge->id,
-				"currency"   => $request->input('currency'),
+				"currency"   => $charge->currency,
 				"total"      => $request->input('total'),
 				"buyer_fee"  => $request->input('serviceFee'),
 				"seller_fee" => $request->input('serviceFee'),

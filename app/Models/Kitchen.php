@@ -37,7 +37,7 @@ class Kitchen extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['slug', 'name', 'address', 'phone', 'email', 'description'];
+	protected $fillable = ['slug', 'name', 'country', 'address', 'phone', 'email', 'description'];
 
 	/**
 	 * Get all of the Kitchen's medias.

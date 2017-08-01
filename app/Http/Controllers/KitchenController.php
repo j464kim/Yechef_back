@@ -48,6 +48,7 @@ class KitchenController extends Controller
 		$kitchen = Kitchen::create([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
+			'country'     => $request->input('country'),
 			'email'       => $request->input('email'),
 			'phone'       => $request->input('phone'),
 			'address'     => $request->input('address'),
