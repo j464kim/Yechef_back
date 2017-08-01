@@ -154,7 +154,7 @@ class StripeService
 					"currency"    => get_currency($kitchen->country),
 					"customer"    => $customerId,
 					"capture"     => false,
-					"description" => "Example charge",
+					"description" => "YeChef - Charged $totalCharged for purchasing dishes from $kitchen->name",
 					"destination" => [
 						"amount"  => $amountToSeller,
 						"account" => $boss->payoutAccount->connect_id,
