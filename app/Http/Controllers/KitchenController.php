@@ -53,6 +53,8 @@ class KitchenController extends Controller
 			'phone'       => $request->input('phone'),
 			'address'     => $request->input('address'),
 			'description' => $request->input('description'),
+			'lat'         => $request->input('lat'),
+			'lng'         => $request->input('lng')
 		]);
 
 		$kitchen->users()->save($user, ['role' => 1, 'verified' => true]);
@@ -100,7 +102,9 @@ class KitchenController extends Controller
 				'email'       => $request->input('email'),
 				'phone'       => $request->input('phone'),
 				'address'     => $request->input('address'),
-				'description' => $request->input('description')
+				'description' => $request->input('description'),
+				'lat'         => $request->input('lat'),
+				'lng'         => $request->input('lng')
 			]
 		);
 
