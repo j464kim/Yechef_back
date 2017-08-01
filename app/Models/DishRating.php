@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Exceptions\YechefException;
+use App\Traits\ModelService;
+use App\Traits\Reactionable;
 use Ghanem\Rating\Models\Rating;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Reactionable;
 
 /**
  * Class DishRating
@@ -17,6 +18,7 @@ class DishRating extends Rating
 {
 	use SoftDeletes;
 	use Reactionable;
+	use ModelService;
 
 	/**
 	 * The attributes that should be mutated to dates.
@@ -56,6 +58,11 @@ class DishRating extends Rating
 	public function user()
 	{
 		return $this->belongsTo('App\Models\User');
+	}
+
+	public function orderItem()
+	{
+		return $this->hasOne('App\Models\OrderItem');
 	}
 
 	/**
