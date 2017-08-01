@@ -4,13 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
+use App\Http\Controllers\Payment\PayoutController;
 use App\Models\Kitchen;
 use App\Models\User;
 use App\Yechef\Helper;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Application;
 
 class KitchenController extends Controller
 {
+	private $payoutCtrl;
+
+	function __construct(Application $app, PayoutController $payoutCtrl)
+	{
+		parent::__construct($app);
+
+		$this->payoutCtrl = $payoutCtrl;
+	}
 
 	/**
 	 * Display a listing of the resource.
@@ -38,6 +48,7 @@ class KitchenController extends Controller
 		$kitchen = Kitchen::create([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
+			'country'     => $request->input('country'),
 			'email'       => $request->input('email'),
 			'phone'       => $request->input('phone'),
 			'address'     => $request->input('address'),
@@ -45,7 +56,11 @@ class KitchenController extends Controller
 			'lat'         => $request->input('lat'),
 			'lng'         => $request->input('lng')
 		]);
+
 		$kitchen->users()->save($user, ['role' => 1, 'verified' => true]);
+
+		// create payout account if owner of kitchen doesn't have a payout method yet
+		$this->payoutCtrl->store($request);
 
 		return response()->success($kitchen);
 	}

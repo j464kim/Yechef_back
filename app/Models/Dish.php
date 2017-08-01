@@ -80,7 +80,7 @@ class Dish extends Model
 
 	public function addRatingAttributes()
 	{
-		$totalRatigSum = 0;
+		$totalRatingSum = 0;
 		$avgRatings = $this->avgRating();
 
 		$this['taste_rating'] = $avgRatings['taste_rating'];
@@ -88,10 +88,10 @@ class Dish extends Model
 		$this['quantity_rating'] = $avgRatings['quantity_rating'];
 
 		foreach ($avgRatings as $eachAvg) {
-			$totalRatigSum += $eachAvg;
+			$totalRatingSum += $eachAvg;
 		}
 
-		$this['total_rating'] = sizeof($avgRatings) == 0 ? 0 : $totalRatigSum / sizeof($avgRatings);
+		$this['total_rating'] = sizeof($avgRatings) == 0 ? 0 : $totalRatingSum / sizeof($avgRatings);
 	}
 
 	/**

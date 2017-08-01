@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\YechefException;
 use App\Models\Dish;
+use App\Models\Kitchen;
 use App\Models\User;
 use App\Yechef\Helper;
 use Illuminate\Http\Request;
@@ -53,6 +54,8 @@ class UserController extends Controller
 
 	public function checkOwnership(Request $request)
 	{
+		$user = $this->getUser($request);
+
 		if ($dishId = $request->input('dish_id')) {
 			$dish = Dish::findById($dishId);
 			$kitchenId = $dish->kitchen_id;
@@ -61,10 +64,11 @@ class UserController extends Controller
 		}
 
 		try {
-			$request->user()->isVerifiedKitchenOwner($kitchenId);
+			$user->isVerifiedKitchenOwner($kitchenId);
 		} catch (YechefException $e) {
 			return response()->notallow($e->getMessage());
 		}
+
 		return response()->success();
 	}
 

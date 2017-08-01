@@ -27,13 +27,13 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('kitchens/checkOwnership', 'UserController@checkOwnership');
 
 	Route::get('users/getMyKitchens', 'UserController@getKitchens');
+	Route::get('users/getMySubscriptions', 'UserController@getSubscriptions');
+	Route::get('users/getMyForkedDishes', 'UserController@getForkedDishes');
 
 	Route::post('kitchens/{id}/admins', 'KitchenController@addAdmin');
 	Route::delete('kitchens/{id}/admins', 'KitchenController@removeAdmin');
 	Route::resource('carts', 'CartController', ['except' => ['show']]);
 
-	Route::get('users/getMySubscriptions', 'UserController@getSubscriptions');
-	Route::get('users/getMyForkedDishes', 'UserController@getForkedDishes');
 	Route::get('users/getOrders', 'UserController@getOrders');
 	Route::get('users/cancelOrder/{orderId}', 'Payment\OrderController@cancelOrder');
 
@@ -41,17 +41,22 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('password/update', 'Auth\UpdatePasswordController@update');
 
 // Checkout
-	Route::post('charge-payment', 'CheckoutController@charge');
-
-	Route::resource('users', 'UserController', ['only' => ['update']]);
-
-// user settings
-	Route::get('userSetting', 'UserSettingController@show');
-	Route::put('userSetting', 'UserSettingController@update');
-
 	Route::post('payment/charge', 'Payment\CheckoutController@charge');
 	Route::resource('payment', 'Payment\PaymentController',
-		['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+		['only' => ['index', 'show', 'store', 'update', 'destroy']]
+	);
+	Route::resource('payout', 'Payment\PayoutController',
+		['only' => ['index', 'store', 'update']]
+	);
+	Route::get('payout/externalAccount', 'Payment\PayoutController@getExternalAccounts');
+	Route::post('payout/externalAccount', 'Payment\PayoutController@createExternalAccount');
+	Route::delete('payout/externalAccount/{id}', 'Payment\PayoutController@destroyExternalAccount');
+	Route::post('payout/externalAccount/switchDefault', 'Payment\PayoutController@switchDefaultAccount');
+
+	Route::resource('users', 'UserController', ['only' => ['update']]);
+	// user settings
+	Route::get('userSetting', 'UserSettingController@show');
+	Route::put('userSetting', 'UserSettingController@update');
 
 //	My Kitchen
 	Route::get('kitchens/{id}/orders', 'KitchenController@getOrders');

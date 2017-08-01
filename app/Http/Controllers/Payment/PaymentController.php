@@ -7,9 +7,7 @@ use App\Models\Payment;
 use App\Services\Payment\StripeService;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Stripe\Customer;
-use Stripe\Stripe;
 
 class PaymentController extends Controller
 {
@@ -50,7 +48,10 @@ class PaymentController extends Controller
 	public function store(Request $request)
 	{
 		$user = $this->getUser($request);
-		$customer = $this->stripeService->addCard($request);
+		$validationRule = ['token' => 'required'];
+		$this->validateInput($request, $validationRule);
+
+		$customer = $this->stripeService->addOrCreateCustomer($request);
 
 		// retrieve payment info from DB or create one
 		$paymentInfo = Payment::firstOrCreate(
@@ -61,7 +62,6 @@ class PaymentController extends Controller
 		);
 
 		return response()->success($paymentInfo);
-
 	}
 
 	public function update(Request $request, $cardId)
@@ -73,7 +73,6 @@ class PaymentController extends Controller
 		$updatedCard = $this->stripeService->updateCard($request, $cardId);
 
 		return response()->success($updatedCard, 17002);
-
 	}
 
 	public function destroy(Request $request, $cardId)

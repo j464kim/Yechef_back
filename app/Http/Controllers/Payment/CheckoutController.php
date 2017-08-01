@@ -3,19 +3,14 @@
 namespace App\Http\Controllers\Payment;
 
 
-use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use App\Services\AppMailer;
 use App\Services\Payment\StripeService;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
-use Stripe\Customer;
-use Stripe\Charge;
 use App\Models\Payment;
 use App\Models\Transaction;
-use App\Models\Kitchen;
 
 class CheckoutController extends Controller
 {
@@ -45,7 +40,7 @@ class CheckoutController extends Controller
 		$user = $this->getUser($request);
 
 		// If a user already has a stripe account, retrieve that. Otherwise, create one
-		$customer = $this->stripeService->addCard($request);
+		$customer = $this->stripeService->addOrCreateCustomer($request);
 
 		// retrieve payment info from DB or create one
 		$paymentInfo = Payment::firstOrCreate(
@@ -54,7 +49,6 @@ class CheckoutController extends Controller
 				'stripe_id' => $customer->id,
 			]
 		);
-
 		// charge customer (hold it until captured)
 		$charge = $this->stripeService->chargeCustomer($request, $customer->id);
 
@@ -62,9 +56,12 @@ class CheckoutController extends Controller
 		$transaction = Transaction::create(
 			[
 				"payment_id" => $paymentInfo->id,
+				"kitchen_id" => $request->input('kitchenId'),
 				"charge_id"  => $charge->id,
-				"currency"   => $request->input('currency'),
-				"amount"     => $request->input('amount'),
+				"currency"   => $charge->currency,
+				"total"      => $request->input('total'),
+				"buyer_fee"  => $request->input('serviceFee'),
+				"seller_fee" => $request->input('serviceFee'),
 			]
 		);
 

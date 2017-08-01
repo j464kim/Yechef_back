@@ -13,13 +13,15 @@ class Transaction extends Model
 
 	protected $fillable = [
 		'payment_id',
+		'kitchen_id',
 		'charge_id',
 		'currency',
-		'amount',
+		'total',
+		'buyer_fee',
+		'seller_fee',
 		'captured_amount',
-		'captured',
 		'refunded_amount',
-		'refunded',
+		'released',
 	];
 
 	public function payment()
@@ -33,26 +35,53 @@ class Transaction extends Model
 	public static function getValidationRule()
 	{
 		$rule = array(
-			'token'     => 'bail|required',
-			'amount'    => 'required',
-			'currency'  => 'required',
-			'kitchenId' => 'required',
+			'token'      => 'bail|required',
+			'total'      => 'required',
+			'currency'   => 'required',
+			'kitchenId'  => 'required',
+			'serviceFee' => 'required'
 		);
 
 		return $rule;
 	}
 
+	public function setTotalAttribute($value)
+	{
+		$this->attributes['total'] = stripe_to_db($value);
+	}
+
+	public function setBuyerFeeAttribute($value)
+	{
+		$this->attributes['buyer_fee'] = stripe_to_db($value);
+	}
+
+	public function setSellerFeeAttribute($value)
+	{
+		$this->attributes['seller_fee'] = stripe_to_db($value);
+	}
+
+	public function setCapturedAmountAttribute($value)
+	{
+		$this->attributes['captured_amount'] = stripe_to_db($value);
+	}
+
+	public function setRefundedAmountAttribute($value)
+	{
+		$this->attributes['refunded_amount'] = stripe_to_db($value);
+	}
+
 	public function storeCapturedAmount($amountToCapture)
 	{
-		$this->captured = 1;
-		$this->captured_amount = $amountToCapture ?: $this->amount;
+		$this->captured_amount = $amountToCapture ?: $this->total;
 		$this->save();
 	}
 
-	public function storeRefundedAmount($amountToRefund)
+	public function storeRefundedAmount($partialAmount = null)
 	{
-		$this->refunded = 1;
-		$this->refunded_amount = $amountToRefund ?: $this->amount;
+		if (!$partialAmount) {
+			$this->released = 1;
+		}
+		$this->refunded_amount = $partialAmount ?: $this->total;
 		$this->save();
 	}
 
@@ -87,19 +116,16 @@ class Transaction extends Model
 
 	public function refundAmount(Charge $charge, $partialAmount = null)
 	{
-		// convert decimal amount to its integer of times 100 for stripe format
-		$amountToRefund = $partialAmount ? round($partialAmount) : null;
-
 		$argument = [];
-		if ($amountToRefund) {
+		if ($partialAmount) {
 			$argument = array(
-				"amount" => $amountToRefund
+				"amount" => $partialAmount
 			);
 		}
 
 		$charge->refund($argument);
 
-		$this->storeRefundedAmount($amountToRefund);
+		$this->storeRefundedAmount($partialAmount);
 	}
 
 }

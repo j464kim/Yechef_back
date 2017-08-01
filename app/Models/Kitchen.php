@@ -35,7 +35,7 @@ class Kitchen extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['slug', 'name', 'address', 'phone', 'email', 'description', 'lat', 'lng'];
+	protected $fillable = ['slug', 'name', 'country', 'address', 'phone', 'email', 'description', 'lat', 'lng'];
 
 	/**
 	 * Get all of the Kitchen's medias.
@@ -60,6 +60,12 @@ class Kitchen extends Model
 		return $this->hasMany('App\Models\Order');
 	}
 
+	// TODO: Boss is the person who receives money. Position of 'boss' can be granted to others by current boss
+	public function getBoss()
+	{
+		return $this->users()->firstOrFail();
+	}
+
 	/**
 	 * Get all of the Dish's reactions.
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
@@ -75,10 +81,11 @@ class Kitchen extends Model
 	public static function getValidationRule($kitchenId = null)
 	{
 		$rule = array(
-			'name'        => 'bail|required',
+			'country'     => 'bail|required',
+			'address'     => 'required',
+			'name'        => 'required',
 			'email'       => 'required|email|max:255|unique:kitchens,email,' . $kitchenId,
 			'phone'       => 'required',
-			'address'     => 'required',
 			'description' => 'required',
 			'lat'         => 'required|numeric',
 			'lng'         => 'required|numeric'
