@@ -36,7 +36,8 @@ class DatabaseSeeder extends Seeder
 		$this->call(UserSettingsTableSeeder::class);
 		$this->call(KitchensTableSeeder::class);
 		$this->call(DishesTableSeeder::class);
-		$this->call(RatingsTableSeeder::class);
+		//TODO: Enable it until order and order_item tables are seeded.
+//		$this->call(RatingsTableSeeder::class);
 		$this->call(MediasTableSeeder::class);
 		$this->call(ReactionsTableSeeder::class);
 

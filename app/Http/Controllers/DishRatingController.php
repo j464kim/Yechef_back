@@ -13,14 +13,15 @@ use Illuminate\Http\Request;
 
 class DishRatingController extends Controller
 {
-	protected $dishRating, $dish;
+	protected $dishRating, $dish, $orderItem;
 
-	public function __construct(Application $app, DishRating $dishRating, Dish $dish)
+	public function __construct(Application $app, DishRating $dishRating, Dish $dish, OrderItem $orderItem)
 	{
 		parent::__construct($app);
 
 		$this->dishRating = $dishRating;
 		$this->dish = $dish;
+		$this->orderItem = $orderItem;
 	}
 
 	public function getAvg(Request $request, $dishId)
@@ -54,7 +55,7 @@ class DishRatingController extends Controller
 		$this->validateInput($request, $validationRule);
 
 		$dish = $this->dish->findById($dishId);
-		$orderItem = OrderItem::findById($request->orderItemId);
+		$orderItem = $this->orderItem->findById($request->orderItemId);
 		$user = $this->getUser($request);
 		$this->isStoreAllowed($orderItem, $user);
 
@@ -63,10 +64,9 @@ class DishRatingController extends Controller
 			'visual_rating'   => $request->input('visual_rating'),
 			'quantity_rating' => $request->input('quantity_rating'),
 			'comment'         => $request->input('comment'),
+			'order_item_id'   => $request->orderItemId
 		], $user);
 
-		//mark order item that the dish is rated
-		$orderItem->dishRating()->associate($rating)->save();
 		return response()->success($rating, 11004);
 	}
 

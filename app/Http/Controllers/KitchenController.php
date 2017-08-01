@@ -198,7 +198,7 @@ class KitchenController extends Controller
 	{
 		$kitchen = Kitchen::findById($kitchenId);
 
-		$orderInfo = $kitchen->orders()->with('items.dish', 'kitchen', 'transaction')->get();
+		$orderInfo = $kitchen->orders()->with('items.dish', 'items.dishRating', 'kitchen', 'transaction')->get();
 		$orderInfo->map(function ($eachOrder) {
 			$eachOrder->user_name = User::findById($eachOrder->user_id)->first_name;
 		});

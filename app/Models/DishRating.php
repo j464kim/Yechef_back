@@ -42,6 +42,7 @@ class DishRating extends Rating
 		'comment',
 		'dish_id',
 		'user_id',
+		'order_item_id'
 	];
 
 	/**
@@ -62,7 +63,7 @@ class DishRating extends Rating
 
 	public function orderItem()
 	{
-		return $this->hasOne('App\Models\OrderItem');
+		return $this->belongsTo('App\Models\OrderItem');
 	}
 
 	/**
@@ -143,6 +144,7 @@ class DishRating extends Rating
 			'visual_rating'   => 'bail|required|integer|between:1,5',
 			'quantity_rating' => 'bail|required|integer|between:1,5',
 			'comment'         => 'required|max:200',
+			'orderItemId'     => 'required'
 		];
 	}
 

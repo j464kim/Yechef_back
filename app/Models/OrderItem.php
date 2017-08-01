@@ -15,7 +15,6 @@ class OrderItem extends Model
 		'dish_id',
 		'quantity',
 		'captured_quantity',
-		'dish_rating_id'
 	];
 
 	public function order()
@@ -30,7 +29,7 @@ class OrderItem extends Model
 
 	public function dishRating()
 	{
-		return $this->belongsTo('App\Models\DishRating');
+		return $this->hasOne('App\Models\DishRating');
 	}
 
 }
