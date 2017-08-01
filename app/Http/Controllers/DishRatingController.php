@@ -46,7 +46,7 @@ class DishRatingController extends Controller
 		$dish = Dish::findById($dishId);
 		$orderItem = OrderItem::findById($request->orderItemId);
 		$order = $orderItem->order;
-		$user = $request->user();
+		$user = $this->getUser($request);
 
 		//Check user access
 		if ($user->id != $order->user_id) {
@@ -77,7 +77,7 @@ class DishRatingController extends Controller
 	{
 		$validationRule = DishRating::getValidationRule($ratingId);
 		$this->validateInput($request, $validationRule);
-		$user = $request->user();
+		$user = $this->getUser($request);
 		$dishRating = DishRating::findById($ratingId);
 
 		//check user access
