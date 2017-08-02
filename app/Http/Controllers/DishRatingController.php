@@ -2,24 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Models\DishRating;
-use App\Models\User;
+use App\Models\OrderItem;
 use App\Yechef\Helper;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
 class DishRatingController extends Controller
 {
+	protected $dishRating, $dish, $orderItem;
+
+	public function __construct(Application $app, DishRating $dishRating, Dish $dish, OrderItem $orderItem)
+	{
+		parent::__construct($app);
+
+		$this->dishRating = $dishRating;
+		$this->dish = $dish;
+		$this->orderItem = $orderItem;
+	}
 
 	public function getAvg(Request $request, $dishId)
 	{
-		$dishRatingsAvg = Dish::findById($dishId)->getAvgRatingAttribute();
+		$dishRatingsAvg = $this->dish->findById($dishId)->getAvgRatingAttribute();
 		return response()->success($dishRatingsAvg);
 	}
 
 	public function index(Request $request, $dishId)
 	{
-		$dishRatings = Dish::findById($dishId)->ratings;
+		$dishRatings = $this->dish->findById($dishId)->ratings;
 		$dishRatings->load([
 			'user' => function ($query) {
 				$query->with('medias');
@@ -32,35 +44,44 @@ class DishRatingController extends Controller
 
 	public function show(Request $request, $dishId, $ratingId)
 	{
-		$dishRating = DishRating::findById($ratingId);
+		$dishRating = $this->dishRating->findById($ratingId);
 		return response()->success($dishRating);
 	}
 
 	public function store(Request $request, $dishId)
 	{
-		//TODO: No need to require slug input from the user.
-		$validationRule = DishRating::getValidationRule();
+		$validationRule = $this->dishRating->getValidationRule();
 		$this->validateInput($request, $validationRule);
 
-		$dish = Dish::findById($dishId);
-		//TODO: Replace with the real user
-		$user = User::first();
+		$dish = $this->dish->findById($dishId);
+		$orderItem = $this->orderItem->findById($request->orderItemId);
+		$user = $this->getUser($request);
+		$user->canRateDish($orderItem);
+
 		$rating = $dish->rating([
 			'taste_rating'    => $request->input('taste_rating'),
 			'visual_rating'   => $request->input('visual_rating'),
 			'quantity_rating' => $request->input('quantity_rating'),
 			'comment'         => $request->input('comment'),
+			'order_item_id'   => $request->orderItemId
 		], $user);
+
 		return response()->success($rating, 11004);
 	}
 
 	public function update(Request $request, $dishId, $ratingId)
 	{
-		//TODO: Check if the user has the permission to do so
-		$validationRule = DishRating::getValidationRule($ratingId);
+		$validationRule = $this->dishRating->getValidationRule($ratingId);
 		$this->validateInput($request, $validationRule);
+		$user = $this->getUser($request);
+		$dishRating = $this->dishRating->findById($ratingId);
 
-		$rating = Dish::updateRating($ratingId, [
+		//check user access
+		if ($dishRating->user_id != $user->id) {
+			throw new YechefException(15503);
+		}
+
+		$rating = $this->dish->updateRating($ratingId, [
 			'taste_rating'    => $request->input('taste_rating'),
 			'visual_rating'   => $request->input('visual_rating'),
 			'quantity_rating' => $request->input('quantity_rating'),
@@ -72,7 +93,7 @@ class DishRatingController extends Controller
 	public function destroy(Request $request, $dishId, $ratingId)
 	{
 		//TODO: Check if the user has the permission to do so
-		$rating = Dish::deleteRating($ratingId);
+		$rating = $this->dish->deleteRating($ratingId);
 		return response()->success($rating, 11006);
 	}
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\YechefException;
 use App\Traits\CanResetPassword;
 use App\Traits\ModelService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -271,5 +272,24 @@ class User extends Authenticatable
 	{
 		return $this->verified;
 	}
+
+	public function canRateDish($orderItem)
+	{
+		$order = $orderItem->order;
+
+		//Check user access
+		if ($this->id != $order->user_id) {
+			throw new YechefException(11503);
+		}
+		//Expiration check
+		if (Carbon::now()->diffInHours($order->updated_at) > 24) {
+			throw new YechefException(11504);
+		}
+		//Check if already rated
+		if ($orderItem->dishRating) {
+			throw new YechefException(11505);
+		}
+	}
+
 
 }

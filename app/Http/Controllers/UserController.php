@@ -156,7 +156,14 @@ class UserController extends Controller
 	{
 		$user = $this->getUser($request);
 
-		$orderInfo = $user->orders()->with('items.dish', 'kitchen', 'transaction')->get();
+		$orderInfo = $user->orders()->with([
+			'items.dishRating' => function ($query) {
+				$query->withTrashed();
+			},
+			'items.dish',
+			'kitchen',
+			'transaction'
+		])->get();
 
 		return response()->success($orderInfo);
 	}

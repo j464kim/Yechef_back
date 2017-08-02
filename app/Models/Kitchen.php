@@ -75,6 +75,36 @@ class Kitchen extends Model
 		return $this->morphMany('App\Models\Reaction', 'reactionable');
 	}
 
+	public function addRatingAttributes()
+	{
+		$dishes = $this->dishes()->get();
+
+		$this['totalTasteRating'] = 0;
+		$this['totalVisualRating'] = 0;
+		$this['totalQuantityRating'] = 0;
+		$this['totalRating'] = 0;
+		$dishesWithoutRating = 0;
+
+		if (sizeof($dishes) > 0) {
+			foreach ($dishes as $dish) {
+				$avgRatings = $dish->avgRating();
+				if ($avgRatings['taste_rating'] < 0 && $avgRatings['visual_rating'] < 0 && $avgRatings['quantity_rating_rating'] < 0) {
+					$dishesWithoutRating++;
+				} else {
+					$this['totalTasteRating'] += $avgRatings['taste_rating'];
+					$this['totalVisualRating'] += $avgRatings['visual_rating'];
+					$this['totalQuantityRating'] += $avgRatings['quantity_rating'];
+				}
+			}
+			$dishesWithRating = sizeof($dishes) - $dishesWithoutRating;
+			$this['totalTasteRating'] /= sizeof($dishesWithRating);
+			$this['totalVisualRating'] /= sizeof($dishesWithRating);
+			$this['totalQuantityRating'] /= sizeof($dishesWithRating);
+			$this['totalRating'] = ($this['totalTasteRating'] + $this['totalVisualRating'] + $this['totalQuantityRating']) / sizeof($avgRatings);
+		}
+
+	}
+
 	/**
 	 * @return array
 	 */

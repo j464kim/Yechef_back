@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Exceptions\YechefException;
+use App\Traits\ModelService;
+use App\Traits\Reactionable;
 use Ghanem\Rating\Models\Rating;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\Reactionable;
 
 /**
  * Class DishRating
@@ -17,6 +18,7 @@ class DishRating extends Rating
 {
 	use SoftDeletes;
 	use Reactionable;
+	use ModelService;
 
 	/**
 	 * The attributes that should be mutated to dates.
@@ -40,6 +42,7 @@ class DishRating extends Rating
 		'comment',
 		'dish_id',
 		'user_id',
+		'order_item_id'
 	];
 
 	/**
@@ -56,6 +59,11 @@ class DishRating extends Rating
 	public function user()
 	{
 		return $this->belongsTo('App\Models\User');
+	}
+
+	public function orderItem()
+	{
+		return $this->belongsTo('App\Models\OrderItem');
 	}
 
 	/**
@@ -130,13 +138,19 @@ class DishRating extends Rating
 	 */
 	public static function getValidationRule($id = null)
 	{
-		Return [
+		$rule = [
 			'dishId'          => 'bail|required',
 			'taste_rating'    => 'bail|required|integer|between:1,5',
 			'visual_rating'   => 'bail|required|integer|between:1,5',
 			'quantity_rating' => 'bail|required|integer|between:1,5',
 			'comment'         => 'required|max:200',
 		];
+
+		if (!$id) {
+			$rule['orderItemId'] = 'required';
+		}
+
+		Return $rule;
 	}
 
 }
