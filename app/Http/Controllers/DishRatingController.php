@@ -7,7 +7,6 @@ use App\Models\Dish;
 use App\Models\DishRating;
 use App\Models\OrderItem;
 use App\Yechef\Helper;
-use Carbon\Carbon;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
@@ -57,7 +56,7 @@ class DishRatingController extends Controller
 		$dish = $this->dish->findById($dishId);
 		$orderItem = $this->orderItem->findById($request->orderItemId);
 		$user = $this->getUser($request);
-		$this->isStoreAllowed($orderItem, $user);
+		$user->canRateDish($orderItem);
 
 		$rating = $dish->rating([
 			'taste_rating'    => $request->input('taste_rating'),
@@ -96,24 +95,6 @@ class DishRatingController extends Controller
 		//TODO: Check if the user has the permission to do so
 		$rating = $this->dish->deleteRating($ratingId);
 		return response()->success($rating, 11006);
-	}
-
-	private function isStoreAllowed($orderItem, $user)
-	{
-		$order = $orderItem->order;
-
-		//Check user access
-		if ($user->id != $order->user_id) {
-			throw new YechefException(11503);
-		}
-		//Expiration check
-		if (Carbon::now()->diffInHours($order->updated_at) > 24) {
-			throw new YechefException(11504);
-		}
-		//Check if already rated
-		if ($orderItem->dish_rating_id != null) {
-			throw new YechefException(11505);
-		}
 	}
 
 }

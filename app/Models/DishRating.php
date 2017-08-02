@@ -138,14 +138,19 @@ class DishRating extends Rating
 	 */
 	public static function getValidationRule($id = null)
 	{
-		Return [
+		$rule = [
 			'dishId'          => 'bail|required',
 			'taste_rating'    => 'bail|required|integer|between:1,5',
 			'visual_rating'   => 'bail|required|integer|between:1,5',
 			'quantity_rating' => 'bail|required|integer|between:1,5',
 			'comment'         => 'required|max:200',
-			'orderItemId'     => 'required'
 		];
+
+		if (!$id) {
+			$rule['orderItemId'] = 'required';
+		}
+
+		Return $rule;
 	}
 
 }
