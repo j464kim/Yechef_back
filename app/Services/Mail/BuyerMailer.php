@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Mail;
 
 use Illuminate\Contracts\Mail\Mailer;
 use App\Models\User;
 use App\Models\Order;
 
-class AppMailer
+class BuyerMailer
 {
 	protected $mailer;
 	protected $to;
@@ -18,21 +18,10 @@ class AppMailer
 		$this->mailer = $mailer;
 	}
 
-	public function sendConfirmationEmailTo(User $user)
+	public function sendOrderRequested(User $buyer, Order $order)
 	{
-		$this->to = $user->email;
-		$this->view = MailType::REGISTRATION_VERIFY;
-
-		// $user variable to be available on template
-		$this->data = compact('user');
-
-		$this->deliver();
-	}
-
-	public function sendOrderRequest(User $user, Order $order)
-	{
-		$this->to = $user->email;
-		$this->view = MailType::ORDER_REQUEST;
+		$this->to = $buyer->email;
+		$this->view = MailType::BUYER_ORDER_REQUEST;
 
 		// $order variable to be available on template
 		$this->data = compact('order');
@@ -40,10 +29,10 @@ class AppMailer
 		$this->deliver();
 	}
 
-	public function sendOrderAccepted(User $user, Order $order)
+	public function sendOrderAccepted(User $buyer, Order $order)
 	{
-		$this->to = $user->email;
-		$this->view = MailType::ORDER_ACCEPTED;
+		$this->to = $buyer->email;
+		$this->view = MailType::BUYER_ORDER_ACCEPTED;
 
 		// $order variable to be available on template
 		$this->data = compact('order');
@@ -51,10 +40,10 @@ class AppMailer
 		$this->deliver();
 	}
 
-	public function sendOrderDeclined(User $user, Order $order)
+	public function sendOrderDeclined(User $buyer, Order $order)
 	{
-		$this->to = $user->email;
-		$this->view = MailType::ORDER_DECLINED;
+		$this->to = $buyer->email;
+		$this->view = MailType::BUYER_ORDER_DECLINED;
 
 		// $order variable to be available on template
 		$this->data = compact('order');
@@ -62,10 +51,10 @@ class AppMailer
 		$this->deliver();
 	}
 
-	public function sendOrderCancelled(User $user, Order $order)
+	public function sendOrderCancelled(User $buyer, Order $order)
 	{
-		$this->to = $user->email;
-		$this->view = MailType::ORDER_CANCELLED;
+		$this->to = $buyer->email;
+		$this->view = MailType::BUYER_ORDER_CANCELLED;
 
 		// $order variable to be available on template
 		$this->data = compact('order');

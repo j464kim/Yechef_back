@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Payment;
 
 
 use App\Http\Controllers\Controller;
-use App\Services\AppMailer;
+use App\Services\Mail\BuyerMailer;
+use App\Services\Mail\SellerMailer;
 use App\Services\Payment\StripeService;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -15,19 +16,21 @@ use App\Models\Transaction;
 class CheckoutController extends Controller
 {
 	private $orderCtrl;
-	protected $mailer, $stripe, $stripeService;
+	protected $buyerMailer, $sellerMailer, $stripe, $stripeService;
 
 	public function __construct(
 		Application $app,
 		OrderController $orderCtrl,
-		AppMailer $mailer,
+		BuyerMailer $buyerMailer,
+		SellerMailer $sellerMailer,
 		Stripe $stripe,
 		StripeService $stripeService
 	) {
 		parent::__construct($app);
 
 		$this->orderCtrl = $orderCtrl;
-		$this->mailer = $mailer;
+		$this->buyerMailer = $buyerMailer;
+		$this->sellerMailer = $sellerMailer;
 		$this->stripe = $stripe;
 		$this->stripeService = $stripeService;
 	}
@@ -37,7 +40,7 @@ class CheckoutController extends Controller
 		$validationRule = Transaction::getValidationRule();
 		$this->validateInput($request, $validationRule);
 
-		$user = $this->getUser($request);
+		$buyer = $this->getUser($request);
 
 		// If a user already has a stripe account, retrieve that. Otherwise, create one
 		$customer = $this->stripeService->addOrCreateCustomer($request);
@@ -45,7 +48,7 @@ class CheckoutController extends Controller
 		// retrieve payment info from DB or create one
 		$paymentInfo = Payment::firstOrCreate(
 			[
-				'user_id'   => $user->id,
+				'user_id'   => $buyer->id,
 				'stripe_id' => $customer->id,
 			]
 		);
@@ -68,14 +71,15 @@ class CheckoutController extends Controller
 		// create order & its items
 		$order = $this->orderCtrl->store($transaction->id, $transaction->payment->user_id,
 			$request->input('kitchenId'));
+		$seller = $order->kitchen->getBoss();
 
 		// delete cart
 		$order->cart()->delete();
 
 		// TODO: CC email to other owners
 		// send order request email to kitchen owner
-		$owner = $order->kitchen->users->first();
-		$this->mailer->sendOrderRequest($owner, $order);
+		$this->buyerMailer->sendOrderRequested($buyer, $order);
+		$this->sellerMailer->sendOrderRequested($seller, $order);
 
 		return response()->success($order, 17000);
 	}

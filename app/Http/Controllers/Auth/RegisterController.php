@@ -6,7 +6,7 @@ use App\Exceptions\YechefException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserSetting;
-use App\Services\AppMailer;
+use App\Services\Mail\AppMailer;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
