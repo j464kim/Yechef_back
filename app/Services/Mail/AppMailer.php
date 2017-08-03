@@ -11,6 +11,7 @@ class AppMailer
 	protected $mailer;
 	protected $to;
 	protected $view;
+	protected $subject;
 	protected $data;
 
 	function __construct(Mailer $mailer)
@@ -22,6 +23,7 @@ class AppMailer
 	{
 		$this->to = $user->email;
 		$this->view = MailType::REGISTRATION_VERIFY;
+		$this->subject = __('registration.confirmation_subject');
 
 		// $user variable to be available on template
 		$this->data = compact('user');
@@ -32,6 +34,7 @@ class AppMailer
 	public function deliver()
 	{
 		$this->mailer->send($this->view, $this->data, function ($message) {
+			$message->subject($this->subject);
 			$message->to($this->to);
 		});
 	}

@@ -13,6 +13,7 @@ return [
 	|
 	*/
 
+	'confirmation_subject' => 'This is a confirmation link to successfully sign up in YeChef',
 	'confirmation_title' => 'Sign Up Confirmation',
 	'confirmation_intro' => 'Thanks for signing up!',
 	'confirmation_body' => 'We just need to you to confirm your email real quick!',

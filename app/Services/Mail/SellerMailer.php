@@ -11,6 +11,7 @@ class SellerMailer
 	protected $mailer;
 	protected $to;
 	protected $view;
+	protected $subject;
 	protected $data;
 
 	function __construct(Mailer $mailer)
@@ -22,6 +23,7 @@ class SellerMailer
 	{
 		$this->to = $seller->email;
 		$this->view = MailType::SELLER_ORDER_REQUEST;
+		$this->subject = __('orderToSeller.order_request_subject');
 
 		// $order variable to be available on template
 		$this->data = compact('order');
@@ -33,6 +35,7 @@ class SellerMailer
 	{
 		$this->to = $seller->email;
 		$this->view = MailType::SELLER_ORDER_ACCEPTED;
+		$this->subject = __('orderToSeller.order_accepted_subject');
 
 		// $order variable to be available on template
 		$this->data = compact('order');
@@ -44,6 +47,7 @@ class SellerMailer
 	{
 		$this->to = $seller->email;
 		$this->view = MailType::SELLER_ORDER_DECLINED;
+		$this->subject = __('orderToSeller.order_declined_subject');
 
 		// $order variable to be available on template
 		$this->data = compact('order');
@@ -55,6 +59,7 @@ class SellerMailer
 	{
 		$this->to = $seller->email;
 		$this->view = MailType::SELLER_ORDER_CANCELLED;
+		$this->subject = __('orderToSeller.order_cancelled_subject');
 
 		// $order variable to be available on template
 		$this->data = compact('order');
@@ -65,6 +70,7 @@ class SellerMailer
 	public function deliver()
 	{
 		$this->mailer->send($this->view, $this->data, function ($message) {
+			$message->subject($this->subject);
 			$message->to($this->to);
 		});
 	}
