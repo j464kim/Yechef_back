@@ -35,7 +35,6 @@ class Transaction extends Model
 	public static function getValidationRule()
 	{
 		$rule = array(
-			'token'      => 'bail|required',
 			'total'      => 'required',
 			'currency'   => 'required',
 			'kitchenId'  => 'required',
