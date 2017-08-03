@@ -15,7 +15,7 @@ use Stripe\Stripe;
 class OrderController extends Controller
 {
 	private $transactionCtrl;
-	protected $stripe, $secretKey, $sellerMailer, $buyerMailer;
+	protected $stripe, $secretKey, $sellerMailer, $buyerMailer, $orderM, $orderItemM, $chargeStripe;
 	protected $user, $order, $charge;
 
 	public function __construct(
@@ -23,7 +23,10 @@ class OrderController extends Controller
 		TransactionController $transactionCtrl,
 		Stripe $stripe,
 		SellerMailer $sellerMailer,
-		BuyerMailer $buyerMailer
+		BuyerMailer $buyerMailer,
+		Order $orderM,
+		OrderItem $orderItemM,
+		Charge $chargeStripe
 	) {
 		parent::__construct($app);
 
@@ -32,19 +35,22 @@ class OrderController extends Controller
 		$this->secretKey = config('services.stripe.secret_key');
 		$this->sellerMailer = $sellerMailer;
 		$this->buyerMailer = $buyerMailer;
+		$this->orderM = $orderM;
+		$this->orderItemM = $orderItemM;
+		$this->chargeStripe = $chargeStripe;
 	}
 
 	public function initialize(Request $request, $orderId)
 	{
 		$this->user = $this->getUser($request);
-		$this->order = Order::findById($orderId);
+		$this->order = $this->orderM->findById($orderId);
 		$this->stripe->setApiKey($this->secretKey);
-		$this->charge = Charge::retrieve($this->order->transaction->charge_id);
+		$this->charge = $this->chargeStripe->retrieve($this->order->transaction->charge_id);
 	}
 
 	public function store($transactionId, $userId, $kitchenId)
 	{
-		$order = Order::create(
+		$order = $this->orderM->create(
 			array(
 				"transaction_id" => $transactionId,
 				"user_id"        => $userId,
@@ -56,11 +62,11 @@ class OrderController extends Controller
 		$cart = $order->cart();
 
 		foreach ($cart->items as $item) {
-			OrderItem::create(
+			$this->orderItemM->create(
 				array(
-					"order_id" => $order->id,
-					"dish_id" => $item->dish_id,
-					"quantity" => $item->quantity,
+					"order_id"          => $order->id,
+					"dish_id"           => $item->dish_id,
+					"quantity"          => $item->quantity,
 					"captured_quantity" => 0
 				)
 			);
