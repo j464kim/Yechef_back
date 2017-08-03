@@ -84,8 +84,15 @@ class StripeService
 		$user = $this->controller->getUser($request);
 
 		if ($paymentAccount = $user->payment) {
-			// If a user already has a stripe account, add a card to the account
+			// If a user already has a stripe account
 			$customer = $this->customer->retrieve($paymentAccount->stripe_id);
+
+			// if user is trying to check out with existing payment method
+			if (!$request->input('token')) {
+				return $customer;
+			}
+
+			// add a card to the account if user entered credit card info on checkout
 			$cardFingerprints = [];
 			$cards = $customer->sources->data;
 			foreach ($cards as $index => $card) {
@@ -98,10 +105,10 @@ class StripeService
 				]
 			);
 
+			// if the entered card already exists in customer account, remove it
 			if (in_array($newCard->fingerprint, $cardFingerprints)) {
 				$customer->sources->retrieve($newCard->id)->delete();
 			}
-
 		} else {
 			// Otherwise, create one
 			try {
