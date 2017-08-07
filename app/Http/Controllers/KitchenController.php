@@ -45,6 +45,9 @@ class KitchenController extends Controller
 		$this->validateInput($request, $validationRule);
 		$user = $this->getUser($request);
 
+		// create payout account if owner of kitchen doesn't have a payout method yet
+		$this->payoutCtrl->store($request);
+
 		$kitchen = Kitchen::create([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
@@ -58,9 +61,6 @@ class KitchenController extends Controller
 		]);
 
 		$kitchen->users()->save($user, ['role' => 1, 'verified' => true]);
-
-		// create payout account if owner of kitchen doesn't have a payout method yet
-		$this->payoutCtrl->store($request);
 
 		return response()->success($kitchen);
 	}
