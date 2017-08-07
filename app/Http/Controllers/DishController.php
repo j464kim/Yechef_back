@@ -27,7 +27,7 @@ class DishController extends Controller
 	{
 		$dishes = $this->dish->with('medias')->get();
 		//TODO: add algorithm to get featured dishes (business model)
-		$featuredDishes = $dishes->random(12);
+		$featuredDishes = $dishes;
 		$featuredDishes->filter(function (Dish $item) {
 			$item->addRatingAttributes();
 		});
