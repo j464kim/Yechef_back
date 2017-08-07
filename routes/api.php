@@ -26,7 +26,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('dishes/checkOwnership', 'UserController@checkOwnership');
 	Route::post('kitchens/checkOwnership', 'UserController@checkOwnership');
 
-	Route::get('users/getMyKitchens', 'UserController@getKitchens');
+	Route::get('users/getMyKitchensInCompactList', 'UserController@getMyKitchensInCompactList');
 	Route::get('users/getMySubscriptions', 'UserController@getSubscriptions');
 	Route::get('users/getMyForkedDishes', 'UserController@getForkedDishes');
 
