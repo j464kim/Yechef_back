@@ -101,7 +101,7 @@ class StripeService
 
 			$newCard = $customer->sources->create(
 				[
-					'source' => $request->input('token')
+					'source' => $request->input('token'),
 				]
 			);
 
@@ -109,6 +109,7 @@ class StripeService
 			if (in_array($newCard->fingerprint, $cardFingerprints)) {
 				$customer->sources->retrieve($newCard->id)->delete();
 			}
+
 		} else {
 			// Otherwise, create one
 			try {
@@ -129,6 +130,10 @@ class StripeService
 	public function updateCard(Request $request, $cardId)
 	{
 		$card = $this->getCardById($request, $cardId);
+
+		$card->address_city = $request->input('address_city');
+		$card->address_line1 = $request->input('address_line1');
+		$card->address_zip = $request->input('address_zip');
 
 		$card->name = $request->input('name');
 		$card->exp_month = $request->input('exp_month');
