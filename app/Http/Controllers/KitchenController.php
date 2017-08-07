@@ -30,6 +30,9 @@ class KitchenController extends Controller
 	public function index(Request $request)
 	{
 		$kitchens = Kitchen::with('medias')->get();
+		foreach ($kitchens as $kitchen) {
+			$kitchen->addRatingAttributes();
+		}
 		// apply pagination
 		$result = Helper::paginate($request, $kitchens);
 		return response()->success($result);

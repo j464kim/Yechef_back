@@ -84,6 +84,8 @@ class Kitchen extends Model
 		$this['totalQuantityRating'] = 0;
 		$this['totalRating'] = 0;
 		$dishesWithoutRating = 0;
+		$this['ratingsCount'] = 0;
+		$this['totalDishes'] = 0;
 
 		if (sizeof($dishes) > 0) {
 			foreach ($dishes as $dish) {
@@ -94,6 +96,8 @@ class Kitchen extends Model
 					$this['totalTasteRating'] += $avgRatings['taste_rating'];
 					$this['totalVisualRating'] += $avgRatings['visual_rating'];
 					$this['totalQuantityRating'] += $avgRatings['quantity_rating'];
+					$this['ratingsCount'] += $dish->countRatings();
+					$this['totalDishes'] = $this['totalDishes'] + 1;
 				}
 			}
 			$dishesWithRating = sizeof($dishes) - $dishesWithoutRating;
