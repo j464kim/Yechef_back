@@ -22,9 +22,10 @@ class Payment extends Model
 	public static function getValidationRule()
 	{
 		$rule = array(
-			'name'      => 'bail|required',
-			'exp_month' => 'required',
-			'exp_year'  => 'required',
+			'name'        => 'bail|required',
+			'exp_month'   => 'required',
+			'exp_year'    => 'required',
+			'address_zip' => 'required',
 		);
 
 		return $rule;
