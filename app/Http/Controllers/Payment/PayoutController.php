@@ -31,6 +31,10 @@ class PayoutController extends Controller
 	public function index(Request $request)
 	{
 		$connect = $this->stripeService->getOrCreateConnect($request);
+		if (!$connect) {
+			return response()->success($connect);
+		}
+
 		$balance = $this->stripeService->getBalance($connect->id);
 		$payoutAccount = PayoutAccount::firstOrCreate(
 			['connect_id' => $connect->id]
