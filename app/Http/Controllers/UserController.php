@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\YechefException;
 use App\Models\Dish;
-use App\Models\Kitchen;
 use App\Models\User;
 use App\Yechef\Helper;
 use Illuminate\Http\Request;
 
 
+/**
+ * Class UserController
+ * @package App\Http\Controllers
+ */
 class UserController extends Controller
 {
 
@@ -23,10 +26,25 @@ class UserController extends Controller
 
 		try {
 			$result = $user->kitchens()->with('medias')->get();
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->fail($e->getMessage());
 		}
 		$result = Helper::paginate($request, $result, $request->perPage);
+		return response()->success($result);
+	}
+
+	/**
+	 * @param Request $request
+	 */
+	public function getMyKitchensInCompactList(Request $request)
+	{
+		$user = $this->getUser($request);
+
+		try {
+			$result = $user->kitchens()->get(['kitchen_id as id', 'name']);
+		} catch (\Exception $e) {
+			return response()->fail($e->getMessage());
+		}
 		return response()->success($result);
 	}
 
