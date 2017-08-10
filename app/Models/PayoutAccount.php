@@ -22,14 +22,24 @@ class PayoutAccount extends Model
 		return $this->belongsTo('App\Models\User');
 	}
 
-	public static function getValidationRule()
+	public static function getValidationRule($userInfo = false)
 	{
-		$rule = array(
-			'state'       => 'bail|required',
-			'city'        => 'required',
-			'line1'       => 'required',
-			'postal_code' => 'required',
-		);
+		if ($userInfo) {
+			$rule = array(
+				'dob_day'    => 'required',
+				'dob_month'  => 'required',
+				'dob_year'   => 'required',
+				'first_name' => 'required',
+				'last_name'  => 'required',
+			);
+		} else {
+			$rule = array(
+				'state'       => 'bail|required',
+				'city'        => 'required',
+				'line1'       => 'required',
+				'postal_code' => 'required',
+			);
+		}
 
 		return $rule;
 	}

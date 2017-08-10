@@ -57,7 +57,7 @@ class PayoutController extends Controller
 
 	public function getExternalAccounts(Request $request)
 	{
-		$connect = $this->stripeService->getOrCreateConnect($request);
+		$connect = $this->stripeService->getConnect($request);
 		Log::info($connect);
 
 		return response()->success($connect->external_accounts);
@@ -68,7 +68,7 @@ class PayoutController extends Controller
 		$user = $this->getUser($request);
 		$connect = $this->stripeService->getOrCreateConnect($request);
 
-		$this->stripeService->updatePayoutAddress($request, $connect);
+		$this->stripeService->updatePayoutAddress($request);
 
 		// Profit from kitchen generally goes to the owner who created the kitchen at first
 		// Store the connect account into DB
@@ -88,11 +88,17 @@ class PayoutController extends Controller
 		$validationRule = PayoutAccount::getValidationRule();
 		$this->validate($request, $validationRule);
 
-		$connect = $this->stripeService->getOrCreateConnect($request);
+		$this->stripeService->updatePayoutAddress($request);
+		return response()->success();
+	}
 
-		$this->stripeService->updatePayoutAddress($request, $connect);
+	public function updatePersonalInfo(Request $request, $id)
+	{
+		$validationRule = PayoutAccount::getValidationRule(true);
+		$this->validate($request, $validationRule);
 
-		Log::info($connect);
+		$this->stripeService->updatePayoutUserInfo($request);
+		return response()->success();
 	}
 
 	public function createExternalAccount(Request $request)
@@ -112,7 +118,7 @@ class PayoutController extends Controller
 	public function switchDefaultAccount(Request $request)
 	{
 		$this->stripeService->switchDefaultExternalAccount($request);
-		
+
 		return response()->success();
 	}
 }

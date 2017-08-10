@@ -70,6 +70,20 @@ class StripeService
 		return $connect;
 	}
 
+	public function getConnect(Request $request)
+	{
+		$user = $this->controller->getUser($request);
+		try {
+			$connectId = $payoutAccount = $user->payoutAccount->connect_id;
+		} catch (\Exception $e) {
+			throw new YechefException(21500, $e->getMessage());
+		}
+
+		$connect = $this->account->retrieve($connectId);
+
+		return $connect;
+	}
+
 	public function getBalance($connectId)
 	{
 		return $this->balance->retrieve([
@@ -125,13 +139,27 @@ class StripeService
 		return $customer;
 	}
 
-	public function updatePayoutAddress(Request $request, $connect)
+	public function updatePayoutAddress(Request $request)
 	{
+		$connect = $this->getConnect($request);
+
 		$connect->legal_entity->address->state = $request->input('state');
 		$connect->legal_entity->address->city = $request->input('city');
 		$connect->legal_entity->address->line1 = $request->input('line1');
 		$connect->legal_entity->address->line2 = $request->input('line2');
 		$connect->legal_entity->address->postal_code = $request->input('postal_code');
+		$connect->save();
+	}
+
+	public function updatePayoutUserInfo(Request $request)
+	{
+		$connect = $this->getConnect($request);
+
+		$connect->legal_entity->dob->day = $request->input('dob_day');
+		$connect->legal_entity->dob->month = $request->input('dob_month');
+		$connect->legal_entity->dob->year = $request->input('dob_year');
+		$connect->legal_entity->first_name = $request->input('first_name');
+		$connect->legal_entity->last_name = $request->input('last_name');
 		$connect->save();
 	}
 
@@ -202,10 +230,7 @@ class StripeService
 
 	public function addExternalAccount(Request $request)
 	{
-		$user = $this->controller->getUser($request);
-		$payoutAccount = $user->payoutAccount;
-
-		$connect = $this->account->retrieve($payoutAccount->connect_id);
+		$connect = $this->getConnect($request);
 
 		$bankFingerprints = [];
 		$banks = $connect->external_accounts->data;
@@ -229,9 +254,7 @@ class StripeService
 
 	public function deleteExternalAccount(Request $request, $id)
 	{
-		$user = $this->controller->getUser($request);
-		$payoutAccount = $user->payoutAccount;
-		$connect = $this->account->retrieve($payoutAccount->connect_id);
+		$connect = $this->getConnect($request);
 
 		$externalAccount = $connect->external_accounts->retrieve($id);
 		$externalAccount->delete();
@@ -239,12 +262,11 @@ class StripeService
 
 	public function switchDefaultExternalAccount(Request $request)
 	{
-		$user = $this->controller->getUser($request);
-		$payoutAccount = $user->payoutAccount;
-		$connect = $this->account->retrieve($payoutAccount->connect_id);
+		$connect = $this->getConnect($request);
 
 		$externalAccount = $connect->external_accounts->retrieve($request->input('id'));
 		$externalAccount->default_for_currency = true;
 		$externalAccount->save();
 	}
+
 }

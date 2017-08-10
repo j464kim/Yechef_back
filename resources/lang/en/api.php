@@ -137,7 +137,7 @@ return [
 
 
 	/**
-	 * User related
+	 * Payment related
 	 * Success Range 17000 <= x < 17500
 	 * Error Range 17500 <= x < 18000
 	 */
@@ -189,5 +189,15 @@ return [
 	// fail
 	'20501' => 'You are not authorized to make action for this order',
 	'20502' => 'An order must be of pending status to be cancellable',
+
+	/**
+	 * Payout related
+	 * Success Range 21000 <= x < 21500
+	 * Error Range 21500 <= x < 22000
+	 */
+	// success
+
+	// fail
+	'21500' => 'Unable to get payout account of user',
 
 ];
