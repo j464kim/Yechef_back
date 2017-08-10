@@ -68,6 +68,8 @@ class PayoutController extends Controller
 		$user = $this->getUser($request);
 		$connect = $this->stripeService->getOrCreateConnect($request);
 
+		$this->stripeService->updatePayoutAddress($request, $connect);
+
 		// Profit from kitchen generally goes to the owner who created the kitchen at first
 		// Store the connect account into DB
 		$payoutAccount = PayoutAccount::firstOrCreate(
@@ -88,12 +90,7 @@ class PayoutController extends Controller
 
 		$connect = $this->stripeService->getOrCreateConnect($request);
 
-		$connect->legal_entity->address->state = $request->input('state');
-		$connect->legal_entity->address->city = $request->input('city');
-		$connect->legal_entity->address->line1 = $request->input('line1');
-		$connect->legal_entity->address->line2 = $request->input('line2');
-		$connect->legal_entity->address->postal_code = $request->input('postal_code');
-		$connect->save();
+		$this->stripeService->updatePayoutAddress($request, $connect);
 
 		Log::info($connect);
 	}

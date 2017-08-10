@@ -55,11 +55,9 @@ class StripeService
 
 		// If user already has a payout method, retrieve that
 		if ($payoutAccount = $user->payoutAccount) {
-
 			$connect = $this->account->retrieve($payoutAccount->connect_id);
 
 		} elseif ($country = $request->input('country')) {
-
 			// Otherwise, create one
 			$connect = $this->account->create(
 				[
@@ -125,6 +123,16 @@ class StripeService
 		}
 
 		return $customer;
+	}
+
+	public function updatePayoutAddress(Request $request, $connect)
+	{
+		$connect->legal_entity->address->state = $request->input('state');
+		$connect->legal_entity->address->city = $request->input('city');
+		$connect->legal_entity->address->line1 = $request->input('line1');
+		$connect->legal_entity->address->line2 = $request->input('line2');
+		$connect->legal_entity->address->postal_code = $request->input('postal_code');
+		$connect->save();
 	}
 
 	public function updateCard(Request $request, $cardId)
