@@ -4,6 +4,7 @@ namespace App\Services\Payment;
 
 use App\Exceptions\YechefException;
 use App\Models\Kitchen;
+use App\Models\PayoutAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\Account;
@@ -16,7 +17,7 @@ use Stripe\Stripe;
 class StripeService
 {
 	private $controller;
-	protected $customer, $charge, $stripe, $account, $balance;
+	protected $customer, $charge, $stripe, $account, $balance, $payoutAccount;
 
 	function __construct(
 		Customer $customer,
@@ -61,9 +62,9 @@ class StripeService
 			// Otherwise, create one
 			$connect = $this->account->create(
 				[
-					"country" => $country,
-					"type"    => "custom",
-					"email"   => $user->email,
+					"country"           => $country,
+					"type"              => "custom",
+					"email"             => $user->email,
 				]
 			);
 		}
@@ -148,6 +149,7 @@ class StripeService
 		$connect->legal_entity->address->line1 = $request->input('line1');
 		$connect->legal_entity->address->line2 = $request->input('line2');
 		$connect->legal_entity->address->postal_code = $request->input('postal_code');
+
 		$connect->save();
 	}
 
@@ -155,11 +157,13 @@ class StripeService
 	{
 		$connect = $this->getConnect($request);
 
+		$connect->legal_entity->type = PayoutAccount::TYPE;
 		$connect->legal_entity->dob->day = $request->input('dob_day');
 		$connect->legal_entity->dob->month = $request->input('dob_month');
 		$connect->legal_entity->dob->year = $request->input('dob_year');
 		$connect->legal_entity->first_name = $request->input('first_name');
 		$connect->legal_entity->last_name = $request->input('last_name');
+
 		$connect->save();
 	}
 

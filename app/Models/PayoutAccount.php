@@ -11,6 +11,7 @@ class PayoutAccount extends Model
 	use SoftDeletes;
 	use modelService;
 
+	const TYPE = 'individual';
 	protected $fillable = [
 		'user_id',
 		'connect_id',
