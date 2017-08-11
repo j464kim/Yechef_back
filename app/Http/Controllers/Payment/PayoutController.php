@@ -68,6 +68,11 @@ class PayoutController extends Controller
 		$user = $this->getUser($request);
 		$connect = $this->stripeService->getOrCreateConnect($request);
 
+		$connect->tos_acceptance->date = time();
+		// Assumes you're not using a proxy
+		$connect->tos_acceptance->ip = $_SERVER['REMOTE_ADDR'];
+		$connect->save();
+
 		// Profit from kitchen generally goes to the owner who created the kitchen at first
 		// Store the connect account into DB
 		$payoutAccount = PayoutAccount::firstOrCreate(
