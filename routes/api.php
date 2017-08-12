@@ -54,6 +54,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('payout/externalAccount/switchDefault', 'Payment\PayoutController@switchDefaultAccount');
 	Route::put('payout/{id}/personalInfo', 'Payment\PayoutController@updatePersonalInfo');
 
+	Route::get('users/checkPayout', 'UserController@checkPayout');
 	Route::resource('users', 'UserController', ['only' => ['update']]);
 	// user settings
 	Route::get('userSetting', 'UserSettingController@show');
@@ -97,7 +98,7 @@ $this->get('register/confirm/{token}', 'Auth\RegisterController@confirmEmail');
 Route::get('media/{id}/{modelName}', 'MediaController@show');
 Route::resource('media', 'MediaController', ['only' => 'destroy']);
 
-//Get User INformation for User Show page
+//Get User Information for User Show page
 Route::get('users/{userId}/getKitchens', 'UserController@getKitchens');
 Route::get('users/{userId}/getSubscriptions', 'UserController@getSubscriptions');
 Route::get('users/{userId}/getForkedDishes', 'UserController@getForkedDishes');
