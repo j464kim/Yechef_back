@@ -53,6 +53,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::delete('payout/externalAccount/{id}', 'Payment\PayoutController@destroyExternalAccount');
 	Route::post('payout/externalAccount/switchDefault', 'Payment\PayoutController@switchDefaultAccount');
 	Route::put('payout/{id}/personalInfo', 'Payment\PayoutController@updatePersonalInfo');
+	Route::post('payout/identity', 'Payment\PayoutController@uploadID');
 
 	Route::get('users/checkPayout', 'UserController@checkPayout');
 	Route::resource('users', 'UserController', ['only' => ['update']]);

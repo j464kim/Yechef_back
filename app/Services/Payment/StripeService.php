@@ -12,12 +12,13 @@ use Stripe\Balance;
 use Stripe\Charge;
 use Stripe\Customer;
 use App\Http\Controllers\Controller;
+use Stripe\FileUpload;
 use Stripe\Stripe;
 
 class StripeService
 {
 	private $controller;
-	protected $customer, $charge, $stripe, $account, $balance, $payoutAccount;
+	protected $customer, $charge, $stripe, $account, $balance, $payoutAccount, $fileUpload;
 
 	function __construct(
 		Customer $customer,
@@ -25,7 +26,8 @@ class StripeService
 		Charge $charge,
 		Stripe $stripe,
 		Account $account,
-		Balance $balance
+		Balance $balance,
+		FileUpload $fileUpload
 	) {
 		$this->customer = $customer;
 		$this->controller = $controller;
@@ -33,6 +35,7 @@ class StripeService
 		$this->stripe = $stripe;
 		$this->account = $account;
 		$this->balance = $balance;
+		$this->fileUpload = $fileUpload;
 
 		$secretKey = config('services.stripe.secret_key');
 		$this->stripe->setApiKey($secretKey);
@@ -62,9 +65,9 @@ class StripeService
 			// Otherwise, create one
 			$connect = $this->account->create(
 				[
-					"country"           => $country,
-					"type"              => "custom",
-					"email"             => $user->email,
+					"country" => $country,
+					"type"    => "custom",
+					"email"   => $user->email,
 				]
 			);
 		}
@@ -273,4 +276,19 @@ class StripeService
 		$externalAccount->save();
 	}
 
+	public function uploadFile(Request $request, $filePath)
+	{
+		$connect = $this->getConnect($request);
+
+		$fileStripe = $this->fileUpload->create(
+			array(
+				"purpose" => "identity_document",
+				"file"    => fopen($filePath, "r")
+			),
+			array("stripe_account" => $connect->id)
+		);
+		Log::info($fileStripe);
+		$connect->legal_entity->verification->document = $fileStripe->id;
+		$connect->save();
+	}
 }

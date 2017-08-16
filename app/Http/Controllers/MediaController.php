@@ -26,6 +26,9 @@ class MediaController extends Controller
 	 */
 	public function store(Request $request)
 	{
+		$validationRule = Media::getValidationRule();
+		$this->validateInput($request, $validationRule);
+
 		$mediable_id = $request->input('mediable_id');
 		$mediable_type = $request->input('mediable_type');
 
@@ -53,9 +56,6 @@ class MediaController extends Controller
 
 			$fileUrl = $s3->url($uniqueFileName);
 			$fileSize = $file->getClientSize();
-
-			$validationRule = Media::getValidationRule();
-			$this->validateInput($request, $validationRule);
 
 			// Save to local db
 			Media::create([

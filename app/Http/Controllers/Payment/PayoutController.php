@@ -10,22 +10,26 @@ use Illuminate\Support\Facades\Log;
 use Stripe\Customer;
 use Stripe\Payout;
 use App\Models\PayoutAccount;
+use Illuminate\Contracts\Filesystem\Factory;
 
 class PayoutController extends Controller
 {
+	private $storage;
 	protected $stripe, $customer, $secretKey, $stripeService, $payment;
 
 	public function __construct(
 		Application $app,
 		Customer $customer,
 		StripeService $stripeService,
-		Payout $payout
+		Payout $payout,
+		Factory $factory
 	) {
 		parent::__construct($app);
 
 		$this->customer = $customer;
 		$this->stripeService = $stripeService;
 		$this->payout = $payout;
+		$this->storage = $factory;
 	}
 
 	public function index(Request $request)
@@ -124,4 +128,20 @@ class PayoutController extends Controller
 
 		return response()->success();
 	}
+
+	public function uploadID(Request $request)
+	{
+		$file = $request->file('file');
+		$fileName = 'yechef_' . date('d-m-Y_H-i-s') . '.' . uniqid() . '.' . $file->getClientOriginalExtension();
+		$filePath = storage_path('app') . '/' . $fileName;
+		Log::info($filePath);
+
+		$localDisk = $this->storage->disk('local');
+		$localDisk->put($fileName, file_get_contents($file), 'public');
+
+		$this->stripeService->uploadFile($request, $filePath);
+
+		return response()->success();
+	}
+
 }
