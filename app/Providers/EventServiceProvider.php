@@ -20,6 +20,9 @@ class EventServiceProvider extends ServiceProvider
 		ReactionableDeleted::class => [
 			ReactionableDeletedListener::class,
 		],
+		'App\Events\MessageSent' => [
+			'App\Listeners\MessageSentListener',
+		],
 	];
 
 	/**

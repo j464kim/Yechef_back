@@ -90,6 +90,16 @@ class User extends Authenticatable
 		return $this->morphMany('App\Models\Media', 'mediable');
 	}
 
+	public function messageRooms()
+	{
+		return $this->hasMany(MessageRoom::class);
+	}
+
+	public function messages()
+	{
+		return $this->hasMany(Message::class);
+	}
+
 	/**
 	 * @return array
 	 */
