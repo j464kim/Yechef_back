@@ -141,6 +141,8 @@ class PayoutController extends Controller
 
 		$this->stripeService->uploadFile($request, $filePath);
 
+		$localDisk->delete($fileName);
+
 		return response()->success();
 	}
 
