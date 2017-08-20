@@ -10,6 +10,10 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
 
+/**
+ * Class UserController
+ * @package App\Http\Controllers
+ */
 class UserController extends Controller
 {
 	protected $user;
@@ -30,10 +34,25 @@ class UserController extends Controller
 
 		try {
 			$result = $user->kitchens()->with('medias')->get();
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->fail($e->getMessage());
 		}
 		$result = Helper::paginate($request, $result, $request->perPage);
+		return response()->success($result);
+	}
+
+	/**
+	 * @param Request $request
+	 */
+	public function getMyKitchensInCompactList(Request $request)
+	{
+		$user = $this->getUser($request);
+
+		try {
+			$result = $user->kitchens()->get(['kitchen_id as id', 'name']);
+		} catch (\Exception $e) {
+			return response()->fail($e->getMessage());
+		}
 		return response()->success($result);
 	}
 
