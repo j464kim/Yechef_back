@@ -6,6 +6,7 @@ use App\Exceptions\YechefException;
 use App\Models\Dish;
 use App\Models\User;
 use App\Yechef\Helper;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
 
@@ -15,6 +16,13 @@ use Illuminate\Http\Request;
  */
 class UserController extends Controller
 {
+	protected $user;
+
+	public function __construct(Application $app, User $user)
+	{
+		parent::__construct($app);
+		$this->user = $user;
+	}
 
 	/**
 	 * @param Request $request
@@ -88,6 +96,12 @@ class UserController extends Controller
 		}
 
 		return response()->success();
+	}
+
+	public function checkPayout(Request $request)
+	{
+		$user = $this->getUser($request);
+		return response()->success($user->payoutAccount);
 	}
 
 	/**

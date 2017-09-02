@@ -4,6 +4,7 @@ namespace App\Services\Payment;
 
 use App\Exceptions\YechefException;
 use App\Models\Kitchen;
+use App\Models\PayoutAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\Account;
@@ -11,12 +12,13 @@ use Stripe\Balance;
 use Stripe\Charge;
 use Stripe\Customer;
 use App\Http\Controllers\Controller;
+use Stripe\FileUpload;
 use Stripe\Stripe;
 
 class StripeService
 {
 	private $controller;
-	protected $customer, $charge, $stripe, $account, $balance;
+	protected $customer, $charge, $stripe, $account, $balance, $payoutAccount, $fileUpload;
 
 	function __construct(
 		Customer $customer,
@@ -24,7 +26,8 @@ class StripeService
 		Charge $charge,
 		Stripe $stripe,
 		Account $account,
-		Balance $balance
+		Balance $balance,
+		FileUpload $fileUpload
 	) {
 		$this->customer = $customer;
 		$this->controller = $controller;
@@ -32,6 +35,7 @@ class StripeService
 		$this->stripe = $stripe;
 		$this->account = $account;
 		$this->balance = $balance;
+		$this->fileUpload = $fileUpload;
 
 		$secretKey = config('services.stripe.secret_key');
 		$this->stripe->setApiKey($secretKey);
@@ -55,11 +59,9 @@ class StripeService
 
 		// If user already has a payout method, retrieve that
 		if ($payoutAccount = $user->payoutAccount) {
-
 			$connect = $this->account->retrieve($payoutAccount->connect_id);
 
 		} elseif ($country = $request->input('country')) {
-
 			// Otherwise, create one
 			$connect = $this->account->create(
 				[
@@ -69,6 +71,20 @@ class StripeService
 				]
 			);
 		}
+		return $connect;
+	}
+
+	public function getConnect(Request $request)
+	{
+		$user = $this->controller->getUser($request);
+		try {
+			$connectId = $payoutAccount = $user->payoutAccount->connect_id;
+		} catch (\Exception $e) {
+			throw new YechefException(21500, $e->getMessage());
+		}
+
+		$connect = $this->account->retrieve($connectId);
+
 		return $connect;
 	}
 
@@ -125,6 +141,33 @@ class StripeService
 		}
 
 		return $customer;
+	}
+
+	public function updatePayoutAddress(Request $request)
+	{
+		$connect = $this->getConnect($request);
+
+		$connect->legal_entity->address->state = $request->input('state');
+		$connect->legal_entity->address->city = $request->input('city');
+		$connect->legal_entity->address->line1 = $request->input('line1');
+		$connect->legal_entity->address->line2 = $request->input('line2');
+		$connect->legal_entity->address->postal_code = $request->input('postal_code');
+
+		$connect->save();
+	}
+
+	public function updatePayoutUserInfo(Request $request)
+	{
+		$connect = $this->getConnect($request);
+
+		$connect->legal_entity->type = PayoutAccount::TYPE;
+		$connect->legal_entity->dob->day = $request->input('dob_day');
+		$connect->legal_entity->dob->month = $request->input('dob_month');
+		$connect->legal_entity->dob->year = $request->input('dob_year');
+		$connect->legal_entity->first_name = $request->input('first_name');
+		$connect->legal_entity->last_name = $request->input('last_name');
+
+		$connect->save();
 	}
 
 	public function updateCard(Request $request, $cardId)
@@ -194,10 +237,7 @@ class StripeService
 
 	public function addExternalAccount(Request $request)
 	{
-		$user = $this->controller->getUser($request);
-		$payoutAccount = $user->payoutAccount;
-
-		$connect = $this->account->retrieve($payoutAccount->connect_id);
+		$connect = $this->getConnect($request);
 
 		$bankFingerprints = [];
 		$banks = $connect->external_accounts->data;
@@ -221,9 +261,7 @@ class StripeService
 
 	public function deleteExternalAccount(Request $request, $id)
 	{
-		$user = $this->controller->getUser($request);
-		$payoutAccount = $user->payoutAccount;
-		$connect = $this->account->retrieve($payoutAccount->connect_id);
+		$connect = $this->getConnect($request);
 
 		$externalAccount = $connect->external_accounts->retrieve($id);
 		$externalAccount->delete();
@@ -231,12 +269,26 @@ class StripeService
 
 	public function switchDefaultExternalAccount(Request $request)
 	{
-		$user = $this->controller->getUser($request);
-		$payoutAccount = $user->payoutAccount;
-		$connect = $this->account->retrieve($payoutAccount->connect_id);
+		$connect = $this->getConnect($request);
 
 		$externalAccount = $connect->external_accounts->retrieve($request->input('id'));
 		$externalAccount->default_for_currency = true;
 		$externalAccount->save();
+	}
+
+	public function uploadFile(Request $request, $filePath)
+	{
+		$connect = $this->getConnect($request);
+
+		$fileStripe = $this->fileUpload->create(
+			array(
+				"purpose" => "identity_document",
+				"file"    => fopen($filePath, "r")
+			),
+			array("stripe_account" => $connect->id)
+		);
+		Log::info($fileStripe);
+		$connect->legal_entity->verification->document = $fileStripe->id;
+		$connect->save();
 	}
 }
