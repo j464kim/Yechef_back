@@ -41,6 +41,41 @@ class MessageController extends Controller
 	}
 
 	/**
+	 * Delete a message sent.
+	 * @param Request $request
+	 */
+	public function destroy(Request $request, $id)
+	{
+		$user = $this->getUser($request);
+		$message = Message::findById($id);
+		if ($message->user()->where('users.id', $user->id)->get()->isEmpty()) {
+			throw new YechefException(22501);
+		}
+		$message->delete();
+		return response()->success($message, 22001);
+	}
+
+	/**
+	 * Send a message in the correct chatting room
+	 * @param Request $request
+	 */
+	public function sendMessage(Request $request)
+	{
+		$from = $this->getUser($request);
+		$validationRule = Message::getValidationRule();
+		$this->validateInput($request, $validationRule);
+		$messageRoomId = $request->input('messageRoomId');
+		$message = Message::create([
+			'user_id'         => $from->id,
+			'message_body'    => $request->input('messageBody'),
+			'message_room_id' => $messageRoomId
+		]);
+		$message_to = $this->messageService->findRecipient($messageRoomId, $from);
+		event(new MessageSent($from, $message_to, $message));
+		return response()->success($message, 22000);
+	}
+
+	/**
 	 * Get the list of chat rooms the user belongs to with the latest message in the message room
 	 * @param Request $request
 	 */
@@ -78,40 +113,5 @@ class MessageController extends Controller
 			$ourMessageRoom = $this->messageService->createMessageRoom($request, $from);
 		}
 		return response()->success($ourMessageRoom);
-	}
-
-	/**
-	 * Send a message in the correct chatting room
-	 * @param Request $request
-	 */
-	public function sendMessage(Request $request)
-	{
-		$from = $this->getUser($request);
-		$validationRule = Message::getValidationRule();
-		$this->validateInput($request, $validationRule);
-		$messageRoomId = $request->input('messageRoomId');
-		$message = Message::create([
-			'user_id'         => $from->id,
-			'message_body'    => $request->input('messageBody'),
-			'message_room_id' => $messageRoomId
-		]);
-		$message_to = $this->messageService->findRecipient($messageRoomId, $from);
-		event(new MessageSent($from, $message_to, $message));
-		return response()->success($message, 22000);
-	}
-
-	/**
-	 * Delete a message sent.
-	 * @param Request $request
-	 */
-	public function destroy(Request $request, $id)
-	{
-		$user = $this->getUser($request);
-		$message = Message::findById($id);
-		if ($message->user()->where('users.id', $user->id)->get()->isEmpty()) {
-			throw new YechefException(22501);
-		}
-		$message->delete();
-		return response()->success($message, 22001);
 	}
 }
