@@ -15,6 +15,6 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
 	return (int)$user->id === (int)$id;
 });
 
-Broadcast::channel('message.{message_room_id}', function ($user, $message) {
-	return $user->messageRooms()->find($message->message_room_id)->get();
+Broadcast::channel('message.{message_to_id}', function ($user, $message) {
+	return !$user->messageRooms()->find($message->message_room_id)->isEmpty();
 });

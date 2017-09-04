@@ -65,6 +65,11 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('kitchens/{id}/orders', 'KitchenController@getOrders');
 	Route::get('kitchens/{id}/acceptOrder/{orderId}', 'Payment\OrderController@acceptOrder');
 	Route::get('kitchens/{id}/declineOrder/{orderId}', 'Payment\OrderController@declineOrder');
+
+	// Messaging
+	Route::post('messageEX', 'MessageController@sendMessage');
+	Route::get('myMessageRooms', 'MessageController@getRooms');
+	Route::post('joinMessageRoom', 'MessageController@joinRoom');
 });
 
 Route::resource('dishes', 'DishController', ['only' => ['index', 'show']]);
@@ -108,5 +113,3 @@ Route::get('users/{userId}/getForkedDishes', 'UserController@getForkedDishes');
 Route::get('kitchens/{id}/admins', 'KitchenController@getAdmins');
 Route::get('kitchens/{id}/dishes', 'KitchenController@getDishes');
 Route::get('kitchens/{id}/subscribers', 'KitchenController@getSubscribers');
-
-Route::post('messageEX', 'MessageController@sendMessage');

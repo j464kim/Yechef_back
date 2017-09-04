@@ -200,4 +200,14 @@ return [
 	// fail
 	'21500' => 'Unable to get payout account of user',
 
+	/**
+	 * Message related
+	 * Success Range 22000 <= x < 22500
+	 * Error Range 22500 <= x < 23000
+	 */
+	// success
+	'22000' => 'Message Successfully Sent',
+
+	// fail
+	'22500' => 'You cannot send message to yourself',
 ];

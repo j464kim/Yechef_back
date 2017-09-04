@@ -92,7 +92,7 @@ class User extends Authenticatable
 
 	public function messageRooms()
 	{
-		return $this->hasMany(MessageRoom::class);
+		return $this->belongsToMany(MessageRoom::class);
 	}
 
 	public function messages()

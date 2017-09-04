@@ -16,6 +16,7 @@ class CreateMessageRoomsTable extends Migration
 		Schema::create('message_rooms', function (Blueprint $table) {
 			$table->increments('id');
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

@@ -21,6 +21,7 @@ class CreateMessagesTable extends Migration
 			$table->foreign('message_room_id')->references('id')->on('message_rooms');
 			$table->text('message_body');
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

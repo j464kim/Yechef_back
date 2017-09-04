@@ -30,7 +30,7 @@ class MessageRoom extends Model
 		return $this->hasMany(Message::class);
 	}
 
-	public function user()
+	public function users()
 	{
 		return $this->belongsToMany(User::class);
 	}

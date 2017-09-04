@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Message extends Model
 {
-	use SoftDeletes ,ModelService;
+	use SoftDeletes, ModelService;
 
 	protected $fillable = [
 		'user_id',
@@ -35,4 +35,16 @@ class Message extends Model
 		return $this->belongsTo(User::class);
 	}
 
+	/**
+	 * @return array
+	 */
+	public static function getValidationRule()
+	{
+		$rule = array(
+			'messageBody'   => 'bail|required',
+			'messageRoomId' => 'required|integer'
+		);
+
+		return $rule;
+	}
 }
