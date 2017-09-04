@@ -36,7 +36,11 @@ class MessageController extends Controller
 		if (!$messageRoom) {
 			return response()->notallow();
 		}
-		$messages = $messageRoom->messages;
+		$messages = $messageRoom->messages()->with([
+			'user' => function ($q) {
+				$q->with('medias');
+			}
+		])->get();
 		return response()->success($messages);
 	}
 
@@ -86,7 +90,7 @@ class MessageController extends Controller
 		foreach ($myMessageRooms as $myMessageRoom) {
 			$myMessageRoom->load([
 				'messages' => function ($q) {
-					$q->orderBy('created_at', 'desc')->first();
+					$q->with('user')->orderBy('created_at', 'desc')->first();
 				}
 			]);
 		}
