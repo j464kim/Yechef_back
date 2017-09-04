@@ -207,7 +207,9 @@ return [
 	 */
 	// success
 	'22000' => 'Message Successfully Sent',
+	'22001' => 'Message Successfully Deleted',
 
 	// fail
 	'22500' => 'You cannot send message to yourself',
+	'22501' => 'You are not authorized to delete the message',
 ];

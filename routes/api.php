@@ -67,7 +67,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('kitchens/{id}/declineOrder/{orderId}', 'Payment\OrderController@declineOrder');
 
 	// Messaging
-	Route::post('messageEX', 'MessageController@sendMessage');
+	Route::post('sendMessage', 'MessageController@sendMessage');
+	Route::resource('message', 'MessageController', ['only' => 'destroy']);
 	Route::get('myMessageRooms', 'MessageController@getRooms');
 	Route::post('joinMessageRoom', 'MessageController@joinRoom');
 });

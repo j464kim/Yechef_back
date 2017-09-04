@@ -93,8 +93,14 @@ class MessageController extends Controller
 	 * Delete a message sent.
 	 * @param Request $request
 	 */
-	public function deleteMessage(Request $request)
+	public function destroy(Request $request, $id)
 	{
-
+		$user = $this->getUser($request);
+		$message = Message::findById($id);
+		if ($message->user()->where('users.id', $user->id)->get()->isEmpty()) {
+			throw new YechefException(22501);
+		}
+		$message->delete();
+		return response()->success($message, 22001);
 	}
 }
