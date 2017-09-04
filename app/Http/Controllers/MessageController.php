@@ -106,7 +106,7 @@ class MessageController extends Controller
 	{
 		$from = $this->getUser($request);
 		$message_to = User::findById($request->input('messageTo'));
-		if ($from->id == $message_to) {
+		if ($from->id == $message_to->id) {
 			// User is not supposed to send messages to itself
 			throw new YechefException(22500);
 		}
@@ -115,6 +115,8 @@ class MessageController extends Controller
 		if ($ourMessageRoom->isEmpty()) {
 			// No Message Room exists for the user and the kitchen owner.. create one
 			$ourMessageRoom = $this->messageService->createMessageRoom($request, $from);
+		} else {
+			$ourMessageRoom = $ourMessageRoom->first();
 		}
 		return response()->success($ourMessageRoom);
 	}
