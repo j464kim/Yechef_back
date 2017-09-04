@@ -128,7 +128,7 @@ class KitchenController extends Controller
 
 		event(new ReactionableDeleted($kitchen));
 
-		return response()->success(12002);
+		return response()->success($kitchen, 12002);
 	}
 
 	public function getAdmins($id)
