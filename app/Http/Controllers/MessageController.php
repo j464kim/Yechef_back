@@ -29,6 +29,17 @@ class MessageController extends Controller
 		$this->messageService = $messageService;
 	}
 
+	public function index(Request $request)
+	{
+		$user = $this->getUser($request);
+		$messageRoom = $user->messageRooms()->find($request->messageRoomId);
+		if (!$messageRoom) {
+			return response()->notallow();
+		}
+		$messages = $messageRoom->messages;
+		return response()->success($messages);
+	}
+
 	/**
 	 * Get the list of chat rooms the user belongs to with the latest message in the message room
 	 * @param Request $request

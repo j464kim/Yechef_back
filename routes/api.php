@@ -68,7 +68,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 	// Messaging
 	Route::post('sendMessage', 'MessageController@sendMessage');
-	Route::resource('message', 'MessageController', ['only' => 'destroy']);
+	Route::resource('message', 'MessageController', ['only' => ['index', 'destroy']]);
 	Route::get('myMessageRooms', 'MessageController@getRooms');
 	Route::post('joinMessageRoom', 'MessageController@joinRoom');
 });
