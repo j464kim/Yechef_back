@@ -3,14 +3,14 @@ return [
 	// Pusher Event/BroadCast Related Constants
 	'events' => [
 		'message' => [
-			'type'   => 'message',
+			'type'   => 'event:message',
 			'action' => [
 				'sent'    => 'message.sent',
 				'deleted' => 'message.deleted'
 			]
 		],
 		'order'   => [
-			'type'   => 'order',
+			'type'   => 'event:order',
 			'action' => [
 				'sent'      => 'order.sent',
 				'accepted'  => 'order.accepted',
