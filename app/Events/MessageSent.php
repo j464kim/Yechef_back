@@ -70,4 +70,14 @@ class MessageSent implements ShouldBroadcastNow
 		return new Channel('pusher.' . $this->message_to->id);
 	}
 
+	/**
+	 * The event's broadcast name.
+	 *
+	 * @return string
+	 */
+	public function broadcastAs()
+	{
+		return config('constants.events.message.type');
+	}
+
 }
