@@ -71,6 +71,11 @@ class Kitchen extends Model
 		return $this->users()->firstOrFail();
 	}
 
+	public function getBusinessHourByDay($day)
+	{
+		return $this->businessHours()->where('day', $day)->firstOrFail();
+	}
+
 	/**
 	 * Get all of the Dish's reactions.
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany

@@ -212,27 +212,33 @@ class KitchenController extends Controller
 		return response()->success($orderInfo);
 	}
 
+	public function toggleBusinessHour(Request $request, $kitchenId)
+	{
+		$kitchen = Kitchen::findById($kitchenId);
+		$businessHour = $kitchen->getBusinessHourByDay($request->input('day'));
+
+		$businessHour->update(
+			[
+				'active'  => $request->input('active'),
+			]
+		);
+
+		return response()->success($businessHour);
+	}
+
 	public function updateBusinessHour(Request $request, $kitchenId)
 	{
 		$kitchen = Kitchen::findById($kitchenId);
-		Log::info('Day: ' . $request->input('day'));
-		Log::info('Open: ' . $request->input('open'));
-		Log::info('Close: ' . $request->input('close'));
-		Log::info('Update Business Hours' . $kitchenId);
+		$businessHour = $kitchen->getBusinessHourByDay($request->input('day'));
 
-		$businessHour = $this->businessHour
-			->where('kitchen_id', $kitchenId)
-			->where('day', $request->input('day'))
-			->firstOrFail();
-
-		Log::info($businessHour);
 		$businessHour->update(
 			[
-				'open_time' => $request->input('open'),
+				'open_time'  => $request->input('open'),
 				'close_time' => $request->input('close')
 			]
 		);
 
-		Log::info($businessHour);
+		return response()->success($businessHour);
 	}
+
 }
