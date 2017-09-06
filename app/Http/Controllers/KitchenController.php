@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Yechef\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Log;
 
 class KitchenController extends Controller
 {
@@ -209,4 +210,9 @@ class KitchenController extends Controller
 		return response()->success($orderInfo);
 	}
 
+	public function updateBusinessHour(Request $request, $kitchenId)
+	{
+		$kitchen = Kitchen::findById($kitchenId);
+		Log::info('Update Business Hours' . $kitchenId);
+	}
 }
