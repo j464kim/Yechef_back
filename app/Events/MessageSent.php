@@ -18,14 +18,30 @@ class MessageSent implements ShouldBroadcastNow
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
 
+
 	/**
-	 * @var Message
+	 * --- IMPORTANT ---
+	 * Both variables must be set from constants and are required in EVERY Event Class.
+	 * @var $type
 	 */
 	/**
-	 * @var Message|User
+	 * @var $action
+	 */
+	public $type, $action;
+
+
+	/**
+	 * @var Message $message
+	 */
+	/**
+	 * @var User $user
+	 */
+	/**
+	 * @var User $message_to
 	 */
 	public $message, $user, $message_to;
 
+	// TODO
 //	public $broadcastQueue = 'your-queue-name';
 
 	/**
@@ -35,6 +51,10 @@ class MessageSent implements ShouldBroadcastNow
 	 */
 	public function __construct(User $user, User $message_to, Message $message)
 	{
+		// type and action variables must be defined from constants
+		$this->type = config('constants.events.message.type');
+		$this->action = config('constants.events.message.action.sent');
+
 		$this->user = $user;
 		$this->message_to = $message_to;
 		$this->message = $message;
@@ -47,7 +67,7 @@ class MessageSent implements ShouldBroadcastNow
 	 */
 	public function broadcastOn()
 	{
-		return new Channel('message.' . $this->message_to->id);
+		return new Channel('pusher.' . $this->message_to->id);
 	}
 
 }
