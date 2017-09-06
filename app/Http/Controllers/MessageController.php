@@ -41,7 +41,11 @@ class MessageController extends Controller
 				$q->with('medias');
 			}
 		])->get();
-		return response()->success($messages);
+		$result = [
+			'recipient' => $this->messageService->findRecipient($request->messageRoomId, $user),
+			'messages'  => $messages
+		];
+		return response()->success($result);
 	}
 
 	/**
@@ -93,6 +97,7 @@ class MessageController extends Controller
 					$q->with('user')->orderBy('created_at', 'desc')->first();
 				}
 			]);
+			$myMessageRoom->recipient = $this->messageService->findRecipient($myMessageRoom->id, $user);
 		}
 
 		return response()->success($myMessageRooms);
