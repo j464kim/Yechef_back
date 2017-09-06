@@ -19,8 +19,8 @@ class CreateBusinessHoursTable extends Migration
 			$table->foreign('kitchen_id')->references('id')->on('kitchens')->onDelete('cascade');
 			$table->boolean('active');
 			$table->unsignedInteger('day');
-			$table->unsignedInteger('open_time');
-			$table->unsignedInteger('close_time');
+			$table->string('open_time');
+			$table->string('close_time');
 			$table->timestamps();
 			$table->softDeletes();
 		});
