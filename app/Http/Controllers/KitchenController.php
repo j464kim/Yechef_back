@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\ReactionableDeleted;
 use App\Exceptions\YechefException;
 use App\Http\Controllers\Payment\PayoutController;
+use App\Models\BusinessHour;
 use App\Models\Kitchen;
 use App\Models\User;
 use App\Yechef\Helper;
@@ -14,13 +15,14 @@ use Illuminate\Support\Facades\Log;
 
 class KitchenController extends Controller
 {
-	private $payoutCtrl;
+	private $payoutCtrl, $businessHour;
 
-	function __construct(Application $app, PayoutController $payoutCtrl)
+	function __construct(Application $app, PayoutController $payoutCtrl, BusinessHour $businessHour)
 	{
 		parent::__construct($app);
 
 		$this->payoutCtrl = $payoutCtrl;
+		$this->businessHour = $businessHour;
 	}
 
 	/**
@@ -213,6 +215,24 @@ class KitchenController extends Controller
 	public function updateBusinessHour(Request $request, $kitchenId)
 	{
 		$kitchen = Kitchen::findById($kitchenId);
+		Log::info('Day: ' . $request->input('day'));
+		Log::info('Open: ' . $request->input('open'));
+		Log::info('Close: ' . $request->input('close'));
 		Log::info('Update Business Hours' . $kitchenId);
+
+		$businessHour = $this->businessHour
+			->where('kitchen_id', $kitchenId)
+			->where('day', $request->input('day'))
+			->firstOrFail();
+
+		Log::info($businessHour);
+		$businessHour->update(
+			[
+				'open_time' => $request->input('open'),
+				'close_time' => $request->input('close')
+			]
+		);
+
+		Log::info($businessHour);
 	}
 }
