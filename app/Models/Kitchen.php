@@ -28,7 +28,7 @@ class Kitchen extends Model
 	/**
 	 * Cascade soft-deletes related models
 	 */
-	protected $cascadeDeletes = ['dishes'];
+	protected $cascadeDeletes = ['dishes', 'business_hours'];
 
 	/**
 	 * The attributes that are mass assignable.
@@ -60,10 +60,20 @@ class Kitchen extends Model
 		return $this->hasMany('App\Models\Order');
 	}
 
+	public function businessHours()
+	{
+		return $this->hasMany('App\Models\BusinessHour');
+	}
+
 	// TODO: Boss is the person who receives money. Position of 'boss' can be granted to others by current boss
 	public function getBoss()
 	{
 		return $this->users()->firstOrFail();
+	}
+
+	public function getBusinessHourByDay($day)
+	{
+		return $this->businessHours()->where('day', $day)->firstOrFail();
 	}
 
 	/**
@@ -73,6 +83,33 @@ class Kitchen extends Model
 	public function reactions()
 	{
 		return $this->morphMany('App\Models\Reaction', 'reactionable');
+	}
+
+	/**
+	 * Set a unique token to be used for verifying email
+	 */
+	public static function boot()
+	{
+		// listen to any model event that will be fired
+		parent::boot();
+
+		// listen for a new record being created
+		static::created(function ($kitchen) {
+			// create a default business hours for a new kitchen
+			for ($day=1; $day<=7; $day++) {
+				$kitchen->businessHours()->save(
+					new BusinessHour(
+						[
+							'active' => 1,
+							'day' => $day,
+							'open_time' => '09_00',
+							'close_time' => '17_00'
+						]
+					)
+				);
+			}
+
+		});
 	}
 
 	public function addRatingAttributes()

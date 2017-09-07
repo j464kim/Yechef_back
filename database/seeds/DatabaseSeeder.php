@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
 		\DB::table('transactions')->truncate();
 		\DB::table('order_items')->truncate();
 		\DB::table('orders')->truncate();
+		\DB::table('business_hours')->truncate();
 
 		$this->call(UsersTableSeeder::class);
 		$this->call(UserSettingsTableSeeder::class);

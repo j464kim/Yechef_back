@@ -14,12 +14,15 @@ use Illuminate\Foundation\Application;
 class KitchenController extends Controller
 {
 	private $payoutCtrl;
+	protected $kitchen, $user;
 
-	function __construct(Application $app, PayoutController $payoutCtrl)
+	function __construct(Application $app, PayoutController $payoutCtrl, Kitchen $kitchen, User $user)
 	{
 		parent::__construct($app);
 
 		$this->payoutCtrl = $payoutCtrl;
+		$this->kitchen = $kitchen;
+		$this->user = $user;
 	}
 
 	/**
@@ -29,7 +32,7 @@ class KitchenController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		$kitchens = Kitchen::with('medias')->get();
+		$kitchens = $this->kitchen->with('medias')->get();
 		foreach ($kitchens as $kitchen) {
 			$kitchen->addRatingAttributes();
 		}
@@ -44,14 +47,14 @@ class KitchenController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$validationRule = Kitchen::getValidationRule();
+		$validationRule = $this->kitchen->getValidationRule();
 		$this->validateInput($request, $validationRule);
 		$user = $this->getUser($request);
 
 		// create payout account if owner of kitchen doesn't have a payout method yet
 		$this->payoutCtrl->store($request);
 
-		$kitchen = Kitchen::create([
+		$kitchen = $this->kitchen->create([
 			'slug'        => snake_case($request->input('name')),
 			'name'        => $request->input('name'),
 			'country'     => $request->input('country'),
@@ -76,7 +79,7 @@ class KitchenController extends Controller
 	 */
 	public function show($id)
 	{
-		$kitchen = Kitchen::findById($id, true);
+		$kitchen = $this->kitchen->findById($id, true);
 		$kitchen->addRatingAttributes();
 		return response()->success($kitchen);
 	}
@@ -93,10 +96,10 @@ class KitchenController extends Controller
 	{
 		$request->user()->isVerifiedKitchenOwner($id);
 
-		$validationRule = Kitchen::getValidationRule($id);
+		$validationRule = $this->kitchen->getValidationRule($id);
 		$this->validateInput($request, $validationRule);
 
-		$kitchen = Kitchen::findById($id, true);
+		$kitchen = $this->kitchen->findById($id, true);
 
 		$kitchen->update(
 			[
@@ -123,7 +126,7 @@ class KitchenController extends Controller
 	public function destroy(Request $request, $id)
 	{
 		$request->user()->isVerifiedKitchenOwner($id);
-		$kitchen = Kitchen::findById($id);
+		$kitchen = $this->kitchen->findById($id);
 		$kitchen->delete();
 
 		event(new ReactionableDeleted($kitchen));
@@ -133,7 +136,7 @@ class KitchenController extends Controller
 
 	public function getAdmins($id)
 	{
-		$admins = Kitchen::findById($id, false)->users->load('medias');
+		$admins = $this->kitchen->findById($id, false)->users->load('medias');
 		return response()->success($admins);
 	}
 
@@ -142,8 +145,8 @@ class KitchenController extends Controller
 		$request->user()->isVerifiedKitchenOwner($id);
 
 		$userId = $this->getUserId($request);
-		$kitchen = Kitchen::findById($id);
-		$user = User::findById($userId);
+		$kitchen = $this->kitchen->findById($id);
+		$user = $this->user->findById($userId);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
 
 		if (!$admin) {
@@ -158,7 +161,7 @@ class KitchenController extends Controller
 	{
 		$request->user()->isVerifiedKitchenOwner($id);
 		$userId = $this->getUserId($request);
-		$kitchen = Kitchen::findById($id);
+		$kitchen = $this->kitchen->findById($id);
 		$admin = $kitchen->users()->where('user_id', $userId)->first();
 		if ($admin) {
 			$kitchen->users()->detach($userId);
@@ -170,7 +173,7 @@ class KitchenController extends Controller
 
 	public function getDishes($id)
 	{
-		$kitchen = Kitchen::findById($id);
+		$kitchen = $this->kitchen->findById($id);
 		$dishes = $kitchen->dishes()->with('medias')->get();
 		foreach ($dishes as $dish) {
 			$dish->addRatingAttributes();
@@ -180,9 +183,9 @@ class KitchenController extends Controller
 
 	public function getSubscribers($id)
 	{
-		$kitchen = Kitchen::findById($id);
+		$kitchen = $this->kitchen->findById($id);
 		$subscribers = $kitchen->reactions()->where('kind', 3)->pluck('user_id')->toArray();
-		$subscribers = User::findMany($subscribers);
+		$subscribers = $this->user->findMany($subscribers);
 		return response()->success($subscribers);
 	}
 
@@ -199,14 +202,51 @@ class KitchenController extends Controller
 
 	public function getOrders($kitchenId)
 	{
-		$kitchen = Kitchen::findById($kitchenId);
+		$kitchen = $this->kitchen->findById($kitchenId);
 
 		$orderInfo = $kitchen->orders()->with('items.dish', 'items.dishRating', 'kitchen', 'transaction')->get();
 		$orderInfo->map(function ($eachOrder) {
-			$eachOrder->user_name = User::findById($eachOrder->user_id)->first_name;
+			$eachOrder->user_name = $this->user->findById($eachOrder->user_id)->first_name;
 		});
 
 		return response()->success($orderInfo);
+	}
+
+	public function toggleBusinessHour(Request $request, $kitchenId)
+	{
+		$kitchen = $this->kitchen->findById($kitchenId);
+		$businessHour = $kitchen->getBusinessHourByDay($request->input('day'));
+
+		$businessHour->update(
+			[
+				'active' => $request->input('active'),
+			]
+		);
+
+		return response()->success($businessHour);
+	}
+
+	public function updateBusinessHour(Request $request, $kitchenId)
+	{
+		$kitchen = $this->kitchen->findById($kitchenId);
+		$businessHour = $kitchen->getBusinessHourByDay($request->input('day'));
+
+		$businessHour->update(
+			[
+				'open_time'  => $request->input('open'),
+				'close_time' => $request->input('close')
+			]
+		);
+
+		return response()->success($businessHour);
+	}
+
+	public function getBusinessHour($kitchenId)
+	{
+		$kitchen = $this->kitchen->findById($kitchenId);
+		$businessHours = $kitchen->businessHours()->get();
+
+		return response()->success($businessHours);
 	}
 
 }
