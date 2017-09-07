@@ -102,8 +102,8 @@ class Kitchen extends Model
 						[
 							'active' => 1,
 							'day' => $day,
-							'open_time' => '0900',
-							'close_time' => '1700'
+							'open_time' => '09_00',
+							'close_time' => '17_00'
 						]
 					)
 				);

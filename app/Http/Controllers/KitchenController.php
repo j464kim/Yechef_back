@@ -219,7 +219,7 @@ class KitchenController extends Controller
 
 		$businessHour->update(
 			[
-				'active'  => $request->input('active'),
+				'active' => $request->input('active'),
 			]
 		);
 
@@ -239,6 +239,14 @@ class KitchenController extends Controller
 		);
 
 		return response()->success($businessHour);
+	}
+
+	public function getBusinessHour($kitchenId)
+	{
+		$kitchen = $this->kitchen->findById($kitchenId);
+		$businessHours = $kitchen->businessHours()->get();
+
+		return response()->success($businessHours);
 	}
 
 }

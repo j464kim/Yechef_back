@@ -62,6 +62,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('kitchens/{id}/orders', 'KitchenController@getOrders');
 	Route::get('kitchens/{id}/acceptOrder/{orderId}', 'Payment\OrderController@acceptOrder');
 	Route::get('kitchens/{id}/declineOrder/{orderId}', 'Payment\OrderController@declineOrder');
+	Route::get('kitchens/{id}/businessHour', 'KitchenController@getBusinessHour');
 	Route::put('kitchens/{id}/businessHour', 'KitchenController@updateBusinessHour');
 	Route::post('kitchens/{id}/businessHour/toggle', 'KitchenController@toggleBusinessHour');
 });
