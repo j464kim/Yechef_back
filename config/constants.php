@@ -2,14 +2,17 @@
 return [
 	// Pusher Event/BroadCast Related Constants
 	'events' => [
-		'message' => [
+		'unchecked' => 0,
+		'checked'   => 1,
+		'deleted'   => 2,
+		'message'   => [
 			'type'   => 'event:message',
 			'action' => [
 				'sent'    => 'message.sent',
 				'deleted' => 'message.deleted'
 			]
 		],
-		'order'   => [
+		'order'     => [
 			'type'   => 'event:order',
 			'action' => [
 				'sent'      => 'order.sent',

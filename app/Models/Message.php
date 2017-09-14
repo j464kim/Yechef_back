@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\ModelService;
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -12,7 +13,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Message extends Model
 {
-	use SoftDeletes, ModelService;
+	use SoftDeletes, ModelService, CascadeSoftDeletes;
+
+	protected $cascadeDeletes = ['notifiable'];
 
 	protected $fillable = [
 		'user_id',
@@ -33,6 +36,11 @@ class Message extends Model
 	public function user()
 	{
 		return $this->belongsTo(User::class);
+	}
+
+	public function notifiable()
+	{
+		return $this->morphOne(Notifiable::class, 'notifiable');
 	}
 
 	/**
